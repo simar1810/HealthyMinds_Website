@@ -119,7 +119,7 @@ export const MenuPreview = () => {
                         </div>
                     </div>
                     
-                    <Button className="bg-[#249B60] hover:bg-[#1E8351] text-white px-8 rounded-full mb-10 h-11 text-[15px] shadow-sm font-semibold border-none" size="md">
+                    <Button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 rounded-full mb-10 h-11 text-[15px] shadow-sm font-semibold border-none" size="md">
                         See full menu
                     </Button>
                 </div>
@@ -186,7 +186,7 @@ export const MenuPreview = () => {
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`flex items-center h-[42px] px-[20px] rounded-full text-[13px] font-bold whitespace-nowrap transition-colors ${
                                     isActive
-                                        ? 'bg-[#1a4a38] text-white shadow-sm'
+                                        ? 'bg-[#3730A3] text-white shadow-sm'
                                         : 'bg-[#F9FAFB] text-[#2F3337] hover:bg-[#E5E7EB]'
                                 }`}
                             >

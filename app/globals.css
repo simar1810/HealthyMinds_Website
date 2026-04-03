@@ -3,8 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #343B42;
-  --primary-brand: #24A170;
-  --primary-brand-hover: #1E8C61;
+  --primary-brand: #4F46E5;
+  --primary-brand-hover: #4338CA;
   --secondary-text: #6C757D;
   --light-bg: #F8F9FA;
 }
@@ -46,5 +46,5 @@ body {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-brand); 
+  background: var(--primary-brand);
 }

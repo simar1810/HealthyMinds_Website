@@ -5,12 +5,12 @@ const reviews = [
     {
         name: 'Safa Ebrahim',
         avatar: 'https://i.pravatar.cc/150?u=safa',
-        text: "As a busy mom, I've been subscribed to NutriChef for over a year and a half now, and I can't imagine being without it! I reached my goal weight, but I decided to keep my subscription. I like the meal variety and choices, but most of all, I love the flexibility and the outstanding customer service."
+        text: "As a busy mom, I've been subscribed to HealthyMinds for over a year and a half now, and I can't imagine being without it! I reached my goal weight, but I decided to keep my subscription. I like the meal variety and choices, but most of all, I love the flexibility and the outstanding customer service."
     },
     {
         name: 'Thomas George',
         avatar: 'https://i.pravatar.cc/150?u=thomas',
-        text: "Before, I found it hard to eat right even though I exercised regularly. But with NutriChef, that changed. Their tasty food made dieting easier and more enjoyable. Thanks to NutriChef, I lost 12kg! They really helped me eat better and get healthier."
+        text: "Before, I found it hard to eat right even though I exercised regularly. But with HealthyMinds, that changed. Their tasty food made dieting easier and more enjoyable. Thanks to HealthyMinds, I lost 12kg! They really helped me eat better and get healthier."
     },
     {
         name: 'Ali Alsadeq',
@@ -20,7 +20,7 @@ const reviews = [
     {
         name: 'Sara M.',
         avatar: 'https://i.pravatar.cc/150?u=sara',
-        text: "NutriChef is life-changing! The meals are so fresh and flavorful. I never feel like I'm on a diet. It's effortless to stick to my calorie goals and maintain my shape."
+        text: "HealthyMinds is life-changing! The meals are so fresh and flavorful. I never feel like I'm on a diet. It's effortless to stick to my calorie goals and maintain my shape."
     },
     {
         name: 'Michael T.',
@@ -30,12 +30,12 @@ const reviews = [
     {
         name: 'Nour El-Din',
         avatar: 'https://i.pravatar.cc/150?u=nour',
-        text: "Finally, a meal plan that actually tastes good! I've lost 5kg in two months without feeling deprived or hungry. NutriChef handles everything perfectly."
+        text: "Finally, a meal plan that actually tastes good! I've lost 5kg in two months without feeling deprived or hungry. HealthyMinds handles everything perfectly."
     },
     {
         name: 'Emily Watson',
         avatar: 'https://i.pravatar.cc/150?u=emily',
-        text: "Being a vegetarian, finding good meal prep was hard. NutriChef's vegetarian options are phenomenal, packed with flavor and plant based protein!"
+        text: "Being a vegetarian, finding good meal prep was hard. HealthyMinds' vegetarian options are phenomenal, packed with flavor and plant based protein!"
     },
     {
         name: 'Fahad K.',
@@ -82,7 +82,7 @@ export const CommunitySection = () => {
             `}</style>
             
             {/* Top Massive Banner Section */}
-            <section className="bg-[#2B9D65] w-full py-24 md:py-36 flex justify-center items-center px-4">
+            <section className="bg-[#4F46E5] w-full py-24 md:py-36 flex justify-center items-center px-4">
                 <h2 className="text-white text-[48px] md:text-[64px] lg:text-[76px] font-black uppercase text-center leading-[1.05] tracking-[-0.02em] shrink-0">
                     Slammed schedule?<br />
                     Personalised meals.<br />
@@ -93,7 +93,7 @@ export const CommunitySection = () => {
             {/* Bottom Testimonials Section */}
             <section className="bg-[#EFF4F1] w-full pt-20 pb-28 overflow-hidden">
                 <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 mb-10">
-                    <p className="text-[#2B9D65] font-extrabold text-[12px] uppercase tracking-wider mb-2">
+                    <p className="text-[#4F46E5] font-extrabold text-[12px] uppercase tracking-wider mb-2">
                         290K happy customers in Worldwide . 19M meals delivered
                     </p>
                     <h2 className="text-[#2F3337] font-extrabold text-[36px] md:text-[44px] tracking-tight">

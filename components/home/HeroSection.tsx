@@ -17,7 +17,7 @@ export const HeroSection = () => {
                         Designed by nutritionists, crafted by chefs, personalized to your goals. Fresh daily. Just heat and eat.
                     </p>
 
-                    <Button size="lg" className="w-[180px] h-[56px] text-[18px] mb-8 font-semibold shadow-[0_8px_16px_rgba(36,161,112,0.3)] hover:-translate-y-1 transition-transform">
+                    <Button size="lg" className="w-[180px] h-[56px] text-[18px] mb-8 font-semibold shadow-[0_8px_16px_rgba(79,70,229,0.3)] hover:-translate-y-1 transition-transform">
                         See plans
                     </Button>
 
@@ -37,7 +37,7 @@ export const HeroSection = () => {
             <div className="absolute right-0 top-0 w-1/2 h-full hidden lg:block z-0">
                 <Image
                     src="https://cdncaloapp.com/28e125562515cd84cda748118c399f96ec409f93.webp"
-                    alt="NutriChef freshly prepared meal"
+                    alt="HealthyMinds freshly prepared meal"
                     fill
                     className="object-cover object-center"
                     priority

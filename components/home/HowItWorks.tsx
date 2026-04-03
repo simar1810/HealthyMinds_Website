@@ -34,9 +34,9 @@ export const HowItWorks = () => {
                         How it works
                     </h2>
                     <p className="text-[17px] md:text-[18px] text-[#6B7280] font-semibold mb-8">
-                        Hit your goals effortlessly with NutriChef in 3 simple steps
+                        Hit your goals effortlessly with HealthyMinds in 3 simple steps
                     </p>
-                    <Button className="bg-[#249B60] hover:bg-[#1E8351] text-white px-8 rounded-full h-[46px] text-[15px] shadow-sm font-bold border-none w-max">
+                    <Button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 rounded-full h-[46px] text-[15px] shadow-sm font-bold border-none w-max">
                         See plans
                     </Button>
                 </div>
@@ -47,7 +47,7 @@ export const HowItWorks = () => {
                         <div key={step.id} className="flex flex-col">
                             <div className="relative mb-7">
                                 {/* Number Badge */}
-                                <div className="absolute -top-[18px] -left-[14px] z-10 w-[42px] h-[42px] bg-[#1a4a38] text-white rounded-full flex items-center justify-center text-[18px] font-black border-[5px] border-white shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+                                <div className="absolute -top-[18px] -left-[14px] z-10 w-[42px] h-[42px] bg-[#3730A3] text-white rounded-full flex items-center justify-center text-[18px] font-black border-[5px] border-white shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
                                     {step.id}
                                 </div>
                                 {/* Image Box */}

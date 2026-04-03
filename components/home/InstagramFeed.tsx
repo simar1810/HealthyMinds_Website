@@ -13,7 +13,7 @@ const instaPosts = [
 
 export const InstagramFeed = () => {
     return (
-        <section className="bg-[#2B9D65] py-[60px] pb-[70px] overflow-hidden w-full">
+        <section className="bg-[#4F46E5] py-[60px] pb-[70px] overflow-hidden w-full">
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 w-full mb-8">
                 <h2 className="text-white text-[28px] md:text-[32px] font-bold tracking-tight">
                     From The Community

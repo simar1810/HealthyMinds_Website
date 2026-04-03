@@ -45,16 +45,16 @@ export const MenuOverlay = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
                             className="object-cover object-center" 
                             unoptimized
                         />
-                        {/* NutriChef logo overlay */}
+                        {/* HealthyMinds logo overlay */}
                         <div className="absolute top-[42px] left-12">
-                            <span className="text-white font-black text-[32px] tracking-[0.12em] uppercase drop-shadow-md">NUTRICHEF</span>
+                            <span className="text-white font-black text-[32px] tracking-[0.12em] uppercase drop-shadow-md">HEALTHYMINDS</span>
                         </div>
                     </div>
                     
                     {/* Green Footer bar */}
-                    <div className="bg-[#2B9D65] h-[160px] relative px-12 py-8 flex flex-col justify-end shrink-0">
+                    <div className="bg-[#4F46E5] h-[160px] relative px-12 py-8 flex flex-col justify-end shrink-0">
                         {/* Float Join Us badge */}
-                        <div className="absolute top-[-18px] left-12 bg-[#2B9D65] text-white pl-3.5 pr-4 py-2 rounded-full flex items-center gap-1.5 text-[12px] font-extrabold shadow-[0_-4px_10px_rgba(0,0,0,0.05)] rounded-bl-none z-10">
+                        <div className="absolute top-[-18px] left-12 bg-[#4F46E5] text-white pl-3.5 pr-4 py-2 rounded-full flex items-center gap-1.5 text-[12px] font-extrabold shadow-[0_-4px_10px_rgba(0,0,0,0.05)] rounded-bl-none z-10">
                            <span className="text-[14px]">✨</span> Join us
                         </div>
                         
@@ -96,10 +96,10 @@ export const MenuOverlay = ({ isOpen, onClose }: { isOpen: boolean, onClose: () 
                     {/* Links List */}
                     <div className="flex flex-col gap-[28px] mt-2">
                         {navLinks.map((link, idx) => (
-                            <Link key={idx} href={link.href} onClick={onClose} className="flex items-center text-[#2F3337] hover:text-[#2B9D65] transition-colors group">
+                            <Link key={idx} href={link.href} onClick={onClose} className="flex items-center text-[#2F3337] hover:text-[#4F46E5] transition-colors group">
                                 <span className="text-[14px] font-[800] tracking-tight">{link.name}</span>
                                 {link.hasChild && (
-                                    <svg className="ml-2 w-3.5 h-3.5 text-[#2F3337] group-hover:text-[#2B9D65] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                    <svg className="ml-2 w-3.5 h-3.5 text-[#2F3337] group-hover:text-[#4F46E5] transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                                 )}
                             </Link>
                         ))}

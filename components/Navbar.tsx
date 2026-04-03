@@ -36,8 +36,8 @@ export const Navbar = () => {
                     <div className="flex justify-between items-center  rounded-full px-8 py-3.5  h-[64px] max-w-[1400px] mx-auto ">
                         {/* Logo */}
                         <div className="flex-shrink-0 flex items-center">
-                            <Link href="/" className="text-[#249B60] font-black text-[22px] tracking-[0.1em] uppercase leading-none mt-1">
-                                NUTRICHEF
+                            <Link href="/" className="text-[#4F46E5] font-black text-[22px] tracking-[0.1em] uppercase leading-none mt-1">
+                                HEALTHYMINDS
                             </Link>
                         </div>
 
@@ -47,7 +47,7 @@ export const Navbar = () => {
                                 <div className="relative" ref={dropdownRef}>
                                     <button
                                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                        className="flex items-center gap-2 bg-[#249B60] text-white px-3 py-1.5 rounded-full hover:bg-[#1E8351] transition-colors"
+                                        className="flex items-center gap-2 bg-[#4F46E5] text-white px-3 py-1.5 rounded-full hover:bg-[#4338CA] transition-colors"
                                     >
                                         <div className="w-[28px] h-[28px] rounded-full bg-white/20 flex items-center justify-center text-[12px] font-extrabold">
                                             {initials}
@@ -93,7 +93,7 @@ export const Navbar = () => {
                             ) : (
                                 <Link
                                     href="/auth/login"
-                                    className="bg-[#249B60] hover:bg-[#1E8351] text-white px-5 py-2 rounded-full text-[13px] font-extrabold transition-colors shadow-sm"
+                                    className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-5 py-2 rounded-full text-[13px] font-extrabold transition-colors shadow-sm"
                                 >
                                     Sign Up
                                 </Link>

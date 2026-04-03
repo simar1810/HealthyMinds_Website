@@ -97,7 +97,7 @@ export default function MenuPage() {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-8 h-8 border-3 border-[#249B60] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-[#4F46E5] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -110,7 +110,7 @@ export default function MenuPage() {
         {/* Hero Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
           <div>
-            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#EAF5F0] text-[#114B34] text-sm font-bold mb-6">
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#E0E7FF] text-[#312E81] text-sm font-bold mb-6">
               <span className="mr-2">📅</span>
               This Week&apos;s Menu
             </div>
@@ -122,7 +122,7 @@ export default function MenuPage() {
             </p>
           </div>
           <div className="mt-8 md:mt-0">
-            <button className="bg-[#24A170] hover:bg-[#1E8C61] text-white px-8 py-3.5 rounded-full font-bold text-base transition-colors shadow-[0_4px_14px_0_rgba(36,161,112,0.39)]">
+            <button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 py-3.5 rounded-full font-bold text-base transition-colors shadow-[0_4px_14px_0_rgba(79,70,229,0.39)]">
               Order Now
             </button>
           </div>

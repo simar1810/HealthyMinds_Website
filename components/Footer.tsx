@@ -12,15 +12,15 @@ export const Footer = () => {
                     {/* Left Brand and Links */}
                     <div className="flex flex-col gap-[36px] w-full lg:w-auto">
                         <div>
-                            <span className="text-[#249B60] font-black text-[32px] tracking-[0.1em] uppercase">NutriChef</span>
+                            <span className="text-[#4F46E5] font-black text-[32px] tracking-[0.1em] uppercase">HealthyMinds</span>
                         </div>
                         
                         <div className="flex flex-wrap gap-x-8 gap-y-3">
-                            <Link href="#" className="text-[#878E99] hover:text-[#249B60] font-semibold text-[13px] tracking-tight">Plans & Packages</Link>
-                            <Link href="#" className="text-[#878E99] hover:text-[#249B60] font-semibold text-[13px] tracking-tight">Menu</Link>
-                            <Link href="#" className="text-[#878E99] hover:text-[#249B60] font-semibold text-[13px] tracking-tight">The Cafe</Link>
-                            <Link href="#" className="text-[#878E99] hover:text-[#249B60] font-semibold text-[13px] tracking-tight">Careers</Link>
-                            <Link href="#" className="text-[#878E99] hover:text-[#249B60] font-semibold text-[13px] tracking-tight">Blog</Link>
+                            <Link href="#" className="text-[#878E99] hover:text-[#4F46E5] font-semibold text-[13px] tracking-tight">Plans & Packages</Link>
+                            <Link href="#" className="text-[#878E99] hover:text-[#4F46E5] font-semibold text-[13px] tracking-tight">Menu</Link>
+                            <Link href="#" className="text-[#878E99] hover:text-[#4F46E5] font-semibold text-[13px] tracking-tight">The Cafe</Link>
+                            <Link href="#" className="text-[#878E99] hover:text-[#4F46E5] font-semibold text-[13px] tracking-tight">Careers</Link>
+                            <Link href="#" className="text-[#878E99] hover:text-[#4F46E5] font-semibold text-[13px] tracking-tight">Blog</Link>
                         </div>
                         
                         <div className="flex items-center gap-4">
@@ -54,7 +54,7 @@ export const Footer = () => {
                         <div className="w-[54px] h-[54px] relative shrink-0">
                             {/* Generic QR Code */}
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://nutrichef.com&color=2F3337" alt="QR Code" className="w-full h-full object-contain rounded-md" />
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://healthyminds.com&color=2F3337" alt="QR Code" className="w-full h-full object-contain rounded-md" />
                         </div>
                         <div className="w-[120px]">
                             <p className="text-[11.5px] font-extrabold text-[#2F3337] leading-[1.35]">
@@ -68,7 +68,7 @@ export const Footer = () => {
                 <div className="flex flex-col md:flex-row justify-between items-center w-full gap-6">
                     {/* Copyright & Legal */}
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-                        <span className="text-[11.5px] font-semibold text-[#A0A5AE]">© 2026 NutriChef</span>
+                        <span className="text-[11.5px] font-semibold text-[#A0A5AE]">© 2026 HealthyMinds</span>
                         <div className="flex gap-4">
                             <Link href="#" className="text-[11.5px] font-semibold text-[#A0A5AE] hover:text-[#2F3337] transition-colors">Privacy Policy</Link>
                             <Link href="#" className="text-[11.5px] font-semibold text-[#A0A5AE] hover:text-[#2F3337] transition-colors">Terms & Conditions</Link>

@@ -32,7 +32,7 @@ export const MenuCard: React.FC<MenuCardProps> = ({ item }) => {
             New
           </span>
         )}
-        <h3 className="text-lg font-bold text-[#343B42] leading-tight mb-1 group-hover:text-[#114B34] transition-colors">{item.title}</h3>
+        <h3 className="text-lg font-bold text-[#343B42] leading-tight mb-1 group-hover:text-[#312E81] transition-colors">{item.title}</h3>
         <p className="text-sm text-gray-500 mb-6 flex-grow">{item.description}</p>
         
         {/* Macros */}

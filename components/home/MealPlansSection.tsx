@@ -76,7 +76,7 @@ export const MealPlansSection = () => {
                 </p>
                 
                 <div className="flex justify-between items-center w-full">
-                    <Button className="bg-[#249B60] hover:bg-[#1E8351] text-white px-8 rounded-full h-[46px] text-[15px] shadow-sm font-bold border-none">
+                    <Button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 rounded-full h-[46px] text-[15px] shadow-sm font-bold border-none">
                         See plans
                     </Button>
                     
@@ -84,7 +84,7 @@ export const MealPlansSection = () => {
                         {/* Left Arrow */}
                         <button 
                             onClick={() => scroll('left')}
-                            className="w-[44px] h-[44px] rounded-full bg-[#EFF8F3] hover:bg-[#DDF0E6] flex items-center justify-center text-[#249B60] transition-colors"
+                            className="w-[44px] h-[44px] rounded-full bg-[#EEF2FF] hover:bg-[#DDD6FE] flex items-center justify-center text-[#4F46E5] transition-colors"
                             aria-label="Scroll left"
                         >
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -92,7 +92,7 @@ export const MealPlansSection = () => {
                         {/* Right Arrow */}
                         <button 
                             onClick={() => scroll('right')}
-                            className="w-[44px] h-[44px] rounded-full bg-[#EFF8F3] hover:bg-[#DDF0E6] flex items-center justify-center text-[#249B60] transition-colors"
+                            className="w-[44px] h-[44px] rounded-full bg-[#EEF2FF] hover:bg-[#DDD6FE] flex items-center justify-center text-[#4F46E5] transition-colors"
                             aria-label="Scroll right"
                         >
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>

@@ -250,7 +250,7 @@ export default function PlansPage() {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-8 h-8 border-3 border-[#249B60] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-[#4F46E5] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -292,7 +292,7 @@ export default function PlansPage() {
                         onClick={() => setSelectedPlan(plan.id)}
                         className={`relative rounded-[24px] p-[22px] border-2 cursor-pointer transition-all flex flex-col justify-between min-h-[170px] ${
                           isActive
-                            ? "border-[#249B60] bg-[#EEF3F0] shadow-sm"
+                            ? "border-[#4F46E5] bg-[#EEF2FF] shadow-sm"
                             : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
                         }`}
                       >
@@ -308,12 +308,12 @@ export default function PlansPage() {
                           <div className="text-[42px] leading-none">{plan.emoji}</div>
                         </div>
                         <div className="flex justify-between items-center mt-auto pt-2">
-                          <span className="text-[#249B60] font-bold text-[13px] flex items-center gap-1">
+                          <span className="text-[#4F46E5] font-bold text-[13px] flex items-center gap-1">
                             Learn More{" "}
                             <span className="text-[12px] font-medium">&rarr;</span>
                           </span>
                           {isActive ? (
-                            <div className="bg-[#1E8351] text-white px-3 py-[7px] rounded-full flex items-center gap-1.5 shadow-sm">
+                            <div className="bg-[#4338CA] text-white px-3 py-[7px] rounded-full flex items-center gap-1.5 shadow-sm">
                               <svg
                                 className="w-3 h-3 ml-0.5"
                                 viewBox="0 0 24 24"
@@ -330,13 +330,13 @@ export default function PlansPage() {
                               </span>
                             </div>
                           ) : plan.style === "custom" ? (
-                            <div className="bg-[#EEF3F0] text-[#249B60] px-[18px] py-[7px] rounded-full">
+                            <div className="bg-[#EEF2FF] text-[#4F46E5] px-[18px] py-[7px] rounded-full">
                               <span className="text-[12px] font-[800] tracking-tight">
                                 Build my plan
                               </span>
                             </div>
                           ) : (
-                            <div className="bg-[#EEF3F0] text-[#249B60] px-[18px] py-[7px] rounded-full hover:bg-[#E2ECE6] transition-colors">
+                            <div className="bg-[#EEF2FF] text-[#4F46E5] px-[18px] py-[7px] rounded-full hover:bg-[#DDD6FE] transition-colors">
                               <span className="text-[12px] font-[800] tracking-tight">
                                 Select Plan
                               </span>
@@ -367,7 +367,7 @@ export default function PlansPage() {
                       onClick={() => toggleMeal(meal)}
                       className={`rounded-[16px] px-5 py-[18px] border-2 cursor-pointer transition-colors flex justify-between items-center ${
                         isActive
-                          ? "border-[#249B60] bg-[#EEF3F0]"
+                          ? "border-[#4F46E5] bg-[#EEF2FF]"
                           : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
                       }`}
                     >
@@ -375,7 +375,7 @@ export default function PlansPage() {
                         {meal}
                       </span>
                       {isActive ? (
-                        <div className="w-6 h-6 rounded-full bg-[#249B60] flex flex-shrink-0 items-center justify-center border-2 border-[#249B60]">
+                        <div className="w-6 h-6 rounded-full bg-[#4F46E5] flex flex-shrink-0 items-center justify-center border-2 border-[#4F46E5]">
                           <svg
                             className="w-3.5 h-3.5 text-white"
                             viewBox="0 0 24 24"
@@ -402,7 +402,7 @@ export default function PlansPage() {
               <h2 className="text-[26px] font-extrabold text-[#2F3337] mb-2 tracking-tight">
                 How many days a week are you eating
                 <br />
-                NutriChef?
+                HealthyMinds?
               </h2>
               <p className="text-[#878E99] font-medium text-[14px] mb-8">
                 Select a minimum of 5 days
@@ -416,7 +416,7 @@ export default function PlansPage() {
                       onClick={() => toggleDay(idx)}
                       className={`w-[46px] h-[46px] rounded-full flex items-center justify-center text-[15px] font-[800] transition-all duration-200 ${
                         isActive
-                          ? "bg-[#249B60] text-white shadow-sm"
+                          ? "bg-[#4F46E5] text-white shadow-sm"
                           : "bg-[#F2F4F7] text-[#878E99] hover:bg-gray-200"
                       }`}
                     >
@@ -441,7 +441,7 @@ export default function PlansPage() {
                       onClick={() => setSelectedCycle(cycle.id)}
                       className={`rounded-[16px] px-6 py-5 border-2 cursor-pointer transition-colors flex justify-between items-center ${
                         isActive
-                          ? "border-[#249B60] bg-[#EEF3F0]"
+                          ? "border-[#4F46E5] bg-[#EEF2FF]"
                           : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
                       }`}
                     >
@@ -451,7 +451,7 @@ export default function PlansPage() {
                             {cycle.title}
                           </span>
                           {cycle.save && (
-                            <span className="bg-[#249B60] text-white text-[10px] font-extrabold px-[10px] py-[3px] rounded-full uppercase tracking-tight">
+                            <span className="bg-[#4F46E5] text-white text-[10px] font-extrabold px-[10px] py-[3px] rounded-full uppercase tracking-tight">
                               Save {cycle.save}
                             </span>
                           )}
@@ -465,8 +465,8 @@ export default function PlansPage() {
                           {cycle.priceDisplay}
                         </span>
                         {isActive ? (
-                          <div className="w-[22px] h-[22px] rounded-full bg-[#249B60] flex flex-shrink-0 items-center justify-center border-[5px] border-white ring-1 ring-[#249B60]">
-                            <div className="w-full h-full bg-[#249B60] rounded-full"></div>
+                          <div className="w-[22px] h-[22px] rounded-full bg-[#4F46E5] flex flex-shrink-0 items-center justify-center border-[5px] border-white ring-1 ring-[#4F46E5]">
+                            <div className="w-full h-full bg-[#4F46E5] rounded-full"></div>
                           </div>
                         ) : (
                           <div className="w-[22px] h-[22px] rounded-full border-2 border-gray-200 flex-shrink-0 bg-white"></div>
@@ -482,7 +482,7 @@ export default function PlansPage() {
                   Pay in 4 interest- free payments for our 3-month and monthly
                   plans.
                 </p>
-                <div className="bg-[#3DDEA5] text-[#2F3337] text-[18px] tracking-tight font-[900] px-3.5 py-1.5 rounded-md italic">
+                <div className="bg-[#818CF8] text-[#2F3337] text-[18px] tracking-tight font-[900] px-3.5 py-1.5 rounded-md italic">
                   tabby
                 </div>
               </div>
@@ -532,7 +532,7 @@ export default function PlansPage() {
                     <input
                       type="text"
                       placeholder="Add promotion code"
-                      className="w-full border border-gray-200 text-[13px] font-bold rounded-[14px] pl-[38px] pr-4 py-[15px] placeholder:text-[#A0A5AE] focus:outline-none focus:ring-2 focus:ring-[#2B9D65] transition-shadow bg-white"
+                      className="w-full border border-gray-200 text-[13px] font-bold rounded-[14px] pl-[38px] pr-4 py-[15px] placeholder:text-[#A0A5AE] focus:outline-none focus:ring-2 focus:ring-[#4F46E5] transition-shadow bg-white"
                     />
                   </div>
                   <button className="bg-[#F2F4F7] text-[#A0A5AE] font-extrabold tracking-tight text-[13px] px-6 py-[15px] rounded-[14px] hover:bg-gray-200 transition-colors">
@@ -543,7 +543,7 @@ export default function PlansPage() {
                 {/* Subscription Coupon */}
                 <div className="border border-gray-200 border-dashed rounded-[14px] p-4 bg-white mb-10 flex items-center justify-between">
                   <div className="flex items-center gap-3.5">
-                    <div className="bg-[#249B60] text-white text-[8px] font-black italic px-[6px] py-[1.5px] rounded-sm transform -rotate-12 mt-1">
+                    <div className="bg-[#4F46E5] text-white text-[8px] font-black italic px-[6px] py-[1.5px] rounded-sm transform -rotate-12 mt-1">
                       🎟️
                     </div>
                     <div className="flex flex-col">
@@ -555,7 +555,7 @@ export default function PlansPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="w-[30px] h-[30px] rounded-full bg-[#EEF3F0] text-[#2B9D65] flex items-center justify-center font-bold text-[18px] cursor-pointer shrink-0 ml-2">
+                  <div className="w-[30px] h-[30px] rounded-full bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center font-bold text-[18px] cursor-pointer shrink-0 ml-2">
                     +
                   </div>
                 </div>
@@ -597,7 +597,7 @@ export default function PlansPage() {
                 <button
                   onClick={handleCheckout}
                   disabled={checkoutLoading || !selectedCycle}
-                  className="w-full bg-[#2B9D65] hover:bg-[#1E8351] disabled:bg-[#2B9D65]/60 text-white font-[800] text-[15px] py-[16px] rounded-full transition-colors shadow-[0_4px_12px_rgba(36,155,96,0.2)]"
+                  className="w-full bg-[#4F46E5] hover:bg-[#4338CA] disabled:bg-[#4F46E5]/60 text-white font-[800] text-[15px] py-[16px] rounded-full transition-colors shadow-[0_4px_12px_rgba(79,70,229,0.2)]"
                 >
                   {checkoutLoading ? "Processing..." : "Continue"}
                 </button>

@@ -113,9 +113,9 @@ function RegisterContent() {
         <div className="text-center mb-10">
           <Link
             href="/"
-            className="text-[#249B60] font-black text-[28px] tracking-[0.1em] uppercase inline-block mb-6"
+            className="text-[#4F46E5] font-black text-[28px] tracking-[0.1em] uppercase inline-block mb-6"
           >
-            NUTRICHEF
+            HEALTHYMINDS
           </Link>
           <h1 className="text-[28px] font-extrabold text-[#2F3337] tracking-tight mb-2">
             Complete your profile
@@ -135,7 +135,7 @@ function RegisterContent() {
               value={form.name}
               onChange={(e) => updateField("name", e.target.value)}
               placeholder="Enter your name"
-              className="w-full border border-gray-200 rounded-[14px] px-4 py-3.5 text-[14px] font-medium text-[#2F3337] placeholder:text-[#A0A5AE] focus:outline-none focus:ring-2 focus:ring-[#249B60]"
+              className="w-full border border-gray-200 rounded-[14px] px-4 py-3.5 text-[14px] font-medium text-[#2F3337] placeholder:text-[#A0A5AE] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
               autoFocus
             />
           </div>
@@ -149,7 +149,7 @@ function RegisterContent() {
               value={form.email}
               onChange={(e) => updateField("email", e.target.value)}
               placeholder="your@email.com"
-              className="w-full border border-gray-200 rounded-[14px] px-4 py-3.5 text-[14px] font-medium text-[#2F3337] placeholder:text-[#A0A5AE] focus:outline-none focus:ring-2 focus:ring-[#249B60]"
+              className="w-full border border-gray-200 rounded-[14px] px-4 py-3.5 text-[14px] font-medium text-[#2F3337] placeholder:text-[#A0A5AE] focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
             />
           </div>
 
@@ -165,7 +165,7 @@ function RegisterContent() {
                   onClick={() => updateField("gender", g)}
                   className={`flex-1 py-3 rounded-[14px] text-[14px] font-bold border-2 transition-colors ${
                     form.gender === g
-                      ? "border-[#249B60] bg-[#EEF3F0] text-[#249B60]"
+                      ? "border-[#4F46E5] bg-[#EEF2FF] text-[#4F46E5]"
                       : "border-gray-200 text-[#2F3337] hover:border-gray-300"
                   }`}
                 >
@@ -187,7 +187,7 @@ function RegisterContent() {
                   onClick={() => updateField("goal", g.id)}
                   className={`py-3 px-4 rounded-[14px] text-[13px] font-bold border-2 transition-colors ${
                     form.goal === g.id
-                      ? "border-[#249B60] bg-[#EEF3F0] text-[#249B60]"
+                      ? "border-[#4F46E5] bg-[#EEF2FF] text-[#4F46E5]"
                       : "border-gray-200 text-[#2F3337] hover:border-gray-300"
                   }`}
                 >
@@ -204,7 +204,7 @@ function RegisterContent() {
             <select
               value={form.activityLevel}
               onChange={(e) => updateField("activityLevel", e.target.value)}
-              className="w-full border border-gray-200 rounded-[14px] px-4 py-3.5 text-[14px] font-medium text-[#2F3337] bg-white focus:outline-none focus:ring-2 focus:ring-[#249B60] appearance-none cursor-pointer"
+              className="w-full border border-gray-200 rounded-[14px] px-4 py-3.5 text-[14px] font-medium text-[#2F3337] bg-white focus:outline-none focus:ring-2 focus:ring-[#4F46E5] appearance-none cursor-pointer"
             >
               <option value="">Select activity level</option>
               {ACTIVITY_LEVELS.map((a) => (
@@ -222,7 +222,7 @@ function RegisterContent() {
             <select
               value={form.dietPreference}
               onChange={(e) => updateField("dietPreference", e.target.value)}
-              className="w-full border border-gray-200 rounded-[14px] px-4 py-3.5 text-[14px] font-medium text-[#2F3337] bg-white focus:outline-none focus:ring-2 focus:ring-[#249B60] appearance-none cursor-pointer"
+              className="w-full border border-gray-200 rounded-[14px] px-4 py-3.5 text-[14px] font-medium text-[#2F3337] bg-white focus:outline-none focus:ring-2 focus:ring-[#4F46E5] appearance-none cursor-pointer"
             >
               <option value="">Select preference</option>
               {DIET_PREFERENCES.map((d) => (
@@ -242,7 +242,7 @@ function RegisterContent() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#249B60] hover:bg-[#1E8351] disabled:bg-[#249B60]/60 text-white font-extrabold text-[15px] py-4 rounded-full transition-colors shadow-[0_4px_14px_0_rgba(36,161,112,0.3)] mt-2"
+            className="w-full bg-[#4F46E5] hover:bg-[#4338CA] disabled:bg-[#4F46E5]/60 text-white font-extrabold text-[15px] py-4 rounded-full transition-colors shadow-[0_4px_14px_0_rgba(79,70,229,0.3)] mt-2"
           >
             {loading ? "Creating account..." : "Get Started"}
           </button>

@@ -5,9 +5,9 @@ import { Footer } from "@/components/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 export const metadata: Metadata = {
-  title: "NutriChef | Meal plans for busy people",
+  title: "HealthyMinds | Meal plans for busy people",
   description:
-    "NutriChef provides meal plans tailored for busy people. It serves delicious food that's portioned to your requirements and fitness goals. You can choose your meals from the daily menu or build your own.",
+    "HealthyMinds provides meal plans tailored for busy people. It serves delicious food that's portioned to your requirements and fitness goals. You can choose your meals from the daily menu or build your own.",
 };
 
 export default function RootLayout({

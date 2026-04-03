@@ -146,9 +146,9 @@ function VerifyContent() {
         <div className="text-center mb-10">
           <Link
             href="/"
-            className="text-[#249B60] font-black text-[28px] tracking-[0.1em] uppercase inline-block mb-6"
+            className="text-[#4F46E5] font-black text-[28px] tracking-[0.1em] uppercase inline-block mb-6"
           >
-            NUTRICHEF
+            HEALTHYMINDS
           </Link>
           <h1 className="text-[28px] font-extrabold text-[#2F3337] tracking-tight mb-2">
             Verify your number
@@ -173,7 +173,7 @@ function VerifyContent() {
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
-                className="w-[50px] h-[56px] text-center text-[20px] font-extrabold text-[#2F3337] border-2 border-gray-200 rounded-[14px] focus:outline-none focus:border-[#249B60] focus:ring-2 focus:ring-[#249B60]/20 transition-all"
+                className="w-[50px] h-[56px] text-center text-[20px] font-extrabold text-[#2F3337] border-2 border-gray-200 rounded-[14px] focus:outline-none focus:border-[#4F46E5] focus:ring-2 focus:ring-[#4F46E5]/20 transition-all"
                 autoFocus={index === 0}
               />
             ))}
@@ -188,7 +188,7 @@ function VerifyContent() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#249B60] hover:bg-[#1E8351] disabled:bg-[#249B60]/60 text-white font-extrabold text-[15px] py-4 rounded-full transition-colors shadow-[0_4px_14px_0_rgba(36,161,112,0.3)]"
+            className="w-full bg-[#4F46E5] hover:bg-[#4338CA] disabled:bg-[#4F46E5]/60 text-white font-extrabold text-[15px] py-4 rounded-full transition-colors shadow-[0_4px_14px_0_rgba(79,70,229,0.3)]"
           >
             {loading ? "Verifying..." : "Verify"}
           </button>
@@ -198,7 +198,7 @@ function VerifyContent() {
           <button
             onClick={handleResend}
             disabled={resending}
-            className="text-[#249B60] font-bold text-[14px] hover:underline disabled:opacity-50"
+            className="text-[#4F46E5] font-bold text-[14px] hover:underline disabled:opacity-50"
           >
             {resending ? "Resending..." : "Resend code"}
           </button>

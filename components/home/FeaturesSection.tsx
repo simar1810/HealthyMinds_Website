@@ -36,7 +36,7 @@ export const FeaturesSection = () => {
                         <div className="w-full lg:w-1/2 mt-16 lg:mt-0 relative aspect-[4/3] lg:aspect-[1.25/1] overflow-hidden">
                             <Image
                                 src="https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-37.webp" 
-                                alt="NutriChef meals bag"
+                                alt="HealthyMinds meals bag"
                                 fill
                                 className="object-cover object-center" 
                                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -44,7 +44,7 @@ export const FeaturesSection = () => {
                             {/* The white prompt overlay */}
                             <div className="absolute top-[35%] left-0 bg-white py-6 md:py-8 px-6 md:px-10 w-[260px] md:w-[320px] shadow-sm">
                                 <h4 className="text-[20px] md:text-[24px] font-extrabold text-[#2F3337] leading-[1.2] tracking-tight">
-                                    Which days do you<br/>want NutriChef meals?
+                                    Which days do you<br/>want HealthyMinds meals?
                                 </h4>
                             </div>
                             {/* The pause button overlay */}

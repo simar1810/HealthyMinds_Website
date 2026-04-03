@@ -60,7 +60,7 @@ export const FilterBar = ({
               onClick={() => onFilterChange(filter.id)}
               className={`whitespace-nowrap flex items-center justify-center px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300 ${
                 isActive
-                  ? "bg-[#114B34] text-white shadow-md"
+                  ? "bg-[#312E81] text-white shadow-md"
                   : "bg-[#F5F6F7] text-[#343B42] hover:bg-[#E2E4E6]"
               }`}
             >

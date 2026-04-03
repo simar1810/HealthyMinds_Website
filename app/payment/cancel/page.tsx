@@ -31,7 +31,7 @@ export default function PaymentCancelPage() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/plans"
-            className="bg-[#249B60] hover:bg-[#1E8351] text-white px-8 py-3.5 rounded-full font-bold text-[15px] transition-colors"
+            className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 py-3.5 rounded-full font-bold text-[15px] transition-colors"
           >
             Back to Plans
           </Link>

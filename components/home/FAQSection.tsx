@@ -45,7 +45,7 @@ const faqs = [
         answer: "Yes, you have full control to swap any meal you don't like with another option from our weekly menu."
     },
     {
-        question: "What makes the NutriChef experience in Kuwait unique?",
+        question: "What makes the HealthyMinds experience in Kuwait unique?",
         answer: "We offer completely personalized meal plans tuned to your unique macros, cooked with premium ingredients, and delivered fresh daily."
     }
 ];
@@ -80,7 +80,7 @@ export const FAQSection = () => {
                                         <span className="text-[15px] font-extrabold text-[#2F3337] pr-4">
                                             {faq.question}
                                         </span>
-                                        <span className="flex-shrink-0 text-[#249B60] text-[28px] font-light leading-none flex items-center justify-center">
+                                        <span className="flex-shrink-0 text-[#4F46E5] text-[28px] font-light leading-none flex items-center justify-center">
                                             {isOpen ? '−' : '+'}
                                         </span>
                                     </div>
@@ -119,7 +119,7 @@ export const FAQSection = () => {
                            </div>
                         </div>
 
-                        <Button className="bg-[#249B60] hover:bg-[#1E8351] text-white px-7 rounded-full h-[42px] text-[14px] shadow-sm font-bold border-none w-max">
+                        <Button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-7 rounded-full h-[42px] text-[14px] shadow-sm font-bold border-none w-max">
                             Chat with us
                         </Button>
                     </div>

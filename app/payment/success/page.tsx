@@ -15,7 +15,7 @@ interface SessionData {
 
 export default function PaymentSuccessPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center"><div className="w-8 h-8 border-3 border-[#249B60] border-t-transparent rounded-full animate-spin" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center"><div className="w-8 h-8 border-3 border-[#4F46E5] border-t-transparent rounded-full animate-spin" /></div>}>
       <PaymentSuccessContent />
     </Suspense>
   );
@@ -56,7 +56,7 @@ function PaymentSuccessContent() {
       <div className="w-full max-w-[480px] text-center">
         {loading ? (
           <div className="flex flex-col items-center gap-4">
-            <div className="w-10 h-10 border-3 border-[#249B60] border-t-transparent rounded-full animate-spin" />
+            <div className="w-10 h-10 border-3 border-[#4F46E5] border-t-transparent rounded-full animate-spin" />
             <p className="text-[#878E99] text-[15px] font-medium">
               Verifying your payment...
             </p>
@@ -84,16 +84,16 @@ function PaymentSuccessContent() {
             <p className="text-[#878E99] text-[15px] font-medium mb-8">{error}</p>
             <Link
               href="/plans"
-              className="inline-block bg-[#249B60] hover:bg-[#1E8351] text-white px-8 py-3.5 rounded-full font-bold text-[15px] transition-colors"
+              className="inline-block bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 py-3.5 rounded-full font-bold text-[15px] transition-colors"
             >
               Back to Plans
             </Link>
           </>
         ) : (
           <>
-            <div className="w-[72px] h-[72px] bg-[#EEF3F0] rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-[72px] h-[72px] bg-[#EEF2FF] rounded-full flex items-center justify-center mx-auto mb-6">
               <svg
-                className="w-8 h-8 text-[#249B60]"
+                className="w-8 h-8 text-[#4F46E5]"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -120,7 +120,7 @@ function PaymentSuccessContent() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
               <Link
                 href="/"
-                className="bg-[#249B60] hover:bg-[#1E8351] text-white px-8 py-3.5 rounded-full font-bold text-[15px] transition-colors"
+                className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 py-3.5 rounded-full font-bold text-[15px] transition-colors"
               >
                 Go to Home
               </Link>
