@@ -1,9 +1,21 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useRequireAuth } from "@/lib/useRequireAuth";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTenant } from "@/contexts/TenantContext";
+import { formatMinorUnits, formatMajorUnits } from "@/lib/formatCurrency";
+import {
+  billingWeeksForDurationKey,
+  collectRawDurationKeysFromPricing,
+  isPlanDurationDayKey,
+  planDurationListTitle,
+  planDurationPeriodPhrase,
+  planDurationShortTitle,
+  supportedDurationKeysPresent,
+} from "@/lib/mealPlanDurationTiers";
 
 const GOAL_EMOJIS: Record<string, string> = {
   balanced: "⚖️",
@@ -20,6 +32,8 @@ const GOAL_EMOJIS: Record<string, string> = {
   keto: "🥑",
   lose_weight: "⚖️",
   gain_muscle: "🍗",
+  muscle_gain: "🍗",
+  high_protein: "🍗",
   maintain: "⚖️",
 };
 
@@ -66,76 +80,130 @@ const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snack"];
 const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
 
 const FALLBACK_CYCLES: Cycle[] = [
-  { id: "1 week", title: "Weekly", subtext: "Per week", priceDisplay: "/week", save: null, amount: 0 },
-  { id: "2 weeks", title: "2 Weeks", subtext: "Per 2 weeks", priceDisplay: "/2 weeks", save: null, amount: 0 },
-  { id: "4 weeks", title: "Monthly", subtext: "Per month", priceDisplay: "/month", save: null, amount: 0 },
+  { id: "7", title: "1 week", subtext: "Per week", priceDisplay: "/week", save: null, amount: 0 },
+  { id: "14", title: "2 weeks", subtext: "Per 2 weeks", priceDisplay: "/2 weeks", save: null, amount: 0 },
+  { id: "28", title: "4 weeks", subtext: "Per 4 weeks", priceDisplay: "/month", save: null, amount: 0 },
 ];
 
-function buildCycles(pricing: BackendPlan["pricing"], selectedMeals: string[]): Cycle[] {
-  if (!pricing) return FALLBACK_CYCLES;
+const PLANS_SUB_BANNER_DISMISSED_KEY = "nutrichef_plans_sub_banner_dismissed";
 
-  const durationKeys = new Set<string>();
-  const mealKeys = selectedMeals.map((m) => m.toLowerCase() as keyof NonNullable<BackendPlan["pricing"]>);
+interface SubscriptionTemplateRef {
+  _id: string;
+  title?: string;
+  goalType?: string;
+  dietType?: string;
+}
 
-  for (const mk of mealKeys) {
-    const tierObj = pricing[mk];
-    if (tierObj) {
-      for (const k of Object.keys(tierObj)) {
-        durationKeys.add(k);
-      }
-    }
+interface ActiveSubscriptionPayload {
+  _id?: string;
+  status?: string;
+  templateId?: string | SubscriptionTemplateRef;
+  amount?: number;
+  currency?: string;
+  type?: string;
+}
+
+function resolveSubscribedTemplateId(data: ActiveSubscriptionPayload | null): string | null {
+  if (!data?.templateId) return null;
+  const t = data.templateId;
+  if (typeof t === "string" && t.trim()) return t.trim();
+  if (typeof t === "object" && t != null && typeof t._id === "string" && t._id.trim()) return t._id.trim();
+  return null;
+}
+
+function resolveSubscriptionPlanTitle(data: ActiveSubscriptionPayload | null): string | null {
+  const t = data?.templateId;
+  if (t && typeof t === "object" && typeof t.title === "string" && t.title.trim()) {
+    return t.title.trim();
+  }
+  return null;
+}
+
+function isActiveSubscriptionStatus(status: string | undefined): boolean {
+  return typeof status === "string" && status.trim().toLowerCase() === "active";
+}
+
+function formatApiLabel(value: string | undefined): string {
+  if (!value?.trim()) return "";
+  return value
+    .replace(/[-_]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
+}
+
+function buildPlanDescription(goalType?: string, dietType?: string): string {
+  const goal = formatApiLabel(goalType);
+  const diet = formatApiLabel(dietType);
+  if (goal && diet) return `${goal} • ${diet}`;
+  return goal || diet || "Customized meal plan";
+}
+
+function buildCycles(
+  pricing: BackendPlan["pricing"],
+  selectedMeals: string[],
+  currency: string
+): { cycles: Cycle[]; unsupportedLegacyOnly: boolean } {
+  if (!pricing) {
+    return { cycles: FALLBACK_CYCLES, unsupportedLegacyOnly: false };
   }
 
-  if (durationKeys.size === 0) return FALLBACK_CYCLES;
+  const mealKeys = selectedMeals.map((m) => m.toLowerCase());
+  const raw = collectRawDurationKeysFromPricing(pricing, mealKeys);
+  const sorted = supportedDurationKeysPresent(raw);
 
-  const sorted = [...durationKeys].sort((a, b) => {
-    const numA = parseInt(a) || 0;
-    const numB = parseInt(b) || 0;
-    return numA - numB;
-  });
+  if (sorted.length === 0) {
+    if (raw.size > 0) {
+      return { cycles: [], unsupportedLegacyOnly: true };
+    }
+    return { cycles: FALLBACK_CYCLES, unsupportedLegacyOnly: false };
+  }
 
-  let cheapestPerUnit = Infinity;
   const cycles: Cycle[] = sorted.map((dur) => {
     let total = 0;
     for (const mk of mealKeys) {
-      const tierObj = pricing[mk];
+      const tierObj = pricing[mk as keyof NonNullable<BackendPlan["pricing"]>];
       if (tierObj && tierObj[dur] != null) {
         total += tierObj[dur];
       }
     }
-    const weeks = parseInt(dur) || 1;
-    const perWeek = total / weeks;
-    if (perWeek < cheapestPerUnit) cheapestPerUnit = perWeek;
-
+    const weeksInPeriod = billingWeeksForDurationKey(dur) ?? 1;
+    const perWeekRounded = Math.round(total / weeksInPeriod);
     return {
       id: dur,
-      title: dur.charAt(0).toUpperCase() + dur.slice(1),
-      subtext: `${total} per ${dur}`,
-      priceDisplay: `${Math.round(total / weeks)}/week`,
+      title: planDurationListTitle(dur),
+      subtext: `${formatMajorUnits(total, currency)} ${planDurationPeriodPhrase(dur)}`,
+      priceDisplay: `${formatMajorUnits(perWeekRounded, currency)}/week`,
       save: null,
       amount: Math.round(total * 100),
     };
   });
 
   if (cycles.length > 1) {
-    const basePerWeek = cycles[0].amount / 100 / (parseInt(cycles[0].id) || 1);
+    const w0 = billingWeeksForDurationKey(cycles[0].id) ?? 1;
+    const basePerWeek = cycles[0].amount / 100 / w0;
     for (let i = 1; i < cycles.length; i++) {
-      const weeks = parseInt(cycles[i].id) || 1;
+      const weeks = billingWeeksForDurationKey(cycles[i].id) ?? 1;
       const thisPerWeek = cycles[i].amount / 100 / weeks;
       const saving = Math.round((basePerWeek - thisPerWeek) * weeks);
       if (saving > 0) {
-        cycles[i].save = `${saving}`;
+        cycles[i].save = formatMajorUnits(saving, currency, {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        });
       }
     }
   }
 
-  return cycles;
+  return { cycles, unsupportedLegacyOnly: false };
 }
 
 export default function PlansPage() {
   const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useRequireAuth();
   const { isAuthenticated: loggedIn } = useAuth();
+  const { currency } = useTenant();
 
   const [backendPlans, setBackendPlans] = useState<BackendPlan[]>([]);
   const [planTypes, setPlanTypes] = useState<PlanType[]>(FALLBACK_PLAN_TYPES);
@@ -144,8 +212,12 @@ export default function PlansPage() {
   const [selectedDays, setSelectedDays] = useState<number[]>([0, 1, 2, 3, 4]);
   const [selectedCycle, setSelectedCycle] = useState("");
   const [cycles, setCycles] = useState<Cycle[]>(FALLBACK_CYCLES);
+  const [unsupportedDurationTiers, setUnsupportedDurationTiers] = useState(false);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [activeSubscription, setActiveSubscription] = useState<ActiveSubscriptionPayload | null>(null);
+  const [subscriptionFetched, setSubscriptionFetched] = useState(false);
+  const [subscriptionBannerDismissed, setSubscriptionBannerDismissed] = useState(false);
 
   const fetchPlans = useCallback(async () => {
     try {
@@ -158,9 +230,7 @@ export default function PlansPage() {
           return {
             id: p._id,
             title: p.title,
-            desc: p.goalType
-              ? `${p.goalType}${p.dietType ? ` - ${p.dietType}` : ""}`
-              : p.dietType || "Customized meal plan",
+            desc: buildPlanDescription(p.goalType, p.dietType),
             emoji: GOAL_EMOJIS[key] || "🍽️",
             style: key.includes("custom") ? "custom" : "default",
           };
@@ -184,15 +254,61 @@ export default function PlansPage() {
   }, [isAuthenticated, fetchPlans]);
 
   useEffect(() => {
-    const plan = backendPlans.find((p) => p._id === selectedPlan);
-    if (plan?.pricing) {
-      const c = buildCycles(plan.pricing, selectedMeals);
-      setCycles(c);
-      if (c.length > 0 && !c.find((cy) => cy.id === selectedCycle)) {
-        setSelectedCycle(c[0].id);
-      }
+    if (typeof sessionStorage === "undefined") return;
+    if (sessionStorage.getItem(PLANS_SUB_BANNER_DISMISSED_KEY) === "1") {
+      setSubscriptionBannerDismissed(true);
     }
-  }, [selectedPlan, selectedMeals, backendPlans, selectedCycle]);
+  }, []);
+
+  const fetchSubscription = useCallback(async () => {
+    try {
+      const res = await api.get<ActiveSubscriptionPayload>("/payment/subscription");
+      const data = res.data;
+      if (data && isActiveSubscriptionStatus(data.status)) {
+        setActiveSubscription(data);
+      } else {
+        setActiveSubscription(null);
+      }
+    } catch {
+      setActiveSubscription(null);
+    } finally {
+      setSubscriptionFetched(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      void fetchSubscription();
+    }
+  }, [isAuthenticated, fetchSubscription]);
+
+  const dismissSubscriptionBanner = () => {
+    setSubscriptionBannerDismissed(true);
+    if (typeof sessionStorage !== "undefined") {
+      sessionStorage.setItem(PLANS_SUB_BANNER_DISMISSED_KEY, "1");
+    }
+  };
+
+  useEffect(() => {
+    const plan = backendPlans.find((p) => p._id === selectedPlan);
+    if (!plan?.pricing) {
+      setCycles(FALLBACK_CYCLES);
+      setUnsupportedDurationTiers(false);
+      if (!FALLBACK_CYCLES.find((cy) => cy.id === selectedCycle)) {
+        setSelectedCycle(FALLBACK_CYCLES[0]?.id ?? "");
+      }
+      return;
+    }
+    const { cycles: c, unsupportedLegacyOnly } = buildCycles(plan.pricing, selectedMeals, currency);
+    setCycles(c);
+    setUnsupportedDurationTiers(unsupportedLegacyOnly);
+    if (c.length > 0 && !c.find((cy) => cy.id === selectedCycle)) {
+      setSelectedCycle(c[0].id);
+    }
+    if (c.length === 0) {
+      setSelectedCycle("");
+    }
+  }, [selectedPlan, selectedMeals, backendPlans, selectedCycle, currency]);
 
   const toggleMeal = (meal: string) => {
     setSelectedMeals((prev) =>
@@ -223,15 +339,20 @@ export default function PlansPage() {
     setCheckoutLoading(true);
     try {
       const templateId = backendPlans.find((p) => p._id === selectedPlan)?._id || selectedPlan;
+      const durationLabel = isPlanDurationDayKey(cycle.id)
+        ? planDurationShortTitle(cycle.id)
+        : cycle.title;
       const res = await api.post<{ url: string; orderId: string }>(
         "/checkout/session",
         {
           templateId,
           amount: cycle.amount,
-          currency: "inr",
-          productName: `${getSelectedPlanTitle()} - ${cycle.title}`,
+          currency: currency.toLowerCase(),
+          productName: `${getSelectedPlanTitle()} - ${durationLabel}`,
           successUrl: `${window.location.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: `${window.location.origin}/payment/cancel`,
+          /** Ask Stripe to always attach a Customer so /payment/success can resolve stripeCustomerId. */
+          customer_creation: "always",
         },
         { noAuth: true }
       );
@@ -249,18 +370,78 @@ export default function PlansPage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-8 h-8 border-3 border-[#4F46E5] border-t-transparent rounded-full animate-spin" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
   }
 
+  const subscribedTemplateId = activeSubscription ? resolveSubscribedTemplateId(activeSubscription) : null;
+  const subscribedPlanTitle = activeSubscription ? resolveSubscriptionPlanTitle(activeSubscription) : null;
+  const showSubscriptionBanner =
+    subscriptionFetched &&
+    activeSubscription &&
+    !subscriptionBannerDismissed &&
+    isActiveSubscriptionStatus(activeSubscription.status);
+
   return (
-    <div className="bg-white min-h-screen pt-[140px] pb-24 w-full">
+    <div className="min-h-screen w-full bg-background pb-24 pt-28 sm:pt-32">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        {showSubscriptionBanner ? (
+          <div
+            className="relative mb-8 flex flex-col gap-4 rounded-2xl border-2 border-primary/30 bg-primary/10 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5"
+            role="status"
+            aria-live="polite"
+          >
+            <button
+              type="button"
+              onClick={dismissSubscriptionBanner}
+              className="absolute right-3 top-3 rounded-lg p-1.5 text-secondary-text transition hover:bg-background/80 hover:text-foreground"
+              aria-label="Dismiss subscription notice"
+            >
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+              </svg>
+            </button>
+            <div className="pr-10 sm:pr-0">
+              <p className="font-heading text-base font-semibold text-foreground sm:text-lg">
+                {subscribedPlanTitle
+                  ? `You're subscribed to ${subscribedPlanTitle}.`
+                  : "You have an active meal plan subscription."}
+              </p>
+              {activeSubscription?.amount != null &&
+              activeSubscription.amount > 0 &&
+              typeof activeSubscription.currency === "string" &&
+              activeSubscription.currency.trim() ? (
+                <p className="mt-1.5 text-sm font-medium text-secondary-text">
+                  Current plan billing:{" "}
+                  {formatMinorUnits(activeSubscription.amount, activeSubscription.currency)}
+                </p>
+              ) : null}
+            </div>
+            <div className="flex shrink-0 flex-wrap gap-3 sm:pl-4">
+              {subscribedTemplateId ? (
+                <Link
+                  href={`/meal-plans/${subscribedTemplateId}`}
+                  className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-hover"
+                >
+                  View your meal plan
+                </Link>
+              ) : (
+                <Link
+                  href="/"
+                  className="inline-flex items-center justify-center rounded-full border border-border-subtle bg-background px-6 py-2.5 text-sm font-semibold text-foreground transition hover:bg-bg-light"
+                >
+                  Browse meal plans
+                </Link>
+              )}
+            </div>
+          </div>
+        ) : null}
+
         {/* Header */}
         <div className="mb-14">
-          <h1 className="text-[34px] md:text-[44px] font-extrabold text-[#2F3337] leading-[1.05] tracking-tight">
+          <h1 className="font-heading text-[34px] font-semibold leading-[1.05] tracking-tight text-foreground md:text-[44px]">
             Customize Your
             <br />
             Perfect Meal Plan
@@ -273,13 +454,16 @@ export default function PlansPage() {
           <div className="flex-1 flex flex-col gap-14">
             {/* Section 1: Plan Preferences */}
             <section>
-              <h2 className="text-[26px] font-extrabold text-[#2F3337] mb-6 tracking-tight">
+              <h2 className="font-heading mb-6 text-[26px] font-semibold tracking-tight text-foreground">
                 What kind of meals do you prefer?
               </h2>
               {loading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-[18px]">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="rounded-[24px] p-[22px] border-2 border-gray-100 min-h-[170px] animate-pulse bg-gray-50" />
+                    <div
+                      key={i}
+                      className="min-h-[170px] animate-pulse rounded-[24px] border-2 border-border-subtle bg-bg-light p-[22px]"
+                    />
                   ))}
                 </div>
               ) : (
@@ -290,30 +474,34 @@ export default function PlansPage() {
                       <div
                         key={plan.id}
                         onClick={() => setSelectedPlan(plan.id)}
-                        className={`relative rounded-[24px] p-[22px] border-2 cursor-pointer transition-all flex flex-col justify-between min-h-[170px] ${
+                        className={`relative flex min-h-[170px] cursor-pointer flex-col justify-between rounded-[24px] border-2 p-[22px] transition-all ${
                           isActive
-                            ? "border-[#4F46E5] bg-[#EEF2FF] shadow-sm"
-                            : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
+                            ? "border-primary bg-primary/10 shadow-sm"
+                            : "border-border-subtle bg-surface shadow-sm hover:border-foreground/15"
                         }`}
                       >
                         <div className="flex justify-between items-start mb-6">
                           <div className="pr-4">
-                            <h3 className="text-[17px] font-extrabold text-[#2F3337] mb-1.5">
+                            <h3 className="mb-1.5 text-[17px] font-semibold text-foreground">
                               {plan.title}
                             </h3>
-                            <p className="text-[13px] text-[#878E99] font-medium leading-[1.4] pr-1">
+                            <p className="pr-1 text-[13px] font-medium leading-[1.4] text-secondary-text">
                               {plan.desc}
                             </p>
                           </div>
                           <div className="text-[42px] leading-none">{plan.emoji}</div>
                         </div>
                         <div className="flex justify-between items-center mt-auto pt-2">
-                          <span className="text-[#4F46E5] font-bold text-[13px] flex items-center gap-1">
+                          <Link
+                            href={`/meal-plans/${plan.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-1 text-[13px] font-semibold text-primary underline-offset-2 hover:underline"
+                          >
                             Learn More{" "}
                             <span className="text-[12px] font-medium">&rarr;</span>
-                          </span>
+                          </Link>
                           {isActive ? (
-                            <div className="bg-[#4338CA] text-white px-3 py-[7px] rounded-full flex items-center gap-1.5 shadow-sm">
+                            <div className="flex items-center gap-1.5 rounded-full bg-primary-hover px-3 py-[7px] text-white shadow-sm">
                               <svg
                                 className="w-3 h-3 ml-0.5"
                                 viewBox="0 0 24 24"
@@ -330,13 +518,13 @@ export default function PlansPage() {
                               </span>
                             </div>
                           ) : plan.style === "custom" ? (
-                            <div className="bg-[#EEF2FF] text-[#4F46E5] px-[18px] py-[7px] rounded-full">
-                              <span className="text-[12px] font-[800] tracking-tight">
+                            <div className="rounded-full bg-primary/10 px-[18px] py-[7px] text-primary">
+                              <span className="text-[12px] font-semibold tracking-tight">
                                 Build my plan
                               </span>
                             </div>
                           ) : (
-                            <div className="bg-[#EEF2FF] text-[#4F46E5] px-[18px] py-[7px] rounded-full hover:bg-[#DDD6FE] transition-colors">
+                            <div className="rounded-full bg-primary/10 px-[18px] py-[7px] text-primary transition-colors hover:bg-primary/15">
                               <span className="text-[12px] font-[800] tracking-tight">
                                 Select Plan
                               </span>
@@ -352,10 +540,10 @@ export default function PlansPage() {
 
             {/* Section 2: Meal Count */}
             <section>
-              <h2 className="text-[26px] font-extrabold text-[#2F3337] mb-2 tracking-tight">
+              <h2 className="font-heading mb-2 text-[26px] font-semibold tracking-tight text-foreground">
                 How many meals per day?
               </h2>
-              <p className="text-[#878E99] font-medium text-[14px] mb-6">
+              <p className="mb-6 text-[14px] font-medium text-secondary-text">
                 Select a minimum of 2 meals, including lunch or dinner.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-[18px]">
@@ -365,17 +553,17 @@ export default function PlansPage() {
                     <div
                       key={meal}
                       onClick={() => toggleMeal(meal)}
-                      className={`rounded-[16px] px-5 py-[18px] border-2 cursor-pointer transition-colors flex justify-between items-center ${
+                      className={`flex cursor-pointer items-center justify-between rounded-[16px] border-2 px-5 py-[18px] transition-colors ${
                         isActive
-                          ? "border-[#4F46E5] bg-[#EEF2FF]"
-                          : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
+                          ? "border-primary bg-primary/10"
+                          : "border-border-subtle bg-surface shadow-sm hover:border-foreground/15"
                       }`}
                     >
-                      <span className="text-[#2F3337] font-extrabold text-[15px]">
+                      <span className="text-[15px] font-semibold text-foreground">
                         {meal}
                       </span>
                       {isActive ? (
-                        <div className="w-6 h-6 rounded-full bg-[#4F46E5] flex flex-shrink-0 items-center justify-center border-2 border-[#4F46E5]">
+                        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 border-primary bg-primary">
                           <svg
                             className="w-3.5 h-3.5 text-white"
                             viewBox="0 0 24 24"
@@ -389,7 +577,7 @@ export default function PlansPage() {
                           </svg>
                         </div>
                       ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-200 flex-shrink-0 bg-white"></div>
+                        <div className="h-6 w-6 flex-shrink-0 rounded-full border-2 border-border-subtle bg-surface" />
                       )}
                     </div>
                   );
@@ -399,39 +587,52 @@ export default function PlansPage() {
 
             {/* Section 3: Days a Week */}
             <section>
-              <h2 className="text-[26px] font-extrabold text-[#2F3337] mb-2 tracking-tight">
+              <h2 className="font-heading mb-2 text-[26px] font-semibold tracking-tight text-foreground">
                 How many days a week are you eating
                 <br />
-                HealthyMinds?
+                Nutrichef?
               </h2>
-              <p className="text-[#878E99] font-medium text-[14px] mb-8">
+              <p className="mb-8 text-[14px] font-medium text-secondary-text">
                 Select a minimum of 5 days
               </p>
-              <div className="flex gap-[12px]">
-                {DAYS.map((day, idx) => {
-                  const isActive = selectedDays.includes(idx);
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => toggleDay(idx)}
-                      className={`w-[46px] h-[46px] rounded-full flex items-center justify-center text-[15px] font-[800] transition-all duration-200 ${
-                        isActive
-                          ? "bg-[#4F46E5] text-white shadow-sm"
-                          : "bg-[#F2F4F7] text-[#878E99] hover:bg-gray-200"
-                      }`}
-                    >
-                      {day}
-                    </button>
-                  );
-                })}
+              <div className="-mx-1 px-1 overflow-x-auto pb-1 [scrollbar-width:thin]">
+                <div className="flex w-max gap-2 sm:w-full sm:justify-between sm:gap-3 md:gap-[12px]">
+                  {DAYS.map((day, idx) => {
+                    const isActive = selectedDays.includes(idx);
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => toggleDay(idx)}
+                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[14px] font-semibold transition-all duration-200 sm:h-[46px] sm:w-[46px] sm:text-[15px] ${
+                          isActive
+                            ? "bg-primary text-white shadow-sm"
+                            : "bg-bg-light text-secondary-text hover:bg-foreground/10"
+                        }`}
+                      >
+                        {day}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </section>
 
-            {/* Section 4: Payment Cycle */}
+            {/* Section 4: Plan duration (API tiers: 7 / 14 / 28 days) */}
             <section>
-              <h2 className="text-[26px] font-extrabold text-[#2F3337] mb-[26px] tracking-tight">
-                Payment Cycle
+              <h2 className="font-heading mb-[26px] text-[26px] font-semibold tracking-tight text-foreground">
+                Plan duration
               </h2>
+              {unsupportedDurationTiers ? (
+                <p
+                  className="mb-6 rounded-2xl border border-amber-200/80 bg-amber-50 px-4 py-3 text-[13px] font-medium leading-relaxed text-amber-950"
+                  role="status"
+                >
+                  This plan&apos;s pricing is still on an older format we no longer support here. Please refresh
+                  later or pick another plan. Once plans are re-saved in admin, 1, 2, and 4 week options
+                  (7, 14, and 28 days) will appear.
+                </p>
+              ) : null}
               <div className="flex flex-col gap-[18px] mb-[24px]">
                 {cycles.map((cycle) => {
                   const isActive = selectedCycle === cycle.id;
@@ -439,37 +640,37 @@ export default function PlansPage() {
                     <div
                       key={cycle.id}
                       onClick={() => setSelectedCycle(cycle.id)}
-                      className={`rounded-[16px] px-6 py-5 border-2 cursor-pointer transition-colors flex justify-between items-center ${
+                      className={`flex cursor-pointer items-center justify-between rounded-[16px] border-2 px-6 py-5 transition-colors ${
                         isActive
-                          ? "border-[#4F46E5] bg-[#EEF2FF]"
-                          : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
+                          ? "border-primary bg-primary/10"
+                          : "border-border-subtle bg-surface shadow-sm hover:border-foreground/15"
                       }`}
                     >
                       <div className="flex flex-col">
                         <div className="flex items-center gap-[12px] mb-1.5">
-                          <span className="text-[#2F3337] font-extrabold text-[15px]">
+                          <span className="text-[15px] font-semibold text-foreground">
                             {cycle.title}
                           </span>
                           {cycle.save && (
-                            <span className="bg-[#4F46E5] text-white text-[10px] font-extrabold px-[10px] py-[3px] rounded-full uppercase tracking-tight">
+                            <span className="rounded-full bg-primary px-[10px] py-[3px] text-[10px] font-semibold uppercase tracking-tight text-white">
                               Save {cycle.save}
                             </span>
                           )}
                         </div>
-                        <span className="text-[#A0A5AE] text-[12px] font-semibold tracking-tight">
+                        <span className="text-[12px] font-semibold tracking-tight text-secondary-text">
                           {cycle.subtext}
                         </span>
                       </div>
                       <div className="flex items-center gap-[14px]">
-                        <span className="text-[#2F3337] font-extrabold text-[13px]">
+                        <span className="text-[13px] font-semibold text-foreground">
                           {cycle.priceDisplay}
                         </span>
                         {isActive ? (
-                          <div className="w-[22px] h-[22px] rounded-full bg-[#4F46E5] flex flex-shrink-0 items-center justify-center border-[5px] border-white ring-1 ring-[#4F46E5]">
-                            <div className="w-full h-full bg-[#4F46E5] rounded-full"></div>
+                          <div className="flex h-[22px] w-[22px] flex-shrink-0 items-center justify-center rounded-full border-[5px] border-surface bg-primary ring-1 ring-primary">
+                            <div className="h-full w-full rounded-full bg-primary" />
                           </div>
                         ) : (
-                          <div className="w-[22px] h-[22px] rounded-full border-2 border-gray-200 flex-shrink-0 bg-white"></div>
+                          <div className="h-[22px] w-[22px] flex-shrink-0 rounded-full border-2 border-border-subtle bg-surface" />
                         )}
                       </div>
                     </div>
@@ -477,35 +678,27 @@ export default function PlansPage() {
                 })}
               </div>
 
-              <div className="flex justify-between items-center w-full">
-                <p className="text-[#878E99] text-[12px] font-semibold max-w-[280px] leading-[1.35]">
-                  Pay in 4 interest- free payments for our 3-month and monthly
-                  plans.
-                </p>
-                <div className="bg-[#818CF8] text-[#2F3337] text-[18px] tracking-tight font-[900] px-3.5 py-1.5 rounded-md italic">
-                  tabby
-                </div>
-              </div>
+             
             </section>
           </div>
 
           {/* Right Column (Sticky Sidebar) */}
           <div className="w-full lg:w-[360px] shrink-0">
-            <div className="sticky top-[140px] w-full">
-              <div className="bg-[#FCFCFC] rounded-[32px] p-7 mb-6 shadow-[0px_4px_24px_rgba(0,0,0,0.04)] ring-1 ring-gray-100">
-                <div className="flex justify-between items-start mb-8">
+            <div className="sticky top-28 w-full lg:top-32">
+              <div className="mb-6 rounded-[32px] border border-border-subtle bg-bg-light p-7 shadow-[0px_4px_24px_rgba(27,48,34,0.06)]">
+                <div className="mb-8 flex items-start justify-between">
                   <div className="flex-1 pr-[18px]">
-                    <h3 className="text-[20px] font-[800] text-[#2F3337] tracking-tight mb-[14px]">
+                    <h3 className="font-heading mb-[14px] text-[20px] font-semibold tracking-tight text-foreground">
                       Your package, your way
                     </h3>
-                    <p className="text-[#878E99] text-[13.5px] font-semibold leading-[1.6]">
+                    <p className="text-[13.5px] font-semibold leading-[1.6] text-secondary-text">
                       {getSelectedPlanTitle()},{" "}
                       {selectedMeals.length} Meal
                       {selectedMeals.length !== 1 ? "s" : ""},{" "}
                       {selectedDays.length} days per week
                     </p>
                   </div>
-                  <div className="w-[64px] h-[64px] shrink-0 bg-[#F2F4F7] rounded-[16px] relative flex items-center justify-center font-black">
+                  <div className="relative flex h-[64px] w-[64px] shrink-0 items-center justify-center rounded-[16px] bg-surface font-black shadow-sm">
                     <span className="text-[36px]">🛍️</span>
                   </div>
                 </div>
@@ -515,7 +708,7 @@ export default function PlansPage() {
                   <div className="flex-1 relative">
                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                       <svg
-                        className="w-[18px] h-[18px] text-[#A0A5AE] rotate-90"
+                        className="h-[18px] w-[18px] rotate-90 text-secondary-text"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -532,62 +725,67 @@ export default function PlansPage() {
                     <input
                       type="text"
                       placeholder="Add promotion code"
-                      className="w-full border border-gray-200 text-[13px] font-bold rounded-[14px] pl-[38px] pr-4 py-[15px] placeholder:text-[#A0A5AE] focus:outline-none focus:ring-2 focus:ring-[#4F46E5] transition-shadow bg-white"
+                      className="w-full rounded-[14px] border border-border-subtle bg-surface py-[15px] pl-[38px] pr-4 text-[13px] font-semibold text-foreground placeholder:text-secondary-text/70 transition-shadow focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
-                  <button className="bg-[#F2F4F7] text-[#A0A5AE] font-extrabold tracking-tight text-[13px] px-6 py-[15px] rounded-[14px] hover:bg-gray-200 transition-colors">
+                  <button
+                    type="button"
+                    className="rounded-[14px] bg-bg-light px-6 py-[15px] text-[13px] font-semibold tracking-tight text-secondary-text transition-colors hover:bg-foreground/10"
+                  >
                     Apply
                   </button>
                 </div>
 
                 {/* Subscription Coupon */}
-                <div className="border border-gray-200 border-dashed rounded-[14px] p-4 bg-white mb-10 flex items-center justify-between">
+                <div className="mb-10 flex items-center justify-between rounded-[14px] border border-dashed border-border-subtle bg-surface p-4">
                   <div className="flex items-center gap-3.5">
-                    <div className="bg-[#4F46E5] text-white text-[8px] font-black italic px-[6px] py-[1.5px] rounded-sm transform -rotate-12 mt-1">
+                    <div className="mt-1 -rotate-12 transform rounded-sm bg-primary px-[6px] py-[1.5px] text-[8px] font-black italic text-white">
                       🎟️
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[12.5px] text-[#2F3337] font-[800] leading-[1.3] mb-0.5">
+                      <span className="mb-0.5 text-[12.5px] font-semibold leading-[1.3] text-foreground">
                         10% off subscription
                       </span>
-                      <span className="text-[11px] text-[#878E99] font-semibold tracking-tight">
+                      <span className="text-[11px] font-semibold tracking-tight text-secondary-text">
                         with 6+ days/week on your package.
                       </span>
                     </div>
                   </div>
-                  <div className="w-[30px] h-[30px] rounded-full bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center font-bold text-[18px] cursor-pointer shrink-0 ml-2">
+                  <div className="ml-2 flex h-[30px] w-[30px] shrink-0 cursor-pointer items-center justify-center rounded-full bg-primary/15 text-[18px] font-bold text-primary">
                     +
                   </div>
                 </div>
 
                 {/* Payment Summary */}
                 <div className="flex flex-col gap-[14px] mb-[28px]">
-                  <h4 className="text-[14px] font-[800] text-[#2F3337] mb-1 tracking-tight">
+                  <h4 className="mb-1 text-[14px] font-semibold tracking-tight text-foreground">
                     Payment summary
                   </h4>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#878E99] text-[13px] font-semibold tracking-tight">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] font-semibold tracking-tight text-secondary-text">
                       Plan price
                     </span>
-                    <span className="text-[#2F3337] text-[13px] font-[800]">
+                    <span className="text-[13px] font-semibold text-foreground">
                       {getCurrentCycle()
-                        ? `₹${(getCurrentCycle()!.amount / 100).toFixed(0)}`
+                        ? formatMinorUnits(getCurrentCycle()!.amount, currency)
                         : "--"}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-[18px]">
-                    <span className="text-[#878E99] text-[13px] font-semibold tracking-tight">
+                  <div className="flex items-center justify-between border-b border-border-subtle pb-[18px]">
+                    <span className="text-[13px] font-semibold tracking-tight text-secondary-text">
                       Delivery fee
                     </span>
-                    <span className="text-[#2F3337] text-[13px] font-[800]">₹0</span>
+                    <span className="text-[13px] font-semibold text-foreground">
+                      {formatMinorUnits(0, currency)}
+                    </span>
                   </div>
-                  <div className="flex justify-between items-center pt-2">
-                    <span className="text-[#2F3337] text-[16px] font-black tracking-tight">
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="font-heading text-[16px] font-semibold tracking-tight text-foreground">
                       Total
                     </span>
-                    <span className="text-[#2F3337] text-[16px] font-black tracking-tight">
+                    <span className="font-heading text-[16px] font-semibold tracking-tight text-foreground">
                       {getCurrentCycle()
-                        ? `₹${(getCurrentCycle()!.amount / 100).toFixed(0)}`
+                        ? formatMinorUnits(getCurrentCycle()!.amount, currency)
                         : "--"}
                     </span>
                   </div>
@@ -595,9 +793,10 @@ export default function PlansPage() {
 
                 {/* Checkout Btn */}
                 <button
+                  type="button"
                   onClick={handleCheckout}
                   disabled={checkoutLoading || !selectedCycle}
-                  className="w-full bg-[#4F46E5] hover:bg-[#4338CA] disabled:bg-[#4F46E5]/60 text-white font-[800] text-[15px] py-[16px] rounded-full transition-colors shadow-[0_4px_12px_rgba(79,70,229,0.2)]"
+                  className="w-full rounded-full bg-primary py-[16px] text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover disabled:bg-primary/60"
                 >
                   {checkoutLoading ? "Processing..." : "Continue"}
                 </button>
