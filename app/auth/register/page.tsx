@@ -8,8 +8,8 @@ export default function RegisterPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-background pt-28">
-          <div className="mx-auto h-10 max-w-[480px] animate-pulse rounded-2xl bg-bg-light" />
+        <div className="min-h-screen bg-hm-surface pt-28">
+          <div className="mx-auto h-10 max-w-[480px] animate-pulse rounded-2xl bg-hm-surface-container" />
         </div>
       }
     >

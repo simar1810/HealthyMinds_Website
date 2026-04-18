@@ -1,20 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&display=swap");
 @import "tailwindcss";
 
 html {
   color-scheme: light;
 }
 
+/*
+  Healthy Minds Restaurant — logo-derived palette:
+  bright red (H), burgundy (wordmark), leaf greens. Tweak hex if you pixel-match the file.
+*/
 :root {
-  /* Brand: forest wordmark + leaf accent (Nutrichef logo) */
-  --background: #fafaf8;
-  --surface: #ffffff;
-  --foreground: #1b3022;
-  --primary-brand: #7db146;
-  --primary-brand-hover: #689938;
-  --secondary-text: #4a5c52;
-  --light-bg: #eef2ed;
-  --accent-leaf-muted: #a3c978;
-  --border-subtle: rgba(27, 48, 34, 0.1);
+  --background: #ffffff;
+  --surface: #fafafa;
+  --foreground: #5a2328;
+  --primary-brand: #e3202d;
+  --primary-brand-hover: #c4111e;
+  --burgundy: #5a2328;
+  --burgundy-deep: #2f1418;
+  --green: #15803d;
+  --green-bright: #4ade80;
+  --green-muted: #dcfce7;
+  --secondary-text: #6d4c52;
+  --light-bg: #f4f4f5;
+  --border-subtle: rgba(90, 35, 40, 0.12);
+  --ring-focus: rgba(227, 32, 45, 0.35);
 }
 
 @theme inline {
@@ -25,18 +34,58 @@ html {
   --color-primary-hover: var(--primary-brand-hover);
   --color-text-secondary: var(--secondary-text);
   --color-bg-light: var(--light-bg);
-  --color-accent-warm: var(--accent-leaf-muted);
+  --color-burgundy: var(--burgundy);
+  --color-burgundy-deep: var(--burgundy-deep);
+  --color-brand-green: var(--green);
+  --color-brand-green-bright: var(--green-bright);
+  --color-brand-green-muted: var(--green-muted);
+  /* Accent used for “leaf” highlights + hovers on dark bands */
+  --color-accent-warm: var(--green-bright);
   --color-border-subtle: var(--border-subtle);
+  /* Stitch editorial palette */
+  --color-hm-surface: #f9f9fa;
+  --color-hm-on-surface: #1a1c1d;
+  --color-hm-primary: #bb001c;
+  --color-hm-primary-mid: #e3202d;
+  --color-hm-tertiary: #006a2f;
+  --color-hm-surface-low: #f3f3f4;
+  --color-hm-surface-container: #eeeeef;
+  --color-hm-surface-container-high: #e8e8e9;
+  --color-hm-outline-variant: #e6bdb9;
+  --color-hm-footer: #8c4b50;
   --font-sans: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-display), ui-serif, Georgia, "Times New Roman", serif;
+  --font-heading: var(--font-display), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
     "Courier New", monospace;
+  --animate-hm-marquee: hm-marquee 48s linear infinite;
+}
+
+@keyframes hm-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+.hm-page-bg {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse 120% 60% at 100% -10%, rgba(227, 32, 45, 0.06), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 0% 100%, rgba(21, 128, 61, 0.05), transparent 45%);
+}
+
+.hm-card {
+  border: 1px solid var(--border-subtle);
+  background: var(--surface);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
 }
 
 .hide-scrollbar {
@@ -47,6 +96,24 @@ body {
   display: none;
 }
 
+/* Material Symbols: must set font-family or icon names render as plain text */
+.material-symbols-outlined {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -55,14 +122,13 @@ body {
   background: var(--light-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(27, 48, 34, 0.22);
+  background: rgba(90, 35, 40, 0.25);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-brand);
 }
 
-/* Google Website Translator: remove top promo bar & layout shift */
 iframe.goog-te-banner-frame,
 .goog-te-banner-frame,
 .goog-te-balloon-frame,
@@ -88,7 +154,6 @@ html {
   margin-top: 0 !important;
 }
 
-/* After translate runs, keep site typography/colors from being overridden */
 html.translated-ltr body,
 html.translated-rtl body {
   font-family: var(--font-sans) !important;
@@ -96,11 +161,6 @@ html.translated-rtl body {
   background: var(--background) !important;
 }
 
-/*
-  Google gadget: keep it off-screen + visibility-hidden so the native “Select Language”
-  UI (logo, label, bordered box) never paints. The hidden <select> stays in the DOM
-  for programmatic updates / cookie flow (see GoogleTranslate.tsx).
-*/
 .google-translate-gadget-layer {
   position: absolute !important;
   left: -9999px !important;

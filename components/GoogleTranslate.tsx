@@ -8,7 +8,7 @@ export function GoogleTranslate() {
   return (
     <div className="notranslate relative w-full max-w-[280px]">
       <GoogleTranslateBootstrap />
-      <LanguageSelect selectId="nutrichef-lang-footer" />
+      <LanguageSelect selectId="healthy-minds-lang-footer" />
     </div>
   );
 }

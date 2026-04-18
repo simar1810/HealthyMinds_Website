@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Healthy Minds Restaurant | The Editorial Harvest</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@300;400;600;700;800;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-surface": "#2f3132",
+                      "surface-container-highest": "#e2e2e3",
+                      "background": "#f9f9fa",
+                      "on-background": "#1a1c1d",
+                      "secondary-container": "#feabaf",
+                      "on-secondary-fixed": "#390a10",
+                      "primary-fixed": "#ffdad7",
+                      "on-surface": "#1a1c1d",
+                      "surface-dim": "#dadadb",
+                      "on-surface-variant": "#5d3f3d",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-fixed": "#95f8a7",
+                      "on-primary-fixed": "#410004",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#005323",
+                      "surface-container-high": "#e8e8e9",
+                      "primary": "#bb001c",
+                      "on-primary": "#ffffff",
+                      "primary-fixed-dim": "#ffb3ad",
+                      "surface": "#f9f9fa",
+                      "primary-container": "#e3202d",
+                      "secondary-fixed": "#ffdada",
+                      "surface-variant": "#e2e2e3",
+                      "secondary-fixed-dim": "#ffb3b6",
+                      "tertiary-fixed-dim": "#79db8d",
+                      "surface-container": "#eeeeef",
+                      "inverse-primary": "#ffb3ad",
+                      "tertiary": "#006a2f",
+                      "on-error": "#ffffff",
+                      "surface-bright": "#f9f9fa",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-container": "#1d8541",
+                      "on-error-container": "#93000a",
+                      "secondary": "#8c4b50",
+                      "surface-container-low": "#f3f3f4",
+                      "surface-tint": "#c0001d",
+                      "on-secondary-container": "#7a3c41",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-container": "#f4fff0",
+                      "on-tertiary-fixed": "#00210a",
+                      "on-primary-container": "#fffbff",
+                      "outline": "#926f6c",
+                      "outline-variant": "#e6bdb9",
+                      "on-primary-fixed-variant": "#930013",
+                      "error": "#ba1a1a",
+                      "inverse-on-surface": "#f0f1f2",
+                      "on-secondary-fixed-variant": "#703439"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "1.5rem",
+                      "full": "9999px"
+              },
+              "fontFamily": {
+                      "headline": ["Epilogue", "sans-serif"],
+                      "body": ["Inter", "sans-serif"],
+                      "label": ["Inter", "sans-serif"]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .asymmetric-overlap { margin-top: -80px; }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-sm dark:shadow-none">
+<nav class="flex justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto">
+<div class="text-2xl font-black text-red-700 dark:text-red-500 tracking-tighter uppercase font-headline">HEALTHY MINDS</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-red-700 dark:text-red-400 font-bold border-b-2 border-red-700 pb-1 font-label text-sm uppercase tracking-widest" href="#">Menu</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 font-label text-sm uppercase tracking-widest" href="#features">Features</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 font-label text-sm uppercase tracking-widest" href="#community">Community</a>
+<a class="text-slate-600 dark:text-slate-400 font-medium hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 font-label text-sm uppercase tracking-widest" href="#faq">FAQ</a>
+</div>
+<div class="flex gap-4 items-center">
+<button class="hidden md:block text-slate-600 font-semibold text-sm hover:text-primary transition-colors">Sign In</button>
+<button class="bg-gradient-to-br from-primary to-primary-container text-white px-6 py-2.5 rounded-xl font-semibold text-sm shadow-md transition-transform scale-95 active:scale-90">Get Started</button>
+</div>
+</nav>
+</header>
+<main class="pt-24 overflow-hidden">
+<!-- Hero Section -->
+<section class="max-w-7xl mx-auto px-6 py-16 md:py-24 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+<div class="md:col-span-6 space-y-8">
+<span class="label-md uppercase tracking-[0.2em] text-primary font-bold">The Editorial Harvest</span>
+<h1 class="font-headline text-5xl md:text-7xl font-extrabold tracking-tighter leading-[0.9] text-on-surface">
+                    Fuel Your Week <br/> the Right Way
+                </h1>
+<p class="text-lg md:text-xl text-slate-600 max-w-md leading-relaxed">
+                    A curated culinary experience delivered to your door. We treat your health like a masterfully edited publication.
+                </p>
+<div class="flex flex-col sm:flex-row gap-6 pt-4">
+<button class="bg-gradient-to-br from-primary to-primary-container text-white px-10 py-4 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all">Get Started</button>
+<div class="flex items-center gap-4">
+<div class="flex -space-x-3">
+<div class="w-10 h-10 rounded-full border-2 border-white bg-slate-200"></div>
+<div class="w-10 h-10 rounded-full border-2 border-white bg-slate-300"></div>
+<div class="w-10 h-10 rounded-full border-2 border-white bg-slate-400"></div>
+</div>
+<div class="text-sm font-semibold">
+<span class="text-primary block">290K+ Customers</span>
+<span class="text-slate-500 font-normal">19M+ Meals Served</span>
+</div>
+</div>
+</div>
+</div>
+<div class="md:col-span-6 relative">
+<div class="rounded-2xl overflow-hidden aspect-[4/5] bg-surface-container shadow-2xl relative z-10">
+<img alt="" class="w-full h-full object-cover" data-alt="Close-up of a premium healthy salad bowl with roasted salmon, avocado, and vibrant greens with dramatic cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB59vfaJ5t_jZFOXkFL7dHgp7SLcExlJgkm3J01n1TshleNGJJG1VMR2GjD3y7amHqFz2i0NwUu0x9VOZN5-PFNqQRbxIygyrFZrF-1bnNTyf-4wWTwrcwRM5SlEF7MyyVSlhF5Ufmnn_qkSq9ieEo4Sik6ZT0fCzeqk7mnnQSpv4QKKx4C4PmVCdan4OpVvpy74m-h7u788v3d07mvCVkAqtwkukqhilRzqDlcBhvrwjBSqCC1zTRgkfBHxkPJNVecs9EQdfKMLR0F"/>
+</div>
+<!-- Floating Caption Card -->
+<div class="absolute -bottom-6 -left-6 md:-left-12 bg-white p-6 rounded-xl shadow-xl z-20 max-w-xs">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-headline font-bold text-sm tracking-tight">CHEF FAVORITES</span>
+</div>
+<p class="text-sm text-slate-600">The Miso-Glazed Salmon Bowl was recently voted #1 by our community.</p>
+</div>
+</div>
+</section>
+<!-- Menu Preview -->
+<section class="bg-surface-container-low py-24 relative" id="menu">
+<div class="max-w-7xl mx-auto px-6">
+<div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-8">
+<div>
+<h2 class="font-headline text-4xl md:text-5xl font-black tracking-tighter mb-4 uppercase">Same Kitchen.<br/>New Picks Weekly.</h2>
+<div class="flex flex-wrap gap-3 mt-8">
+<button class="px-6 py-2 bg-primary text-white rounded-full text-sm font-bold tracking-wide">ALL</button>
+<button class="px-6 py-2 bg-white text-on-surface hover:bg-surface-container-highest transition-colors rounded-full text-sm font-bold tracking-wide">BALANCED</button>
+<button class="px-6 py-2 bg-white text-on-surface hover:bg-surface-container-highest transition-colors rounded-full text-sm font-bold tracking-wide">HIGH PROTEIN</button>
+<button class="px-6 py-2 bg-white text-on-surface hover:bg-surface-container-highest transition-colors rounded-full text-sm font-bold tracking-wide">LOW CARB</button>
+</div>
+</div>
+<a class="text-primary font-bold border-b-2 border-primary pb-1 mb-2 hover:opacity-80 transition-opacity" href="#">View Full Menu</a>
+</div>
+<div class="flex overflow-x-auto gap-8 pb-12 hide-scrollbar">
+<!-- Recipe Card 1 -->
+<div class="min-w-[320px] bg-white rounded-xl overflow-hidden p-4 group">
+<div class="aspect-square rounded-lg overflow-hidden mb-6">
+<img alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Vibrant healthy bowl with quinoa, chickpeas, roasted sweet potato, and fresh kale on a clean white background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7pWciDBGs96bCG3uOEb4YkLCQvwqz--1FOgmFh5T1mUlvPE86dGNiDD_7Q92rzcXPoTq3XZRZeWUemuXdAtqlRMhH7AiKwhwmnNxtFuQAWLoPvKXrsK0F2nwOmlj31QtHHixuwDyXBZ5ENe_awZTd9VYw0g8q2V7sA3aKL6o4jdsO9flUDjcvyqMoUHNDiyGB9Dh-HdoQvPe3_H7YoNiha1TGofiRZxXpejfsncm2B4df664Z7o3jkEdVmaoxGCV7EcEVwvmvyZ-6"/>
+</div>
+<div class="space-y-1">
+<span class="label-md uppercase tracking-widest text-tertiary font-bold text-[10px]">HEALTHY</span>
+<h3 class="font-headline text-xl font-bold">Rainbow Harvest Bowl</h3>
+<p class="text-slate-500 font-label text-sm uppercase tracking-widest">420 CALORIES</p>
+</div>
+</div>
+<!-- Recipe Card 2 -->
+<div class="min-w-[320px] bg-white rounded-xl overflow-hidden p-4 group">
+<div class="aspect-square rounded-lg overflow-hidden mb-6">
+<img alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Artisanal Mediterranean salad with feta cheese, olives, cherry tomatoes, and cucumber in a ceramic bowl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQrkPW_MW_XfNKS1VsvZRFXjzxKM8DzLULftuVkOJSsJ6GX-Hl0jjpHA0SmN7kch9hUl3BUkluf1JObhbloaP0rU3R0dKG7uvVtDKMsgdzc0bTGhdvQrpgw5KcblAqj6CLDtkmFoqpyzK-1WPIoYFhembMZrbY9IRVj8Y66jUa-gvTpbwSIkBNp5cUp7GiLbuam3eM9qckgnT6BY8a-Hd0mCxMSuvbJS9vrEIRFqSNfXMgTZ7J8GK4VLZ9KZMSB6Cs4VEyTAMOK6bE"/>
+</div>
+<div class="space-y-1">
+<span class="label-md uppercase tracking-widest text-tertiary font-bold text-[10px]">VEGETARIAN</span>
+<h3 class="font-headline text-xl font-bold">Classic Greek Power</h3>
+<p class="text-slate-500 font-label text-sm uppercase tracking-widest">380 CALORIES</p>
+</div>
+</div>
+<!-- Recipe Card 3 -->
+<div class="min-w-[320px] bg-white rounded-xl overflow-hidden p-4 group">
+<div class="aspect-square rounded-lg overflow-hidden mb-6">
+<img alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Pan-seared salmon fillet over a bed of roasted seasonal vegetables with lemon wedges" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtBe1d2wyiqpwsEXQLH1fJUylT7LnGNfPkK87_w70sgjxgKKFhaMMLRPOQuTmoDIUj1Ox8dVBMP74X017Ydg5njgu0-XxEl_7YAgslP0hJ_zBEJtMQzDG2Pk2P_yd08wIvJyJNxWtmRaE2fEqK8CfrZHFExv-Q3hZ2f1yIcwSPkm6Xf-yr-2wcZPsWVfPxhqR8a_Aek3b6UUeFCOfMSo02VVjiHwoXR0RrVbxe1S7AuDiV-flbPSDtm2PmgkaWJhGiYa76ucney5Hs"/>
+</div>
+<div class="space-y-1">
+<span class="label-md uppercase tracking-widest text-primary font-bold text-[10px]">CHEF CHOICE</span>
+<h3 class="font-headline text-xl font-bold">Lemon Garlic Salmon</h3>
+<p class="text-slate-500 font-label text-sm uppercase tracking-widest">450 CALORIES</p>
+</div>
+</div>
+<!-- Recipe Card 4 -->
+<div class="min-w-[320px] bg-white rounded-xl overflow-hidden p-4 group">
+<div class="aspect-square rounded-lg overflow-hidden mb-6">
+<img alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="High protein roasted chicken breast with asparagus and wild rice pilaf" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOGuJz5BVOBvAO2OpBegT_DdQCEeu7ZTyCj39C6n7rv3F4yFl5W7yLtS-e1Kp7jKMamiY6MhYmcoIM2XuZ0qvyeMMULN-S01dglkRtaXAO-9AHig-pQdfqxaJxHFsaKouafw195OEd5qfKaLJECi2MaMzoi6zewbbj0lwY8QbR5fvms1hjiQAbsS5uyGvwl613zqBjXgS1XkORIlfpvsY_43ban1y7OgqtZUnH75WTN1etgHaH-9pXLZUPaXkjNsYsKo6pR9Pmio0B"/>
+</div>
+<div class="space-y-1">
+<span class="label-md uppercase tracking-widest text-tertiary font-bold text-[10px]">PROTEIN+</span>
+<h3 class="font-headline text-xl font-bold">Herbed Chicken Grill</h3>
+<p class="text-slate-500 font-label text-sm uppercase tracking-widest">510 CALORIES</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Why Us Section -->
+<section class="py-24 bg-surface px-6" id="features">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-16">
+<h2 class="font-headline text-4xl md:text-5xl font-black tracking-tighter uppercase leading-tight">Built Like a Restaurant.<br/>Priced Like a Plan.</h2>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Feature 1 -->
+<div class="bg-surface-container-low p-8 rounded-xl space-y-4 hover:bg-white hover:shadow-xl transition-all duration-300">
+<div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="restaurant_menu">restaurant_menu</span>
+</div>
+<h3 class="font-headline text-xl font-bold">Total Control</h3>
+<p class="text-slate-600 text-sm leading-relaxed">Modify your menu, skip weeks, or swap recipes with a single tap on our app.</p>
+</div>
+<!-- Feature 2 -->
+<div class="bg-surface-container-low p-8 rounded-xl space-y-4 hover:bg-white hover:shadow-xl transition-all duration-300">
+<div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="skillet">skillet</span>
+</div>
+<h3 class="font-headline text-xl font-bold">Chef Crafted</h3>
+<p class="text-slate-600 text-sm leading-relaxed">Each meal is designed by Michelin-trained chefs to ensure gourmet quality every time.</p>
+</div>
+<!-- Feature 3 -->
+<div class="bg-surface-container-low p-8 rounded-xl space-y-4 hover:bg-white hover:shadow-xl transition-all duration-300">
+<div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="local_shipping">local_shipping</span>
+</div>
+<h3 class="font-headline text-xl font-bold">Fresh Deliveries</h3>
+<p class="text-slate-600 text-sm leading-relaxed">Never frozen. We deliver chilled to maintain nutrients and authentic texture.</p>
+</div>
+<!-- Feature 4 -->
+<div class="bg-surface-container-low p-8 rounded-xl space-y-4 hover:bg-white hover:shadow-xl transition-all duration-300">
+<div class="w-12 h-12 bg-primary-container/10 flex items-center justify-center rounded-lg">
+<span class="material-symbols-outlined text-primary" data-icon="eco">eco</span>
+</div>
+<h3 class="font-headline text-xl font-bold">Thoughtful Packaging</h3>
+<p class="text-slate-600 text-sm leading-relaxed">Fully recyclable and compostable containers because we care about the harvest.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- How It Works -->
+<section class="py-24 max-w-7xl mx-auto px-6">
+<div class="flex flex-col items-center text-center mb-16 space-y-6">
+<h2 class="font-headline text-4xl md:text-5xl font-black tracking-tighter uppercase">Three Steps. Zero Drama.</h2>
+<button class="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:bg-primary-container transition-colors shadow-lg">View Plans</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-16 relative">
+<!-- Step 1 -->
+<div class="flex flex-col items-center text-center group">
+<div class="relative w-full aspect-square mb-8 overflow-hidden rounded-xl bg-surface-container-low">
+<span class="absolute top-4 left-4 z-10 font-headline text-6xl font-black text-primary/20">01</span>
+<img alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Bird's eye view of someone planning a meal plan on a clean minimalist tablet device" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5eIDoINzq0cPVz1r-5sNSO2T0aAaekp49zbo7KGU930SReFW139SoIAxhLwjpYi1nl9h3FSflAnAXd0wqFTttzQSsRJmkQrA7tPUVwKIJoax876jTZbr6UbmrbfPX8AsECF6WTlXXQihsrCml4jkjB0wv0iXA7xlwL8wAZ4zCUdTS7BAarSmUmWyD_yrgBeCajdRxavc9u4-TfnA4eROeV2-W7Ag-sqAknRAPLJn9wk0NcAbIKA4Aj36Kd01bNC0ZxgtZ6qWFBkNZ"/>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-4">Pick Your Plan</h3>
+<p class="text-slate-600">Choose from Weight Loss, Muscle Gain, or Healthy Balance to suit your lifestyle goals.</p>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center text-center group">
+<div class="relative w-full aspect-square mb-8 overflow-hidden rounded-xl bg-surface-container-low">
+<span class="absolute top-4 left-4 z-10 font-headline text-6xl font-black text-primary/20">02</span>
+<img alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close-up of fresh ingredients and chef-prepared plates being selected from a weekly menu interface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCm3U0Dl8zyI2k4s90yXdAhxGoOBqzv_Bf77h4W88tO94A-IZxwki1R1gjuocVzTaz91N02TRBR4pLEsacrecAPuqGVXIojlQJjeNZ072oFS1Bp-aZbzziLJ6p9G3kNEuwbDfCU2PRwQS3xnqt9bjp0ehhDcGUF4A58cizcvE9qHsgPNOIkhGdGD-hiMGA5mBEj16XlaPJIHD-ijGbR4BPDz8lCHGgivQMVDHa-_KfUBrY3pIq4beigwplaD__08mL06fq3yvCWQrMT"/>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-4">Choose Your Plates</h3>
+<p class="text-slate-600">Select from over 30 rotating weekly recipes that fit your macronutrient needs.</p>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col items-center text-center group">
+<div class="relative w-full aspect-square mb-8 overflow-hidden rounded-xl bg-surface-container-low">
+<span class="absolute top-4 left-4 z-10 font-headline text-6xl font-black text-primary/20">03</span>
+<img alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Minimalist scene of a healthy meal being served on a modern dining table with soft morning light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCKMeutCZwoJ5j-_Te-tGjhM4Wvo1jqTxAJc4PyRPC3Zdb3my3-kOpHZdtsJockGft-oRk8lGJnl-YWuM6J5UHMoL_R9MGcAf7pljjzurfHC3pu2Lv7xDmwobb4Kf8S6JWPgYIhZsbS7_wypiUn6SfoWWeY23Y6g8A6W0jorA4jfLS7-xYM2EongyD56KPTolga-fLvAdjnVuQxpi5S0OWKUPFftaBkcnOHWnc1OJOwnz2EPb0Eq6DNZ4UxspOlBYTsJDM_q5bD_8P"/>
+</div>
+<h3 class="font-headline text-2xl font-bold mb-4">Eat on Autopilot</h3>
+<p class="text-slate-600">Delivered fresh. Ready in minutes. No grocery shopping, no prepping, no cleaning.</p>
+</div>
+</div>
+</section>
+<!-- Stories Section -->
+<section class="py-24 bg-surface-container-low overflow-hidden" id="community">
+<div class="max-w-7xl mx-auto px-6">
+<div class="flex flex-col md:flex-row gap-16 items-start">
+<div class="md:w-1/2">
+<span class="label-md uppercase tracking-[0.2em] text-primary font-bold mb-4 block">COMMUNITY FEED</span>
+<h2 class="font-headline text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9] mb-12">Real People.<br/>Real Plates.</h2>
+<div class="relative rounded-2xl overflow-hidden aspect-[4/5] shadow-2xl">
+<img alt="" class="w-full h-full object-cover" data-alt="Portrait of a healthy active woman smiling while holding a fresh meal container in a bright modern kitchen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQs0KwgyMFhOilXaAnYKPB1LrFZRCVKGf6pSHNcLhuSeH6KM99c96aewzPjw5l7FkVOFfNlm-1VTMmbzjb2McVdlTsPKowisQIWqKLhLS_tbh3qTf-x7s0eM7Jjns4fXWn7oyo8BhRLQ3uXxXpKSRRkM8tGHJZqEnzN7H3-2zxGhqIdA0CtSkj9y6ugSjU4oPW8g1WRBiIZOJvbM11wjRIIxQBlrPfTcSuVZY7L9jDCw2Fl0gSJFQ1r2ZRNMB224mhCBFCJIzg4TtC"/>
+<div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent text-white">
+<p class="text-xl font-bold italic mb-2">"Finally, healthy food that actually tastes like it was made in a kitchen, not a factory."</p>
+<p class="font-label text-sm uppercase tracking-widest">— @sarah_wellness</p>
+</div>
+</div>
+</div>
+<div class="md:w-1/2 grid grid-cols-2 gap-4 md:mt-24">
+<div class="space-y-4">
+<div class="rounded-xl overflow-hidden aspect-square"><img alt="" data-alt="Social media style photo of a fresh meal prep container on a wooden table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALb__T2g3_yYveIco71Od2_zkMVOiC7jPu3kW60Cngjg8VLxgnGMflI5L_jIuaBTjQ_sT8EUf1UpViKKrjTR4t64uD71cJBEv_QB0dq-mr74O7Y2qB2V_3-c9gFIlR-bFX6huaHfQ-Z_M80Xa_9xQnmUlJORzbU00BKxNZyv3gZcd2ocUryrA5oSYlM-j2H-M4LcBtT2oviAnYLcWWyCHyE3KOAkI9eSSUoPFM_vPyvt22-nAHK2hQnxrJ3803ENNRnUSXHYOCv1Z2"/></div>
+<div class="rounded-xl overflow-hidden aspect-[3/4]"><img alt="" data-alt="Close-up aesthetic shot of a colorful healthy meal with avocado" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOzyHYson5KGwgLJjNnKgw3ClPEjj19c1ZIfkqw-8HzhuO5Q9QmoaxXtWfYMW6hkXOIIHB4OYs6IGWEfwotRBHrHksDq9vRstmns-iz-xblVT2taTaPjJ-5ZyKodnYE6mTNLlhU29Ga9dzOeTls94HPGuMZX7lUNaYjI_dZlZPBiGLqP4rDFwp3XC__IcqOCyulnWgtcx6z3uJXiXbDZuprggOI9Dhv-EawBVQIxK4v2-9M7szZQg1wcJSkM3K4EDBiKmZ6TEWw1Iq"/></div>
+</div>
+<div class="space-y-4 pt-12">
+<div class="rounded-xl overflow-hidden aspect-[3/4]"><img alt="" data-alt="Overhead shot of several healthy meal prep boxes on a kitchen island" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPlz8-gIVDmoknld2Xz_GYhwk7Ra5Bap_7Xa_kuaMb-QCkX1KtCqYrBHg0XILBjGAeMm1o2bZOwEmse0RcFNyAeN7mjdohVcwtm05wK1wdzBbiqmqiq-2N6xQqnuQe--UQLeX0gqe4FUmwJxHJZ-L5EDEXIPbaoAyWDRT5vOLrSAGUikgTeLC_-JRR2JgYiQ6v1Gtg_Zsb_MrRmNjJ1sPRPKGQhIcgyn0V0JsPh4nT0TIx6MxPToBtjeG0n03AzULij35G737KZeBi"/></div>
+<div class="rounded-xl overflow-hidden aspect-square"><img alt="" data-alt="Candid photo of a person enjoying a healthy meal outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyY1UirLtTZOKErtA6znd_8aqiZxSKox8cHk21iZSBCp7y_T_FfKiK5ma6CDCvcju2funwsnRILdf0AdnoJ8dKS-CK2F93Q2xgpAcGoycmjvn7ipVg5bnyk8IViEwbcCeQCIgXUsgD3rOmI4NJpoQ3WgxY66WyoKVut6cqVIlU0ehBbm0ArtbzCfr6dp91EL-TF2wIruHTNFFHPxrqM5au6FKjo5sxsMy7ykoXVXYxhtbJz8zszM3JfNwpRwJjWs-lqYMjKPnMvpxM"/></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Meal Plans -->
+<section class="py-24 max-w-7xl mx-auto px-6">
+<h2 class="font-headline text-4xl md:text-5xl font-black tracking-tighter uppercase mb-12 text-center">Lock the Plan. Love the Plates.</h2>
+<div class="flex overflow-x-auto gap-8 pb-12 hide-scrollbar">
+<!-- Plan 1 -->
+<div class="min-w-[380px] bg-white rounded-xl shadow-sm border border-outline-variant/20 p-8 flex flex-col">
+<h3 class="font-headline text-3xl font-extrabold mb-2 uppercase">Weight Loss</h3>
+<p class="text-slate-500 mb-8">Science-backed calorie deficit without hunger.</p>
+<div class="grid grid-cols-3 gap-4 mb-8">
+<div class="text-center p-3 bg-surface-container-low rounded-lg">
+<p class="text-primary font-bold text-lg">35g</p>
+<p class="text-[10px] uppercase font-bold tracking-widest">PRO</p>
+</div>
+<div class="text-center p-3 bg-surface-container-low rounded-lg">
+<p class="text-on-surface font-bold text-lg">25g</p>
+<p class="text-[10px] uppercase font-bold tracking-widest">CARB</p>
+</div>
+<div class="text-center p-3 bg-surface-container-low rounded-lg">
+<p class="text-on-surface font-bold text-lg">12g</p>
+<p class="text-[10px] uppercase font-bold tracking-widest">FAT</p>
+</div>
+</div>
+<button class="mt-auto w-full py-4 border-2 border-primary text-primary font-bold rounded-xl hover:bg-primary hover:text-white transition-all uppercase tracking-widest text-sm">Select Weight Loss</button>
+</div>
+<!-- Plan 2 -->
+<div class="min-w-[380px] bg-primary text-white rounded-xl shadow-xl p-8 flex flex-col relative overflow-hidden">
+<div class="absolute -right-12 -top-12 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+<h3 class="font-headline text-3xl font-extrabold mb-2 uppercase">Muscle Gain</h3>
+<p class="text-white/80 mb-8">Hyper-protein meals designed for active lifestyles.</p>
+<div class="grid grid-cols-3 gap-4 mb-8">
+<div class="text-center p-3 bg-white/10 rounded-lg">
+<p class="text-white font-bold text-lg">55g</p>
+<p class="text-[10px] uppercase font-bold tracking-widest">PRO</p>
+</div>
+<div class="text-center p-3 bg-white/10 rounded-lg">
+<p class="text-white font-bold text-lg">50g</p>
+<p class="text-[10px] uppercase font-bold tracking-widest">CARB</p>
+</div>
+<div class="text-center p-3 bg-white/10 rounded-lg">
+<p class="text-white font-bold text-lg">18g</p>
+<p class="text-[10px] uppercase font-bold tracking-widest">FAT</p>
+</div>
+</div>
+<button class="mt-auto w-full py-4 bg-white text-primary font-bold rounded-xl hover:bg-surface-container-lowest transition-all uppercase tracking-widest text-sm">Select Muscle Gain</button>
+</div>
+<!-- Plan 3 -->
+<div class="min-w-[380px] bg-white rounded-xl shadow-sm border border-outline-variant/20 p-8 flex flex-col">
+<h3 class="font-headline text-3xl font-extrabold mb-2 uppercase">Healthy Balance</h3>
+<p class="text-slate-500 mb-8">Perfectly portioned variety for maintaining wellness.</p>
+<div class="grid grid-cols-3 gap-4 mb-8">
+<div class="text-center p-3 bg-surface-container-low rounded-lg">
+<p class="text-primary font-bold text-lg">30g</p>
+<p class="text-[10px] uppercase font-bold tracking-widest">PRO</p>
+</div>
+<div class="text-center p-3 bg-surface-container-low rounded-lg">
+<p class="text-on-surface font-bold text-lg">40g</p>
+<p class="text-[10px] uppercase font-bold tracking-widest">CARB</p>
+</div>
+<div class="text-center p-3 bg-surface-container-low rounded-lg">
+<p class="text-on-surface font-bold text-lg">15g</p>
+<p class="text-[10px] uppercase font-bold tracking-widest">FAT</p>
+</div>
+</div>
+<button class="mt-auto w-full py-4 border-2 border-primary text-primary font-bold rounded-xl hover:bg-primary hover:text-white transition-all uppercase tracking-widest text-sm">Select Balance</button>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="py-24 bg-surface px-6" id="faq">
+<div class="max-w-4xl mx-auto">
+<h2 class="font-headline text-4xl md:text-5xl font-black tracking-tighter uppercase text-center mb-16">Straight Answers</h2>
+<div class="space-y-4">
+<details class="group bg-surface-container-low rounded-xl overflow-hidden">
+<summary class="flex justify-between items-center p-6 cursor-pointer list-none font-bold text-lg">
+                            Am I tied into a contract?
+                            <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="px-6 pb-6 text-slate-600">No. You can pause, cancel, or skip weeks at any time through our easy-to-use dashboard. Your freedom is part of the recipe.</div>
+</details>
+<details class="group bg-surface-container-low rounded-xl overflow-hidden">
+<summary class="flex justify-between items-center p-6 cursor-pointer list-none font-bold text-lg">
+                            Can I exclude specific ingredients?
+                            <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="px-6 pb-6 text-slate-600">Absolutely. Our smart menu filter allows you to hide meals containing nuts, dairy, or gluten. We tailor every delivery to your unique dietary requirements.</div>
+</details>
+<details class="group bg-surface-container-low rounded-xl overflow-hidden">
+<summary class="flex justify-between items-center p-6 cursor-pointer list-none font-bold text-lg">
+                            How long do the meals last?
+                            <span class="material-symbols-outlined transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="px-6 pb-6 text-slate-600">Our meals are delivered fresh and stay perfect in your refrigerator for up to 5 days. Each container has a clear "use by" date.</div>
+</details>
+</div>
+</div>
+</section>
+<!-- Instagram Feed Marquee -->
+<section class="py-12 border-y border-surface-container">
+<div class="flex gap-4 overflow-hidden select-none whitespace-nowrap">
+<div class="flex gap-4 min-w-full animate-marquee">
+<div class="w-64 h-64 rounded-lg overflow-hidden shrink-0"><img alt="" data-alt="Gourmet salad with figs and goat cheese" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAleplOyEZyAXyoABC51R3-nHlmejOgWHz9dVnJ_5UZLroRqBARHcnfdAHCu_femVGiRqA7bZRhc1owZTqDBGMXL3DiETBULeGSDOnKJO_aRB5bZNvMvguTFlLINNS_AbylRC9PoqRzlPdboSaOrqnKAv8GCpviIkgnalHII1XJjAQkVKIx41kIEiT06YUAjYpYGRRaUMbXrUywidaeVxXXPWmfV3tzL8nVTAOeCcPl2CHL3n3bZBPTS8CQRPCTh7W3JOhWZs87_oHU"/></div>
+<div class="w-64 h-64 rounded-lg overflow-hidden shrink-0"><img alt="" data-alt="Roasted vegetables on a dark plate" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHc-VTXAkejV6Uzf--fH1CIy6TX9nPRSodqnGFvu5g2nNRSLcfBJyep5NhJ0BNqeFRAlr0VGkbqsNCXy_qokv8cNzabi7t39Q8I_TQtr3RQE52-P2DkicUdwWR4XNFIa1wWO4XMiTzAZGA1Pzcvn06tlnSoPw0wCzHd0cMQt22AAgWvbXC6C_3qdGCz6HEK2iv3ehuWK2pcN6B-5jWILUX7dwtlXoIX7Z0octAFubrxaEC4MF26c41uUZiGrm2xD0Rr726bcl4tK6s"/></div>
+<div class="w-64 h-64 rounded-lg overflow-hidden shrink-0"><img alt="" data-alt="Bright mediterranean salad bowl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9wSyioej-BniQj6XU6Ttr39zjPE7hRbxzwPR47Ndv22uQR3ot85KffQX1fnxIjd7fVcEQHroTZxzLjqOMzQ5ru49yQ2mz5y09kTJjSkJlnDGUKE_MG7wkrI-fcC2tlT-mpZcMXG-v12UPFXvLhUykYt7rw7rf-Z41atKMgzUzsBVqhaeXGkAppufvcM_47hEgbd-uKmDIKZPm27Qj_o4g6RY2LViNQpDjZpTW-7wap2P1-nARYiwju1XRHYtA18VCau3w0Bcxem1Z"/></div>
+<div class="w-64 h-64 rounded-lg overflow-hidden shrink-0"><img alt="" data-alt="Sizzling grilled salmon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAUCUoebDb1BjNmq0OFr-FVkz20UmdqEWZSAGQKLKLEOS1UgLJu3fP7Ja0yNrcVTVMd8fLe0HBfY4TB5IC1u8gKJXBuzxU7h9qm-jHqHAUYCRumMuzNXauDBJGKGdLsxRY8lZJ_BxljjAkJlngy36c52Dl-eCltP7RDoZCc4lYyMlNib-5wBFeLxAPu6KomZZJRmMHpAlgfb2vwzDWUf936Fiyu0G-UsRv-K2SHhI4MR_pcvDA1fz9PldUztKW0dtvHreleaqtLmHR"/></div>
+<div class="w-64 h-64 rounded-lg overflow-hidden shrink-0"><img alt="" data-alt="Chef plating a dish" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnddC2qelU9iqV1NhCXbuisxQM9xRbhxFRL_1LUXXOx3WSyMBNxceRRKFdniih_mKc8-skDmZdVzT8s133UgxfLRJsGv0uoGdtJLHn3qao3hrMsV0jH2fVfqP0uYQe0-1_RHSJbp-l9XFA7AXdsFzWUzWRWJmcpK3g4rnif6wjtLT5sle3dIwGXgIkNIVxFJGXLhIXN5CwrXw_Dw-y728eMqjwzXazikLZqc8pFQiIbxggWbIQ8bqZ9Bp9tCzkKbT01PK0lKETsIDv"/></div>
+<div class="w-64 h-64 rounded-lg overflow-hidden shrink-0"><img alt="" data-alt="Multiple meal boxes arranged aesthetically" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuJ6cGZBkcLaqeCO4GP9-uZIRMVc17JMhaDrE7f9uL5p5Ltex2xi6gAfC45Da_KyiaffRZXQ_AYFB28DNDKRtqW_zpDR6jsd8GE6Bm2ydVBkwpb_W5ChI09oP631MCW_5Ug0B7-YMIyy7qGCwObvViyAeQNZMjEpBuhqPr_3DfxGnTxuLZzte0C4BOBucCbEVakBx4T8uJwQsRw2rT77f9mNu82YQzmIRNTio6xEF4_HaRMKHOUrTAKUARbgAlPN_LV76aoGIdpLku"/></div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#8c4b50] dark:bg-slate-950 w-full py-16 px-8 text-white">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 w-full max-w-7xl mx-auto">
+<div class="space-y-6">
+<div class="text-xl font-extrabold text-white tracking-widest uppercase font-headline">HEALTHY MINDS</div>
+<p class="font-body text-sm leading-relaxed text-white/70">Elevating the meal delivery experience to a form of art. Nourish your body with curated editorial culinary selections.</p>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg mb-6 uppercase tracking-tight">Discover</h4>
+<ul class="space-y-4 font-body text-sm text-white/70">
+<li><a class="hover:text-white transition-opacity" href="#">About Us</a></li>
+<li><a class="hover:text-white transition-opacity underline underline-offset-4 font-semibold text-white" href="#">Menu</a></li>
+<li><a class="hover:text-white transition-opacity" href="#">Features</a></li>
+<li><a class="hover:text-white transition-opacity" href="#">Community</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg mb-6 uppercase tracking-tight">Legal</h4>
+<ul class="space-y-4 font-body text-sm text-white/70">
+<li><a class="hover:text-white transition-opacity" href="#">Privacy</a></li>
+<li><a class="hover:text-white transition-opacity" href="#">Terms</a></li>
+<li><a class="hover:text-white transition-opacity" href="#">Language</a></li>
+<li><a class="hover:text-white transition-opacity" href="#">Contact</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline font-bold text-lg mb-6 uppercase tracking-tight">Join the Harvest</h4>
+<form class="flex gap-2">
+<input class="bg-white/10 border-none rounded-lg text-sm w-full focus:ring-1 focus:ring-white/30 placeholder-white/40" placeholder="Email address" type="email"/>
+<button class="bg-white text-[#8c4b50] px-4 rounded-lg font-bold">Go</button>
+</form>
+<div class="mt-8 flex gap-4">
+<span class="material-symbols-outlined cursor-pointer hover:opacity-70" data-icon="facebook">social_leaderboard</span>
+<span class="material-symbols-outlined cursor-pointer hover:opacity-70" data-icon="instagram">retweet</span>
+<span class="material-symbols-outlined cursor-pointer hover:opacity-70" data-icon="twitter">retweet</span>
+</div>
+</div>
+</div>
+<div class="mt-16 pt-8 border-t border-white/10 text-center text-xs text-white/40 font-body">
+            © 2024 Healthy Minds. Designed for the Editorial Harvest.
+        </div>
+</footer>
+</body></html>

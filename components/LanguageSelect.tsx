@@ -12,7 +12,7 @@ import {
 } from '@/lib/googleTranslateShared';
 
 const selectStyles =
-  'w-full appearance-none cursor-pointer rounded-[12px] border border-gray-200 bg-white px-4 py-2.5 pr-9 text-left text-[13px] font-medium text-[#3D4450] shadow-none outline-none transition-colors hover:border-[#249B60]/40 hover:bg-gray-50 focus:border-[#249B60] focus:ring-2 focus:ring-[#249B60]/20';
+  'w-full appearance-none cursor-pointer rounded-[12px] border border-border-subtle bg-surface px-4 py-2.5 pr-9 text-left text-[13px] font-medium text-foreground shadow-none outline-none transition-colors hover:border-primary/35 hover:bg-bg-light focus:border-primary focus:ring-2 focus:ring-primary/25';
 
 type LanguageSelectProps = {
   /** Unique id for accessibility (multiple selects on the page). */

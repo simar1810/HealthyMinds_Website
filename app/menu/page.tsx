@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { FilterBar } from "../../components/menu/FilterBar";
 import { MenuCard } from "../../components/menu/MenuCard";
+import { EditorialPageHeader } from "@/components/layout/EditorialPageHeader";
 import { fallbackMenuItems, type MenuItem } from "./data";
 import { api } from "@/lib/api";
 import { menuItemMatchesFilter } from "@/lib/menuFilterMatch";
@@ -87,32 +88,22 @@ export default function MenuPage() {
   }, [activeFilter, menuItems]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <main className="mx-auto max-w-[1440px] px-4 pb-16 pt-28 sm:px-6 sm:pb-24 sm:pt-32 lg:px-12">
-        <div className="mb-8 flex flex-col justify-between md:flex-row md:items-end">
-          <div>
-            <div className="mb-6 inline-flex items-center rounded-full bg-primary/10 px-3 py-1.5 text-sm font-semibold text-primary">
-              <span className="mr-2">📅</span>
-              This week&apos;s menu
-            </div>
-            <h1 className="font-heading mb-3 text-4xl font-semibold tracking-tight md:text-5xl">
-              Check out this week&apos;s menu
-            </h1>
-            <p className="text-lg text-secondary-text">
-              Here&apos;s a taste of what&apos;s included when you subscribe
-            </p>
-          </div>
-          <div className="mt-8 md:mt-0">
-            <Link
-              href="/plans"
-              className="inline-flex rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover"
-            >
-              Order now
-            </Link>
-          </div>
-        </div>
+    <div className="min-h-screen bg-hm-surface text-hm-on-surface">
+      <EditorialPageHeader
+        eyebrow="The menu"
+        title={<>This week&apos;s picks</>}
+        description="Here&apos;s a taste of what&apos;s included when you subscribe—same kitchen, rotating plates."
+        actions={
+          <Link
+            href="/plans"
+            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-sm font-bold text-white shadow-lg transition hover:brightness-105"
+          >
+            Order now
+          </Link>
+        }
+      />
 
-        {/* Filter Bar */}
+      <main className="mx-auto max-w-7xl px-6 pb-20 pt-4 sm:px-8">
         <FilterBar activeFilter={activeFilter} onFilterChange={setActiveFilter} />
 
         {/* Menu Grid */}
@@ -120,9 +111,9 @@ export default function MenuPage() {
           <div className="mt-8 grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="flex flex-col animate-pulse">
-                <div className="mb-4 aspect-square w-full rounded-[2rem] bg-bg-light" />
-                <div className="mx-2 mb-2 h-4 w-3/4 rounded bg-bg-light" />
-                <div className="mx-2 h-3 w-1/2 rounded bg-bg-light" />
+                <div className="mb-4 aspect-square w-full rounded-xl bg-hm-surface-container" />
+                <div className="mx-2 mb-2 h-4 w-[75%] rounded bg-hm-surface-container-high" />
+                <div className="mx-2 h-3 w-[50%] rounded bg-hm-surface-container" />
               </div>
             ))}
           </div>
@@ -136,9 +127,7 @@ export default function MenuPage() {
 
         {!loading && filteredItems.length === 0 && (
           <div className="py-20 text-center">
-            <p className="text-lg font-medium text-secondary-text">
-              No dishes found for this filter.
-            </p>
+            <p className="text-lg font-medium text-slate-600">No dishes found for this filter.</p>
           </div>
         )}
       </main>

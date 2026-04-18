@@ -12,8 +12,8 @@ export default function VerifyPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-background pt-28">
-          <div className="mx-auto h-10 max-w-[440px] animate-pulse rounded-2xl bg-bg-light" />
+        <div className="min-h-screen bg-hm-surface pt-28">
+          <div className="mx-auto h-10 max-w-[440px] animate-pulse rounded-2xl bg-hm-surface-container" />
         </div>
       }
     >

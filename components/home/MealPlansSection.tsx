@@ -1,9 +1,8 @@
 "use client";
+
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "../Button";
 import { api } from "@/lib/api";
 import { useTenant } from "@/contexts/TenantContext";
 import { formatMajorUnits } from "@/lib/formatCurrency";
@@ -12,6 +11,14 @@ import {
   type CarouselPlanCard,
   templateToCard,
 } from "@/lib/mealPlanTemplateDisplay";
+
+function macroCell(label: string): string {
+  const g = label.match(/(\d+)\s*g/i);
+  if (g) return `${g[1]}g`;
+  const pct = label.match(/(\d+)\s*%/);
+  if (pct) return `${pct[1]}%`;
+  return "—";
+}
 
 export const MealPlansSection = () => {
   const router = useRouter();
@@ -43,166 +50,164 @@ export const MealPlansSection = () => {
 
   const scroll = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
-      const scrollAmount = direction === "left" ? -360 : 360;
+      const scrollAmount = direction === "left" ? -380 : 380;
       scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
 
   return (
-    <section className="py-24 bg-white overflow-hidden w-full">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 w-full mb-10 lg:mb-12">
-        <h2 className="text-[36px] md:text-[44px] font-extrabold text-[#2F3337] mb-2 tracking-tight">
-          Find your perfect meal plan
+    <section className="mx-auto max-w-7xl scroll-mt-28 px-6 py-24">
+      <div className="mb-12 flex flex-col items-end justify-between gap-6 sm:flex-row sm:items-center">
+        <h2 className="font-heading text-center text-4xl font-black uppercase tracking-tighter text-hm-on-surface sm:text-left md:text-5xl">
+          Lock the Plan. Love the Plates.
         </h2>
-        <p className="text-[#878E99] font-bold text-[15px] mb-8">
-          Starting at{" "}
-          {formatMajorUnits(2.5, currency, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
-          /meal and{" "}
-          {formatMajorUnits(1.5, currency, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
-          /breakfast
-        </p>
-
-        <div className="flex justify-between items-center w-full">
-          <Button
+        <div className="hidden gap-2 sm:flex">
+          <button
             type="button"
-            onClick={() => router.push("/plans")}
-            className="bg-[#249B60] hover:bg-[#1E8351] text-white px-8 rounded-full h-[46px] text-[15px] shadow-sm font-bold border-none"
+            onClick={() => scroll("left")}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-hm-outline-variant/40 bg-white text-hm-primary transition hover:bg-hm-surface-low"
+            aria-label="Scroll left"
           >
-            See plans
-          </Button>
-
-          <div className="flex gap-3 hidden md:flex">
-            <button
-              onClick={() => scroll("left")}
-              className="w-[44px] h-[44px] rounded-full bg-[#EFF8F3] hover:bg-[#DDF0E6] flex items-center justify-center text-[#249B60] transition-colors"
-              aria-label="Scroll left"
-              type="button"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path
+                d="m15 18-6-6 6-6"
                 stroke="currentColor"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-              >
-                <path d="m15 18-6-6 6-6" />
-              </svg>
-            </button>
-            <button
-              onClick={() => scroll("right")}
-              className="w-[44px] h-[44px] rounded-full bg-[#EFF8F3] hover:bg-[#DDF0E6] flex items-center justify-center text-[#249B60] transition-colors"
-              aria-label="Scroll right"
-              type="button"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => scroll("right")}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-hm-outline-variant/40 bg-white text-hm-primary transition hover:bg-hm-surface-low"
+            aria-label="Scroll right"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path
+                d="m9 18 6-6-6-6"
                 stroke="currentColor"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-              >
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </button>
-          </div>
+              />
+            </svg>
+          </button>
         </div>
       </div>
 
-      <div className="w-full">
-        <style>{`
-                    .no-scrollbar::-webkit-scrollbar {
-                        display: none;
-                    }
-                    .no-scrollbar {
-                        -ms-overflow-style: none;
-                        scrollbar-width: none;
-                    }
-                `}</style>
-        {loading ? (
-          <div className="flex gap-[18px] md:gap-[24px] overflow-hidden pl-4 sm:pl-6 lg:pl-12 pr-4">
-            {Array.from({ length: 4 }).map((_, i) => (
+      <p className="mb-10 text-center text-sm text-slate-600 sm:text-left">
+        From{" "}
+        {formatMajorUnits(2.5, currency, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+        /meal — explore every template and subscribe when you are ready.
+      </p>
+
+      {loading ? (
+        <div className="flex gap-8 overflow-x-auto pb-4 hide-scrollbar">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="min-h-[420px] min-w-[380px] shrink-0 animate-pulse rounded-xl border border-hm-outline-variant/30 bg-white"
+            />
+          ))}
+        </div>
+      ) : !hasPlans ? (
+        <p className="py-8 text-center text-slate-600">No meal plan templates yet.</p>
+      ) : (
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-8 overflow-x-auto pb-12 hide-scrollbar"
+        >
+          {plans.map((plan, index) => {
+            const pg = macroCell(plan.labels.p);
+            const cg = macroCell(plan.labels.c);
+            const fg = macroCell(plan.labels.f);
+            const featured = plans.length >= 2 && index === 1;
+            return (
               <div
-                key={i}
-                className="min-w-[280px] md:min-w-[320px] lg:min-w-[340px] h-[360px] rounded-[28px] bg-[#E5E7EB] animate-pulse shrink-0"
-              />
-            ))}
-          </div>
-        ) : !hasPlans ? (
-          <p className="text-center text-[15px] text-[#878E99] font-medium px-6 pb-8">
-            No meal plan templates yet.
-          </p>
-        ) : (
-          <div
-            ref={scrollContainerRef}
-            className="flex gap-[18px] md:gap-[24px] overflow-x-auto no-scrollbar pb-8 snap-x pl-4 sm:pl-6 lg:pl-12 2xl:pl-[calc((100vw-1400px)/2+48px)] pr-4 sm:pr-6 lg:pr-12"
-          >
-            {plans.map((plan) => (
-              <Link
                 key={plan.id}
-                href={`/meal-plans/${plan.id}`}
-                className="min-w-[280px] md:min-w-[320px] lg:min-w-[340px] snap-start relative rounded-[28px] overflow-hidden aspect-[4/4.5] md:aspect-[4/5] bg-[#F7F7F8] flex-shrink-0 group cursor-pointer shadow-sm block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#249B60] focus-visible:ring-offset-2"
+                className={`flex min-h-[420px] min-w-[380px] shrink-0 flex-col rounded-xl p-8 shadow-sm ${
+                  featured
+                    ? "relative overflow-hidden bg-gradient-to-br from-hm-primary to-hm-primary-mid text-white shadow-xl"
+                    : "border border-hm-outline-variant/20 bg-white"
+                }`}
               >
-                {plan.image ? (
-                  <Image
-                    src={plan.image}
-                    alt={plan.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 340px"
+                {featured ? (
+                  <div
+                    className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-white/10 blur-3xl"
+                    aria-hidden
                   />
-                ) : (
-                  <div className="absolute inset-0 bg-[#ECEFF1]" aria-hidden />
-                )}
-
-                <div className="absolute inset-x-3 bottom-3 md:inset-x-4 md:bottom-4 bg-white/95 backdrop-blur-sm rounded-[24px] p-[14px] md:p-4 flex items-center shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
-                  <div className="w-[38px] h-[38px] md:w-[44px] md:h-[44px] shrink-0 bg-[#F7F7F8] rounded-full flex items-center justify-center text-[20px] md:text-[22px] shadow-sm mr-3 md:mr-4 border border-gray-100/50">
-                    {plan.icon}
-                  </div>
-                  <div className="flex-1 w-full overflow-hidden">
-                    <h3 className="text-[#2F3337] font-extrabold text-[13px] md:text-[14px] mb-[6px] truncate">
-                      {plan.title}
-                    </h3>
-
-                    <div className="flex w-full h-[5px] rounded-full overflow-hidden mb-[6px] gap-[2px] bg-gray-100">
-                      <div style={{ width: `${plan.macros.protein}%` }} className="h-full bg-[#8b5cf6]" />
-                      <div style={{ width: `${plan.macros.carbs}%` }} className="h-full bg-[#f59e0b]" />
-                      <div style={{ width: `${plan.macros.fat}%` }} className="h-full bg-[#60a5fa]" />
-                    </div>
-
+                ) : null}
+                <h3
+                  className={`font-heading text-3xl font-extrabold uppercase ${featured ? "relative" : ""}`}
+                >
+                  {plan.title}
+                </h3>
+                <p
+                  className={`relative mb-8 mt-2 text-sm ${featured ? "text-white/80" : "text-slate-500"}`}
+                >
+                  Chef-crafted rotation with macros tuned to this plan.
+                </p>
+                <div className="relative mb-8 grid grid-cols-3 gap-4">
+                  {[
+                    { v: pg, k: "PRO", highlight: true },
+                    { v: cg, k: "CARB", highlight: false },
+                    { v: fg, k: "FAT", highlight: false },
+                  ].map((cell) => (
                     <div
-                      className={`flex w-full text-[8.5px] md:text-[9.5px] font-bold text-[#878E99] ${
-                        plan.labels.p === "—" ? "justify-center" : "justify-between"
+                      key={cell.k}
+                      className={`rounded-lg p-3 text-center ${
+                        featured ? "bg-white/10" : "bg-hm-surface-low"
                       }`}
                     >
-                      {plan.labels.p === "—" ? (
-                        <span className="text-[9px]">Macros on request</span>
-                      ) : (
-                        <>
-                          <span className={plan.useGramLabels ? "truncate min-w-0 mr-0.5" : ""}>
-                            {plan.labels.p}
-                          </span>
-                          <span className={plan.useGramLabels ? "truncate min-w-0 mx-0.5 text-center" : ""}>
-                            {plan.labels.c}
-                          </span>
-                          <span className={plan.useGramLabels ? "truncate min-w-0 ml-0.5 text-right" : ""}>
-                            {plan.labels.f}
-                          </span>
-                        </>
-                      )}
+                      <p
+                        className={`text-lg font-bold ${
+                          featured
+                            ? "text-white"
+                            : cell.highlight
+                              ? "text-hm-primary"
+                              : "text-hm-on-surface"
+                        }`}
+                      >
+                        {cell.v}
+                      </p>
+                      <p
+                        className={`text-[10px] font-bold uppercase tracking-widest ${
+                          featured ? "text-white/80" : "text-slate-500"
+                        }`}
+                      >
+                        {cell.k}
+                      </p>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+                <div className="mt-auto flex flex-col gap-3">
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/meal-plans/${plan.id}`)}
+                    className={`w-full rounded-xl py-4 text-sm font-bold uppercase tracking-widest transition ${
+                      featured
+                        ? "bg-white text-hm-primary hover:bg-slate-100"
+                        : "border-2 border-hm-primary text-hm-primary hover:bg-hm-primary hover:text-white"
+                    }`}
+                  >
+                    Select {plan.title}
+                  </button>
+                  <Link
+                    href="/plans"
+                    className={`text-center text-xs font-semibold underline-offset-4 hover:underline ${
+                      featured ? "text-white/90" : "text-hm-primary"
+                    }`}
+                  >
+                    Compare on plans page
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 };

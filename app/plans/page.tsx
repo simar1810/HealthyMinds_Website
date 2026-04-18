@@ -85,7 +85,7 @@ const FALLBACK_CYCLES: Cycle[] = [
   { id: "28", title: "4 weeks", subtext: "Per 4 weeks", priceDisplay: "/month", save: null, amount: 0 },
 ];
 
-const PLANS_SUB_BANNER_DISMISSED_KEY = "nutrichef_plans_sub_banner_dismissed";
+const PLANS_SUB_BANNER_DISMISSED_KEY = "healthy_minds_plans_sub_banner_dismissed";
 
 interface SubscriptionTemplateRef {
   _id: string;
@@ -370,8 +370,8 @@ export default function PlansPage() {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-hm-surface">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-hm-primary border-t-transparent" />
       </div>
     );
   }
@@ -385,18 +385,18 @@ export default function PlansPage() {
     isActiveSubscriptionStatus(activeSubscription.status);
 
   return (
-    <div className="min-h-screen w-full bg-background pb-24 pt-28 sm:pt-32">
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
+    <div className="min-h-screen w-full bg-hm-surface pb-24 pt-28 text-hm-on-surface sm:pt-32">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         {showSubscriptionBanner ? (
           <div
-            className="relative mb-8 flex flex-col gap-4 rounded-2xl border-2 border-primary/30 bg-primary/10 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5"
+            className="relative mb-8 flex flex-col gap-4 rounded-2xl border border-hm-primary/25 bg-white px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5"
             role="status"
             aria-live="polite"
           >
             <button
               type="button"
               onClick={dismissSubscriptionBanner}
-              className="absolute right-3 top-3 rounded-lg p-1.5 text-secondary-text transition hover:bg-background/80 hover:text-foreground"
+              className="absolute right-3 top-3 rounded-lg p-1.5 text-slate-500 transition hover:bg-hm-surface-low hover:text-hm-on-surface"
               aria-label="Dismiss subscription notice"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -404,7 +404,7 @@ export default function PlansPage() {
               </svg>
             </button>
             <div className="pr-10 sm:pr-0">
-              <p className="font-heading text-base font-semibold text-foreground sm:text-lg">
+              <p className="font-heading text-base font-bold text-hm-on-surface sm:text-lg">
                 {subscribedPlanTitle
                   ? `You're subscribed to ${subscribedPlanTitle}.`
                   : "You have an active meal plan subscription."}
@@ -413,7 +413,7 @@ export default function PlansPage() {
               activeSubscription.amount > 0 &&
               typeof activeSubscription.currency === "string" &&
               activeSubscription.currency.trim() ? (
-                <p className="mt-1.5 text-sm font-medium text-secondary-text">
+                <p className="mt-1.5 text-sm font-medium text-slate-600">
                   Current plan billing:{" "}
                   {formatMinorUnits(activeSubscription.amount, activeSubscription.currency)}
                 </p>
@@ -423,14 +423,14 @@ export default function PlansPage() {
               {subscribedTemplateId ? (
                 <Link
                   href={`/meal-plans/${subscribedTemplateId}`}
-                  className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-hover"
+                  className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-6 py-2.5 text-sm font-bold text-white shadow-md transition hover:brightness-105"
                 >
                   View your meal plan
                 </Link>
               ) : (
                 <Link
                   href="/"
-                  className="inline-flex items-center justify-center rounded-full border border-border-subtle bg-background px-6 py-2.5 text-sm font-semibold text-foreground transition hover:bg-bg-light"
+                  className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-sm font-bold text-hm-on-surface transition hover:bg-hm-surface-low"
                 >
                   Browse meal plans
                 </Link>
@@ -440,12 +440,16 @@ export default function PlansPage() {
         ) : null}
 
         {/* Header */}
-        <div className="mb-14">
-          <h1 className="font-heading text-[34px] font-semibold leading-[1.05] tracking-tight text-foreground md:text-[44px]">
-            Customize Your
+        <div className="mb-12 rounded-2xl border border-slate-200/90 bg-white px-6 py-10 shadow-sm md:mb-14 md:px-10 md:py-12">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-hm-primary">Plans</p>
+          <h1 className="font-heading mt-3 text-4xl font-black uppercase leading-[0.95] tracking-tighter text-hm-on-surface md:text-5xl">
+            Customize your
             <br />
-            Perfect Meal Plan
+            perfect meal plan
           </h1>
+          <p className="mt-4 max-w-2xl text-base text-slate-600 md:text-lg">
+            Pick a style, set your rhythm, and subscribe when you&apos;re ready.
+          </p>
         </div>
 
         {/* Two Column Layout */}
@@ -454,7 +458,7 @@ export default function PlansPage() {
           <div className="flex-1 flex flex-col gap-14">
             {/* Section 1: Plan Preferences */}
             <section>
-              <h2 className="font-heading mb-6 text-[26px] font-semibold tracking-tight text-foreground">
+              <h2 className="font-heading mb-6 text-2xl font-bold uppercase tracking-tight text-hm-on-surface md:text-[26px]">
                 What kind of meals do you prefer?
               </h2>
               {loading ? (
@@ -462,7 +466,7 @@ export default function PlansPage() {
                   {Array.from({ length: 4 }).map((_, i) => (
                     <div
                       key={i}
-                      className="min-h-[170px] animate-pulse rounded-[24px] border-2 border-border-subtle bg-bg-light p-[22px]"
+                      className="min-h-[170px] animate-pulse rounded-[24px] border-2 border-slate-200/90 bg-hm-surface-low p-[22px]"
                     />
                   ))}
                 </div>
@@ -474,18 +478,18 @@ export default function PlansPage() {
                       <div
                         key={plan.id}
                         onClick={() => setSelectedPlan(plan.id)}
-                        className={`relative flex min-h-[170px] cursor-pointer flex-col justify-between rounded-[24px] border-2 p-[22px] transition-all ${
+                        className={`relative flex min-h-[170px] cursor-pointer flex-col justify-between rounded-2xl border-2 p-[22px] transition-all ${
                           isActive
-                            ? "border-primary bg-primary/10 shadow-sm"
-                            : "border-border-subtle bg-surface shadow-sm hover:border-foreground/15"
+                            ? "border-hm-primary bg-red-50/80 shadow-md"
+                            : "border-slate-200/90 bg-white shadow-sm hover:border-hm-primary/25"
                         }`}
                       >
                         <div className="flex justify-between items-start mb-6">
                           <div className="pr-4">
-                            <h3 className="mb-1.5 text-[17px] font-semibold text-foreground">
+                            <h3 className="mb-1.5 text-[17px] font-bold text-hm-on-surface">
                               {plan.title}
                             </h3>
-                            <p className="pr-1 text-[13px] font-medium leading-[1.4] text-secondary-text">
+                            <p className="pr-1 text-[13px] font-medium leading-[1.4] text-slate-600">
                               {plan.desc}
                             </p>
                           </div>
@@ -540,10 +544,10 @@ export default function PlansPage() {
 
             {/* Section 2: Meal Count */}
             <section>
-              <h2 className="font-heading mb-2 text-[26px] font-semibold tracking-tight text-foreground">
+              <h2 className="font-heading mb-2 text-[26px] font-semibold tracking-tight text-hm-on-surface">
                 How many meals per day?
               </h2>
-              <p className="mb-6 text-[14px] font-medium text-secondary-text">
+              <p className="mb-6 text-[14px] font-medium text-slate-600">
                 Select a minimum of 2 meals, including lunch or dinner.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-[18px]">
@@ -556,10 +560,10 @@ export default function PlansPage() {
                       className={`flex cursor-pointer items-center justify-between rounded-[16px] border-2 px-5 py-[18px] transition-colors ${
                         isActive
                           ? "border-primary bg-primary/10"
-                          : "border-border-subtle bg-surface shadow-sm hover:border-foreground/15"
+                          : "border-slate-200/90 bg-white shadow-sm hover:border-slate-300"
                       }`}
                     >
-                      <span className="text-[15px] font-semibold text-foreground">
+                      <span className="text-[15px] font-semibold text-hm-on-surface">
                         {meal}
                       </span>
                       {isActive ? (
@@ -577,7 +581,7 @@ export default function PlansPage() {
                           </svg>
                         </div>
                       ) : (
-                        <div className="h-6 w-6 flex-shrink-0 rounded-full border-2 border-border-subtle bg-surface" />
+                        <div className="h-6 w-6 flex-shrink-0 rounded-full border-2 border-slate-200/90 bg-white" />
                       )}
                     </div>
                   );
@@ -587,12 +591,12 @@ export default function PlansPage() {
 
             {/* Section 3: Days a Week */}
             <section>
-              <h2 className="font-heading mb-2 text-[26px] font-semibold tracking-tight text-foreground">
+              <h2 className="font-heading mb-2 text-[26px] font-semibold tracking-tight text-hm-on-surface">
                 How many days a week are you eating
                 <br />
-                Nutrichef?
+                Healthy Minds?
               </h2>
-              <p className="mb-8 text-[14px] font-medium text-secondary-text">
+              <p className="mb-8 text-[14px] font-medium text-slate-600">
                 Select a minimum of 5 days
               </p>
               <div className="-mx-1 px-1 overflow-x-auto pb-1 [scrollbar-width:thin]">
@@ -607,7 +611,7 @@ export default function PlansPage() {
                         className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[14px] font-semibold transition-all duration-200 sm:h-[46px] sm:w-[46px] sm:text-[15px] ${
                           isActive
                             ? "bg-primary text-white shadow-sm"
-                            : "bg-bg-light text-secondary-text hover:bg-foreground/10"
+                            : "bg-hm-surface-low text-slate-600 hover:bg-slate-200/50"
                         }`}
                       >
                         {day}
@@ -620,7 +624,7 @@ export default function PlansPage() {
 
             {/* Section 4: Plan duration (API tiers: 7 / 14 / 28 days) */}
             <section>
-              <h2 className="font-heading mb-[26px] text-[26px] font-semibold tracking-tight text-foreground">
+              <h2 className="font-heading mb-[26px] text-[26px] font-semibold tracking-tight text-hm-on-surface">
                 Plan duration
               </h2>
               {unsupportedDurationTiers ? (
@@ -643,12 +647,12 @@ export default function PlansPage() {
                       className={`flex cursor-pointer items-center justify-between rounded-[16px] border-2 px-6 py-5 transition-colors ${
                         isActive
                           ? "border-primary bg-primary/10"
-                          : "border-border-subtle bg-surface shadow-sm hover:border-foreground/15"
+                          : "border-slate-200/90 bg-white shadow-sm hover:border-slate-300"
                       }`}
                     >
                       <div className="flex flex-col">
                         <div className="flex items-center gap-[12px] mb-1.5">
-                          <span className="text-[15px] font-semibold text-foreground">
+                          <span className="text-[15px] font-semibold text-hm-on-surface">
                             {cycle.title}
                           </span>
                           {cycle.save && (
@@ -657,12 +661,12 @@ export default function PlansPage() {
                             </span>
                           )}
                         </div>
-                        <span className="text-[12px] font-semibold tracking-tight text-secondary-text">
+                        <span className="text-[12px] font-semibold tracking-tight text-slate-600">
                           {cycle.subtext}
                         </span>
                       </div>
                       <div className="flex items-center gap-[14px]">
-                        <span className="text-[13px] font-semibold text-foreground">
+                        <span className="text-[13px] font-semibold text-hm-on-surface">
                           {cycle.priceDisplay}
                         </span>
                         {isActive ? (
@@ -670,7 +674,7 @@ export default function PlansPage() {
                             <div className="h-full w-full rounded-full bg-primary" />
                           </div>
                         ) : (
-                          <div className="h-[22px] w-[22px] flex-shrink-0 rounded-full border-2 border-border-subtle bg-surface" />
+                          <div className="h-[22px] w-[22px] flex-shrink-0 rounded-full border-2 border-slate-200/90 bg-white" />
                         )}
                       </div>
                     </div>
@@ -685,20 +689,20 @@ export default function PlansPage() {
           {/* Right Column (Sticky Sidebar) */}
           <div className="w-full lg:w-[360px] shrink-0">
             <div className="sticky top-28 w-full lg:top-32">
-              <div className="mb-6 rounded-[32px] border border-border-subtle bg-bg-light p-7 shadow-[0px_4px_24px_rgba(27,48,34,0.06)]">
+              <div className="mb-6 rounded-[32px] border border-slate-200/90 bg-hm-surface-low p-7 shadow-[0px_4px_24px_rgba(27,48,34,0.06)]">
                 <div className="mb-8 flex items-start justify-between">
                   <div className="flex-1 pr-[18px]">
-                    <h3 className="font-heading mb-[14px] text-[20px] font-semibold tracking-tight text-foreground">
+                    <h3 className="font-heading mb-[14px] text-[20px] font-semibold tracking-tight text-hm-on-surface">
                       Your package, your way
                     </h3>
-                    <p className="text-[13.5px] font-semibold leading-[1.6] text-secondary-text">
+                    <p className="text-[13.5px] font-semibold leading-[1.6] text-slate-600">
                       {getSelectedPlanTitle()},{" "}
                       {selectedMeals.length} Meal
                       {selectedMeals.length !== 1 ? "s" : ""},{" "}
                       {selectedDays.length} days per week
                     </p>
                   </div>
-                  <div className="relative flex h-[64px] w-[64px] shrink-0 items-center justify-center rounded-[16px] bg-surface font-black shadow-sm">
+                  <div className="relative flex h-[64px] w-[64px] shrink-0 items-center justify-center rounded-[16px] bg-white font-black shadow-sm">
                     <span className="text-[36px]">🛍️</span>
                   </div>
                 </div>
@@ -708,7 +712,7 @@ export default function PlansPage() {
                   <div className="flex-1 relative">
                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                       <svg
-                        className="h-[18px] w-[18px] rotate-90 text-secondary-text"
+                        className="h-[18px] w-[18px] rotate-90 text-slate-600"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -725,28 +729,28 @@ export default function PlansPage() {
                     <input
                       type="text"
                       placeholder="Add promotion code"
-                      className="w-full rounded-[14px] border border-border-subtle bg-surface py-[15px] pl-[38px] pr-4 text-[13px] font-semibold text-foreground placeholder:text-secondary-text/70 transition-shadow focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full rounded-[14px] border border-slate-200/90 bg-white py-[15px] pl-[38px] pr-4 text-[13px] font-semibold text-hm-on-surface placeholder:text-slate-600/70 transition-shadow focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <button
                     type="button"
-                    className="rounded-[14px] bg-bg-light px-6 py-[15px] text-[13px] font-semibold tracking-tight text-secondary-text transition-colors hover:bg-foreground/10"
+                    className="rounded-[14px] bg-hm-surface-low px-6 py-[15px] text-[13px] font-semibold tracking-tight text-slate-600 transition-colors hover:bg-slate-200/50"
                   >
                     Apply
                   </button>
                 </div>
 
                 {/* Subscription Coupon */}
-                <div className="mb-10 flex items-center justify-between rounded-[14px] border border-dashed border-border-subtle bg-surface p-4">
+                <div className="mb-10 flex items-center justify-between rounded-[14px] border border-dashed border-slate-200/90 bg-white p-4">
                   <div className="flex items-center gap-3.5">
                     <div className="mt-1 -rotate-12 transform rounded-sm bg-primary px-[6px] py-[1.5px] text-[8px] font-black italic text-white">
                       🎟️
                     </div>
                     <div className="flex flex-col">
-                      <span className="mb-0.5 text-[12.5px] font-semibold leading-[1.3] text-foreground">
+                      <span className="mb-0.5 text-[12.5px] font-semibold leading-[1.3] text-hm-on-surface">
                         10% off subscription
                       </span>
-                      <span className="text-[11px] font-semibold tracking-tight text-secondary-text">
+                      <span className="text-[11px] font-semibold tracking-tight text-slate-600">
                         with 6+ days/week on your package.
                       </span>
                     </div>
@@ -758,32 +762,32 @@ export default function PlansPage() {
 
                 {/* Payment Summary */}
                 <div className="flex flex-col gap-[14px] mb-[28px]">
-                  <h4 className="mb-1 text-[14px] font-semibold tracking-tight text-foreground">
+                  <h4 className="mb-1 text-[14px] font-semibold tracking-tight text-hm-on-surface">
                     Payment summary
                   </h4>
                   <div className="flex items-center justify-between">
-                    <span className="text-[13px] font-semibold tracking-tight text-secondary-text">
+                    <span className="text-[13px] font-semibold tracking-tight text-slate-600">
                       Plan price
                     </span>
-                    <span className="text-[13px] font-semibold text-foreground">
+                    <span className="text-[13px] font-semibold text-hm-on-surface">
                       {getCurrentCycle()
                         ? formatMinorUnits(getCurrentCycle()!.amount, currency)
                         : "--"}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between border-b border-border-subtle pb-[18px]">
-                    <span className="text-[13px] font-semibold tracking-tight text-secondary-text">
+                  <div className="flex items-center justify-between border-b border-slate-200/90 pb-[18px]">
+                    <span className="text-[13px] font-semibold tracking-tight text-slate-600">
                       Delivery fee
                     </span>
-                    <span className="text-[13px] font-semibold text-foreground">
+                    <span className="text-[13px] font-semibold text-hm-on-surface">
                       {formatMinorUnits(0, currency)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between pt-2">
-                    <span className="font-heading text-[16px] font-semibold tracking-tight text-foreground">
+                    <span className="font-heading text-[16px] font-semibold tracking-tight text-hm-on-surface">
                       Total
                     </span>
-                    <span className="font-heading text-[16px] font-semibold tracking-tight text-foreground">
+                    <span className="font-heading text-[16px] font-semibold tracking-tight text-hm-on-surface">
                       {getCurrentCycle()
                         ? formatMinorUnits(getCurrentCycle()!.amount, currency)
                         : "--"}

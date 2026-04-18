@@ -54,7 +54,7 @@ function isCheckoutPaidAndComplete(session: SessionData): boolean {
 function LoadingSpinner() {
   return (
     <div
-      className="h-10 w-10 animate-spin rounded-full border-2 border-primary border-t-transparent"
+      className="h-10 w-10 animate-spin rounded-full border-2 border-hm-primary border-t-transparent"
       aria-hidden
     />
   );
@@ -64,7 +64,7 @@ export default function PaymentSuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-background pt-24">
+        <div className="flex min-h-screen items-center justify-center bg-hm-surface pt-24">
           <LoadingSpinner />
         </div>
       }
@@ -206,7 +206,7 @@ function PaymentSuccessContent() {
         {loading ? (
           <div className="flex flex-col items-center gap-4 py-4">
             <LoadingSpinner />
-            <p className="text-sm font-medium text-secondary-text">
+            <p className="text-sm font-medium text-slate-600">
               {loadingStep === "verify" ? "Verifying your payment..." : "Activating your meal plan..."}
             </p>
           </div>
@@ -228,13 +228,13 @@ function PaymentSuccessContent() {
                 <line x1="9" y1="9" x2="15" y2="15" />
               </svg>
             </div>
-            <h1 className="font-heading mb-3 text-2xl font-semibold text-foreground">
+            <h1 className="font-heading mb-3 text-2xl font-black uppercase tracking-tight text-hm-on-surface">
               Something went wrong
             </h1>
-            <p className="mb-8 text-sm font-medium text-secondary-text">{error}</p>
+            <p className="mb-8 text-sm font-medium text-slate-600">{error}</p>
             <Link
               href="/plans"
-              className="inline-block rounded-xl bg-primary px-8 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-hover"
+              className="inline-block rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-sm font-bold text-white shadow-md transition hover:brightness-105"
             >
               Back to plans
             </Link>
@@ -256,20 +256,20 @@ function PaymentSuccessContent() {
                 <polyline points="22 4 12 14.01 9 11.01" />
               </svg>
             </div>
-            <h1 className="font-heading mb-3 text-2xl font-semibold text-foreground">
+            <h1 className="font-heading mb-3 text-2xl font-black uppercase tracking-tight text-hm-on-surface">
               Payment successful
             </h1>
-            <p className="mb-2 text-sm font-medium text-secondary-text">
-              Redirecting you back to the NutriChef app...
+            <p className="mb-2 text-sm font-medium text-slate-600">
+              Redirecting you back to the Healthy Minds app...
             </p>
-            <p className="mb-8 text-xs text-secondary-text">
+            <p className="mb-8 text-xs text-slate-500">
               If the app doesn&apos;t open automatically, tap the button below.
             </p>
             <a
               href={`nutrichef://payment/success?session_id=${encodeURIComponent(sessionId ?? "")}`}
-              className="inline-block rounded-xl bg-primary px-8 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-hover"
+              className="inline-block rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-sm font-bold text-white shadow-md transition hover:brightness-105"
             >
-              Open NutriChef
+              Open app
             </a>
           </>
         ) : (
@@ -289,14 +289,14 @@ function PaymentSuccessContent() {
                 <polyline points="22 4 12 14.01 9 11.01" />
               </svg>
             </div>
-            <h1 className="font-heading mb-3 text-2xl font-semibold text-foreground">
+            <h1 className="font-heading mb-3 text-2xl font-black uppercase tracking-tight text-hm-on-surface">
               Payment successful
             </h1>
-            <p className="mb-2 text-sm font-medium text-secondary-text">
+            <p className="mb-2 text-sm font-medium text-slate-600">
               Your meal plan has been activated.
             </p>
             {session && session.amount_total != null ? (
-              <p className="mb-8 font-heading text-lg font-semibold text-foreground">
+              <p className="mb-8 font-heading text-lg font-bold text-hm-on-surface">
                 {formatMinorUnits(session.amount_total, session.currency || "inr")} paid
               </p>
             ) : (
@@ -305,13 +305,13 @@ function PaymentSuccessContent() {
             <div className="mt-2 flex flex-col justify-center gap-3 sm:flex-row">
               <Link
                 href="/"
-                className="rounded-xl bg-primary px-8 py-3.5 text-center text-sm font-semibold text-white shadow-sm transition hover:bg-primary-hover"
+                className="rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-center text-sm font-bold text-white shadow-md transition hover:brightness-105"
               >
                 Go to home
               </Link>
               <Link
                 href="/menu"
-                className="rounded-xl border border-border-subtle bg-background px-8 py-3.5 text-center text-sm font-semibold text-foreground transition hover:bg-bg-light"
+                className="rounded-xl border border-slate-200 bg-hm-surface-low px-8 py-3.5 text-center text-sm font-bold text-hm-on-surface transition hover:bg-hm-surface-container-high"
               >
                 View menu
               </Link>

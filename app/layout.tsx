@@ -1,27 +1,28 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import { Epilogue, Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { TenantProvider } from "@/contexts/TenantContext";
 
-const fontUi = Plus_Jakarta_Sans({
+const fontUi = Inter({
   subsets: ["latin"],
   variable: "--font-ui",
   display: "swap",
 });
 
-const fontDisplay = Fraunces({
+const fontDisplay = Epilogue({
   subsets: ["latin"],
   variable: "--font-display",
+  weight: ["400", "600", "700", "800", "900"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Nutrichef | Meal plans for busy people",
+  title: "Healthy Minds Restaurant | The Editorial Harvest",
   description:
-    "Nutrichef provides meal plans tailored for busy people. It serves delicious food that's portioned to your requirements and fitness goals. You can choose your meals from the daily menu or build your own.",
+    "Healthy Minds Restaurant — chef-crafted meals, bold flavors, and plans that fit real life. Fresh ingredients, balanced plates, your way.",
   icons: {
     icon: "/Nutrichef_Icon.ico",
   },
@@ -45,7 +46,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body
-        className={`${fontUi.className} flex min-h-screen flex-col antialiased bg-background text-foreground`}
+        className={`${fontUi.className} hm-page-bg flex min-h-screen flex-col antialiased bg-background text-foreground`}
       >
         <AuthProvider>
           <TenantProvider>

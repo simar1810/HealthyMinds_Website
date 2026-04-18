@@ -24,8 +24,8 @@ import {
 
 function LoadingState() {
   return (
-    <div className="mx-auto flex min-h-[50vh] max-w-[1000px] items-center justify-center px-4 py-20">
-      <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#249B60] border-t-transparent" />
+    <div className="mx-auto flex min-h-[50vh] max-w-[1000px] items-center justify-center bg-hm-surface px-4 py-20">
+      <div className="h-10 w-10 animate-spin rounded-full border-2 border-hm-primary border-t-transparent" />
     </div>
   );
 }
@@ -103,10 +103,10 @@ function MealCard({
   const extras = mealExtraPrimitives(meal, handled);
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[24px] border border-[#E8EAED] bg-white shadow-[0_4px_24px_rgba(47,51,55,0.06)] transition hover:border-[#249B60]/25 hover:shadow-[0_8px_32px_rgba(36,155,96,0.12)]">
-      <div className="relative aspect-[16/10] w-full bg-[#F7F7F8]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm transition hover:border-hm-primary/30 hover:shadow-lg">
+      <div className="relative aspect-[16/10] w-full bg-hm-surface-low">
         {slotLabel ? (
-          <span className="absolute left-3 top-3 z-10 rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-[#249B60] shadow-sm backdrop-blur-sm">
+          <span className="absolute left-3 top-3 z-10 rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-hm-primary shadow-sm backdrop-blur-sm">
             {slotLabel}
           </span>
         ) : null}
@@ -143,7 +143,7 @@ function MealCard({
             {tags.map((t) => (
               <span
                 key={t}
-                className="rounded-full bg-[#EFF8F3] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-[#249B60]"
+                className="rounded-full bg-bg-light px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-primary"
               >
                 {t}
               </span>
@@ -250,7 +250,7 @@ function MealPlanDetailInner() {
         <p className="mt-3 text-[15px] text-[#5C6370]">We couldn&apos;t load this meal plan. Please try again.</p>
         <Link
           href="/"
-          className="mt-8 inline-block rounded-full bg-[#249B60] px-8 py-3 text-[15px] font-bold text-white hover:bg-[#1E8351]"
+          className="mt-8 inline-block rounded-full bg-primary px-8 py-3 text-[15px] font-bold text-white hover:bg-primary-hover"
         >
           Back to home
         </Link>
@@ -265,7 +265,7 @@ function MealPlanDetailInner() {
         <p className="mt-3 text-[15px] text-[#5C6370]">This plan may have been removed or the link is invalid.</p>
         <Link
           href="/"
-          className="mt-8 inline-block rounded-full bg-[#249B60] px-8 py-3 text-[15px] font-bold text-white hover:bg-[#1E8351]"
+          className="mt-8 inline-block rounded-full bg-primary px-8 py-3 text-[15px] font-bold text-white hover:bg-primary-hover"
         >
           Back to home
         </Link>
@@ -283,20 +283,20 @@ function MealPlanDetailInner() {
   const goalLine = [template.goalType, template.dietType].filter(Boolean).join(" · ");
 
   return (
-    <div className="bg-white pb-20 pt-28 sm:pt-32">
+    <div className="bg-hm-surface pb-20 pt-28 text-hm-on-surface sm:pt-32">
       <div className="mx-auto max-w-[1000px] px-4 sm:px-6">
-        <nav className="mb-8 text-[14px] font-medium text-[#878E99]">
-          <Link href="/" className="hover:text-[#249B60]">
+        <nav className="mb-8 text-sm font-semibold text-slate-500">
+          <Link href="/" className="transition hover:text-hm-primary">
             Home
           </Link>
           <span className="mx-2" aria-hidden>
             /
           </span>
-          <span className="text-[#2F3337]">Meal plan</span>
+          <span className="text-hm-on-surface">Meal plan</span>
         </nav>
 
         <header className="mb-12">
-          <div className="relative mb-6 aspect-[21/9] overflow-hidden rounded-[28px] bg-[#F7F7F8] md:aspect-[21/8]">
+          <div className="relative mb-6 aspect-[21/9] overflow-hidden rounded-2xl border border-slate-200/80 bg-hm-surface-low shadow-sm md:aspect-[21/8]">
             {cover ? (
               <Image
                 src={cover}
@@ -313,17 +313,17 @@ function MealPlanDetailInner() {
             )}
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#F7F7F8] text-2xl shadow-sm">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200/80 bg-white text-2xl shadow-sm">
               {icon}
             </div>
             <div>
-              <h1 className="font-heading text-[32px] font-extrabold leading-tight tracking-tight text-[#2F3337] md:text-[40px]">
+              <h1 className="font-heading text-[32px] font-black uppercase leading-tight tracking-tighter text-hm-on-surface md:text-[40px]">
                 {template.title}
               </h1>
               {goalLine ? (
-                <p className="mt-2 text-[15px] font-semibold text-[#878E99]">{goalLine}</p>
+                <p className="mt-2 text-sm font-bold uppercase tracking-wide text-slate-500">{goalLine}</p>
               ) : null}
-              <p className="mt-4 text-[15px] leading-relaxed text-[#5C6370]">
+              <p className="mt-4 text-[15px] leading-relaxed text-slate-600">
                 All dishes included in this plan are listed below. Individual dish prices are not shown.
               </p>
             </div>
@@ -363,13 +363,13 @@ function MealPlanDetailInner() {
         <div className="mt-14 flex flex-wrap justify-center gap-4">
           <Link
             href="/plans"
-            className="inline-flex items-center justify-center rounded-full bg-[#249B60] px-8 py-3.5 text-[15px] font-bold text-white shadow-sm hover:bg-[#1E8351]"
+            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-[15px] font-bold text-white shadow-md transition hover:brightness-105"
           >
             Subscribe to this style
           </Link>
           <Link
             href="/#menu"
-            className="inline-flex items-center justify-center rounded-full border border-[#E0E4E8] bg-white px-8 py-3.5 text-[15px] font-bold text-[#2F3337] hover:bg-[#F7F7F8]"
+            className="inline-flex items-center justify-center rounded-xl border border-slate-200/90 bg-white px-8 py-3.5 text-[15px] font-bold text-hm-on-surface shadow-sm transition hover:bg-hm-surface-low"
           >
             Browse full menu
           </Link>

@@ -1,66 +1,39 @@
-import React from 'react';
-import Image from 'next/image';
+import React from "react";
+import Image from "next/image";
 
-const instaPosts = [
-    { handle: 'sultanfalasi', img: 'https://api-blog.calo.app/wp-content/uploads/2025/10/Rectangle-6495.webp', avatar: 'https://i.pravatar.cc/100?u=sultan' },
-    { handle: 's_mozakzak', img: 'https://api-blog.calo.app/wp-content/uploads/2025/10/Rectangle-6496.webp', avatar: 'https://i.pravatar.cc/100?u=moz' },
-    { handle: 'laurazaraa', img: 'https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-37.webp', avatar: 'https://i.pravatar.cc/100?u=laura' },
-    { handle: 'khadija.chahmoud', img: 'https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-9-1.webp', avatar: 'https://i.pravatar.cc/100?u=khadija' },
-    { handle: 'nasegeh', img: 'https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-7.webp', avatar: 'https://i.pravatar.cc/100?u=nasegeh' },
-    { handle: 'taatgorgulho', img: 'https://api-blog.calo.app/wp-content/uploads/2025/10/Rectangle-6495.webp', avatar: 'https://i.pravatar.cc/100?u=taat' },
-    { handle: 'ommie10', img: 'https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-37.webp', avatar: 'https://i.pravatar.cc/100?u=ommie' }
+const images = [
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAleplOyEZyAXyoABC51R3-nHlmejOgWHz9dVnJ_5UZLroRqBARHcnfdAHCu_femVGiRqA7bZRhc1owZTqDBGMXL3DiETBULeGSDOnKJO_aRB5bZNvMvguTFlLINNS_AbylRC9PoqRzlPdboSaOrqnKAv8GCpviIkgnalHII1XJjAQkVKIx41kIEiT06YUAjYpYGRRaUMbXrUywidaeVxXXPWmfV3tzL8nVTAOeCcPl2CHL3n3bZBPTS8CQRPCTh7W3JOhWZs87_oHU",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuDHc-VTXAkejV6Uzf--fH1CIy6TX9nPRSodqnGFvu5g2nNRSLcfBJyep5NhJ0BNqeFRAlr0VGkbqsNCXy_qokv8cNzabi7t39Q8I_TQtr3RQE52-P2DkicUdwWR4XNFIa1wWO4XMiTzAZGA1Pzcvn06tlnSoPw0wCzHd0cMQt22AAgWvbXC6C_3qdGCz6HEK2iv3ehuWK2pcN6B-5jWILUX7dwtlXoIX7Z0octAFubrxaEC4MF26c41uUZiGrm2xD0Rr726bcl4tK6s",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuB9wSyioej-BniQj6XU6Ttr39zjPE7hRbxzwPR47Ndv22uQR3ot85KffQX1fnxIjd7fVcEQHroTZxzLjqOMzQ5ru49yQ2mz5y09kTJjSkJlnDGUKE_MG7wkrI-fcC2tlT-mpZcMXG-v12UPFXvLhUykYt7rw7rf-Z41atKMgzUzsBVqhaeXGkAppufvcM_47hEgbd-uKmDIKZPm27Qj_o4g6RY2LViNQpDjZpTW-7wap2P1-nARYiwju1XRHYtA18VCau3w0Bcxem1Z",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAAUCUoebDb1BjNmq0OFr-FVkz20UmdqEWZSAGQKLKLEOS1UgLJu3fP7Ja0yNrcVTVMd8fLe0HBfY4TB5IC1u8gKJXBuzxU7h9qm-jHqHAUYCRumMuzNXauDBJGKGdLsxRY8lZJ_BxljjAkJlngy36c52Dl-eCltP7RDoZCc4lYyMlNib-5wBFeLxAPu6KomZZJRmMHpAlgfb2vwzDWUf936Fiyu0G-UsRv-K2SHhI4MR_pcvDA1fz9PldUztKW0dtvHreleaqtLmHR",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAnddC2qelU9iqV1NhCXbuisxQM9xRbhxFRL_1LUXXOx3WSyMBNxceRRKFdniih_mKc8-skDmZdVzT8s133UgxfLRJsGv0uoGdtJLHn3qao3hrMsV0jH2fVfqP0uYQe0-1_RHSJbp-l9XFA7AXdsFzWUzWRWJmcpK3g4rnif6wjtLT5sle3dIwGXgIkNIVxFJGXLhIXN5CwrXw_Dw-y728eMqjwzXazikLZqc8pFQiIbxggWbIQ8bqZ9Bp9tCzkKbT01PK0lKETsIDv",
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuCuJ6cGZBkcLaqeCO4GP9-uZIRMVc17JMhaDrE7f9uL5p5Ltex2xi6gAfC45Da_KyiaffRZXQ_AYFB28DNDKRtqW_zpDR6jsd8GE6Bm2ydVBkwpb_W5ChI09oP631MCW_5Ug0B7-YMIyy7qGCwObvViyAeQNZMjEpBuhqPr_3DfxGnTxuLZzte0C4BOBucCbEVakBx4T8uJwQsRw2rT77f9mNu82YQzmIRNTio6xEF4_HaRMKHOUrTAKUARbgAlPN_LV76aoGIdpLku",
 ];
 
-export const InstagramFeed = () => {
-    return (
-        <section className="bg-[#2B9D65] py-[60px] pb-[70px] overflow-hidden w-full">
-            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 w-full mb-8">
-                <h2 className="text-white text-[28px] md:text-[32px] font-bold tracking-tight">
-                    From The Community
-                </h2>
-            </div>
+function ImageStrip() {
+  return (
+    <>
+      {images.map((src, i) => (
+        <div
+          key={`${src}-${i}`}
+          className="relative h-64 w-64 shrink-0 overflow-hidden rounded-lg"
+        >
+          <Image src={src} alt="" fill className="object-cover" sizes="256px" />
+        </div>
+      ))}
+    </>
+  );
+}
 
-            <div className="flex w-full overflow-hidden pointer-events-none select-none relative">
-                 <style>{`
-                    @keyframes marquee-insta {
-                        0% { transform: translateX(0); }
-                        100% { transform: translateX(-100%); }
-                    }
-                    .animate-marquee-insta {
-                        animation: marquee-insta 35s linear infinite;
-                    }
-                `}</style>
-                <div className="flex w-max shrink-0 animate-marquee-insta items-center gap-[22px] pr-[22px] pl-4 sm:pl-6 lg:pl-12 2xl:pl-[calc((100vw-1400px)/2+48px)]">
-                    {instaPosts.map((post, i) => (
-                        <div key={`i1-${i}`} className="w-[280px] md:w-[320px] bg-white rounded-[24px] overflow-hidden shadow-sm flex-shrink-0 flex flex-col p-3">
-                             <div className="relative w-full aspect-square rounded-[16px] overflow-hidden bg-gray-100">
-                                 <Image src={post.img} alt={post.handle} fill className="object-cover" sizes="320px" unoptimized />
-                             </div>
-                             <div className="flex items-center px-2 py-[14px] bg-white h-[58px]">
-                                 <div className="w-[26px] h-[26px] rounded-full overflow-hidden relative mr-2.5 shrink-0 bg-gray-200">
-                                     <Image src={post.avatar} alt="avatar" fill className="object-cover" sizes="26px" unoptimized />
-                                 </div>
-                                 <span className="text-[#2F3337] font-semibold text-[13px]">@{post.handle}</span>
-                             </div>
-                        </div>
-                    ))}
-                </div>
-                <div className="flex w-max shrink-0 animate-marquee-insta items-center gap-[22px] pr-[22px]">
-                    {instaPosts.map((post, i) => (
-                        <div key={`i2-${i}`} className="w-[280px] md:w-[320px] bg-white rounded-[24px] overflow-hidden shadow-sm flex-shrink-0 flex flex-col p-3">
-                             <div className="relative w-full aspect-square rounded-[16px] overflow-hidden bg-gray-100">
-                                 <Image src={post.img} alt={post.handle} fill className="object-cover" sizes="320px" unoptimized />
-                             </div>
-                             <div className="flex items-center px-2 py-[14px] bg-white h-[58px]">
-                                 <div className="w-[26px] h-[26px] rounded-full overflow-hidden relative mr-2.5 shrink-0 bg-gray-200">
-                                     <Image src={post.avatar} alt="avatar" fill className="object-cover" sizes="26px" unoptimized />
-                                 </div>
-                                 <span className="text-[#2F3337] font-semibold text-[13px]">@{post.handle}</span>
-                             </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
+export const InstagramFeed = () => {
+  return (
+    <section className="border-y border-hm-surface-container py-12">
+      <div className="flex overflow-hidden">
+        <div className="flex min-w-max animate-hm-marquee gap-4 pr-4">
+          <ImageStrip />
+          <ImageStrip />
+        </div>
+      </div>
+    </section>
+  );
 };
