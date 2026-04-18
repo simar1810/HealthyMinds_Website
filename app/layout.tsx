@@ -24,7 +24,9 @@ export const metadata: Metadata = {
   description:
     "Healthy Minds Restaurant — chef-crafted meals, bold flavors, and plans that fit real life. Fresh ingredients, balanced plates, your way.",
   icons: {
-    icon: "/Nutrichef_Icon.ico",
+    icon: [{ url: "/healthy-minds-logo.png", type: "image/png" }],
+    shortcut: "/healthy-minds-logo.png",
+    apple: "/healthy-minds-logo.png",
   },
 };
 

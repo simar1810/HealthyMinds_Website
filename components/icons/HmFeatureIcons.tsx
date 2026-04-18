@@ -91,20 +91,3 @@ export function IconStarFilled({ className = "h-5 w-5 text-hm-primary" }: SvgPro
     </svg>
   );
 }
-
-export function IconChevronDown({ className = "h-6 w-6 text-hm-on-surface" }: SvgProps) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="m6 9 6 6 6-6" />
-    </svg>
-  );
-}

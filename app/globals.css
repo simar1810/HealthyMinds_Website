@@ -97,6 +97,14 @@ body {
 }
 
 /* Material Symbols: must set font-family or icon names render as plain text */
+/* FAQ <details> chevron — rotate when open (no Tailwind group-open dependency) */
+.faq-disclosure > summary .faq-chevron {
+  transition: transform 0.2s ease;
+}
+.faq-disclosure[open] > summary .faq-chevron {
+  transform: rotate(180deg);
+}
+
 .material-symbols-outlined {
   font-family: "Material Symbols Outlined";
   font-weight: normal;

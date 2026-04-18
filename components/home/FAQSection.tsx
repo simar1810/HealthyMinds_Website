@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { IconChevronDown } from "@/components/icons/HmFeatureIcons";
 
 const faqs = [
   {
@@ -48,11 +47,27 @@ export const FAQSection = () => {
           {faqs.map((faq) => (
             <details
               key={faq.question}
-              className="group overflow-hidden rounded-xl bg-hm-surface-low open:shadow-md"
+              className="faq-disclosure overflow-hidden rounded-xl bg-hm-surface-low open:shadow-md"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-6 text-lg font-bold text-hm-on-surface [&::-webkit-details-marker]:hidden">
-                <span>{faq.question}</span>
-                <IconChevronDown className="shrink-0 text-slate-500 transition-transform group-open:rotate-180" />
+                <span className="min-w-0 pr-2">{faq.question}</span>
+                <span
+                  className="faq-chevron inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-slate-600 ring-1 ring-slate-200/80"
+                  aria-hidden
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </span>
               </summary>
               <div className="border-t border-slate-200/80 px-6 pb-6 pt-0 text-slate-600">
                 {faq.answer}
