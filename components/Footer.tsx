@@ -9,6 +9,7 @@ const explore = [
   { href: "/menu", label: "Menu" },
   { href: "/plans", label: "Plans" },
   { href: "/#features", label: "Features" },
+  { href: "/#chef", label: "Chef" },
   { href: "/#community", label: "Community" },
 ] as const;
 

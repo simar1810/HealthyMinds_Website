@@ -17,11 +17,12 @@ import { useAuth } from "@/contexts/AuthContext";
 const navLinks = [
   { href: "/#menu", label: "Menu", match: "menu" },
   { href: "/#features", label: "Features", match: "features" },
+  { href: "/#chef", label: "Chef", match: "chef" },
   { href: "/#community", label: "Community", match: "community" },
   { href: "/#faq", label: "FAQ", match: "faq" },
 ] as const;
 
-const SECTION_IDS = ["menu", "features", "community", "faq"] as const;
+const SECTION_IDS = ["menu", "features", "chef", "community", "faq"] as const;
 
 const LG = "(min-width: 1024px)";
 
