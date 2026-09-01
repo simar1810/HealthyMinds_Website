@@ -4,6 +4,7 @@ import { FeaturesSection } from "@/components/home/FeaturesSection";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { MealPlansSection } from "@/components/home/MealPlansSection";
+import { LeadCaptureSection } from "@/components/home/LeadCaptureSection";
 import { FAQSection } from "@/components/home/FAQSection";
 import { InstagramFeed } from "@/components/home/InstagramFeed";
 
@@ -16,6 +17,7 @@ export default function Home() {
       <HowItWorks />
       <CommunitySection />
       <MealPlansSection />
+      <LeadCaptureSection />
       <FAQSection />
       <InstagramFeed />
     </div>

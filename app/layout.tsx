@@ -3,11 +3,17 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { TenantProvider } from "@/contexts/TenantContext";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { HOME_META, SITE_NAME, SITE_URL } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "HealthyMinds | Meal plans for busy people",
-  description:
-    "HealthyMinds provides meal plans tailored for busy people. It serves delicious food that's portioned to your requirements and fitness goals. You can choose your meals from the daily menu or build your own.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: HOME_META.title,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: HOME_META.description,
 };
 
 export default function RootLayout({
@@ -19,11 +25,12 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <body className="antialiased text-foreground bg-background font-sans flex flex-col min-h-screen">
         <AuthProvider>
-          <Navbar />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
+          <TenantProvider>
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+            <WhatsAppButton />
+          </TenantProvider>
         </AuthProvider>
       </body>
     </html>

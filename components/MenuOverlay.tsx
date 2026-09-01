@@ -8,6 +8,8 @@ const navLinks = [
     { name: 'Homepage', href: '/', hasChild: false },
     { name: 'Plans & Packages', href: '/plans', hasChild: false },
     { name: 'Menu', href: '/menu', hasChild: false },
+    { name: 'FAQ', href: '/faq', hasChild: false },
+    { name: 'Contact', href: '/contact-us', hasChild: false },
 ];
 
 export const MenuOverlay = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {

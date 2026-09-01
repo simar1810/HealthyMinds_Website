@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Navbar } from "../../components/Navbar";
-import { Footer } from "../../components/Footer";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { FilterBar } from "../../components/menu/FilterBar";
 import { MenuCard } from "../../components/menu/MenuCard";
 import { fallbackMenuItems, type MenuItem } from "./data";
 import { api } from "@/lib/api";
-import { useRequireAuth } from "@/lib/useRequireAuth";
+import { menuItemMatchesFilter } from "@/lib/menuFilterMatch";
+import { derivePlanFilterIdFromMacros } from "@/lib/planFromMacros";
 
 interface BackendRecipe {
   _id: string;
@@ -25,15 +26,19 @@ interface BackendRecipe {
 }
 
 function mapRecipeToMenuItem(recipe: BackendRecipe): MenuItem {
+  const calories = recipe.nutrition?.calories ?? 0;
+  const protein = recipe.nutrition?.protein ?? 0;
+  const carbs = recipe.nutrition?.carbs ?? 0;
+  const fat = recipe.nutrition?.fat ?? 0;
   return {
     id: recipe._id,
     title: recipe.title,
     description: recipe.category || "",
-    calories: recipe.nutrition?.calories || 0,
+    calories,
     macros: {
-      protein: recipe.nutrition?.protein || 0,
-      carbs: recipe.nutrition?.carbs || 0,
-      fat: recipe.nutrition?.fat || 0,
+      protein,
+      carbs,
+      fat,
     },
     isNew: recipe.tags?.includes("new") || false,
     imageUrl:
@@ -41,29 +46,36 @@ function mapRecipeToMenuItem(recipe: BackendRecipe): MenuItem {
       "https://cdn.calo.app/food/46cfb754-32c1-4f59-93fa-026430ae9918/square@3x.jpg",
     category: recipe.category,
     tags: recipe.tags,
+    planFilterId: derivePlanFilterIdFromMacros({ calories, protein, carbs, fat }),
   };
 }
 
 export default function MenuPage() {
-  const { isAuthenticated, isLoading: authLoading } = useRequireAuth();
+  return (
+    <Suspense fallback={null}>
+      <MenuPageContent />
+    </Suspense>
+  );
+}
+
+function MenuPageContent() {
+  const searchParams = useSearchParams();
+  const deepLinkFilter = searchParams.get("filter") === "vegetarian" ? "vegetarian" : "all";
+
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [filteredItems, setFilteredItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [categories, setCategories] = useState<string[]>([]);
+  const [activeFilter, setActiveFilter] = useState(deepLinkFilter);
 
   const fetchMenu = useCallback(async () => {
     try {
-      const res = await api.get<{ recipes: BackendRecipe[] }>("/menu/list?type=recipes");
+      const res = await api.get<{ recipes: BackendRecipe[] }>("/menu/list?type=recipes", {
+        noAuth: true,
+      });
       const recipes = res.data?.recipes || [];
       if (recipes.length > 0) {
-        const items = recipes
-          .filter((r) => r.status !== "draft")
-          .map(mapRecipeToMenuItem);
+        const items = recipes.map(mapRecipeToMenuItem);
         setMenuItems(items);
-
-        const cats = [...new Set(items.map((i) => i.category).filter(Boolean))] as string[];
-        setCategories(cats);
       } else {
         setMenuItems(fallbackMenuItems);
       }
@@ -75,79 +87,74 @@ export default function MenuPage() {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchMenu();
-    }
-  }, [isAuthenticated, fetchMenu]);
+    void fetchMenu();
+  }, [fetchMenu]);
 
   useEffect(() => {
     if (activeFilter === "all") {
       setFilteredItems(menuItems);
     } else {
-      setFilteredItems(
-        menuItems.filter(
-          (item) =>
-            item.category?.toLowerCase() === activeFilter.toLowerCase() ||
-            item.tags?.some((t) => t.toLowerCase() === activeFilter.toLowerCase())
-        )
-      );
+      setFilteredItems(menuItems.filter((item) => menuItemMatchesFilter(item, activeFilter)));
     }
   }, [activeFilter, menuItems]);
 
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-8 h-8 border-3 border-[#4F46E5] border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-white text-[#343B42]">
-      <Navbar />
-
-      <main className="max-w-[1440px] mx-auto px-6 lg:px-12 pt-32 pb-24">
-        {/* Hero Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
+    <div className="min-h-screen bg-background text-foreground">
+      <main className="mx-auto max-w-[1440px] px-4 pb-16 pt-28 sm:px-6 sm:pb-24 sm:pt-32 lg:px-12">
+        <div className="mb-8 flex flex-col justify-between md:flex-row md:items-end">
           <div>
-            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-[#E0E7FF] text-[#312E81] text-sm font-bold mb-6">
+            <div className="mb-6 inline-flex items-center rounded-full bg-primary/10 px-3 py-1.5 text-sm font-semibold text-primary">
               <span className="mr-2">📅</span>
-              This Week&apos;s Menu
+              This week&apos;s rotation
             </div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-[#343B42] mb-3 tracking-tight">
-              Check out this week&apos;s menu
+            <h1 className="font-heading mb-3 text-4xl font-semibold tracking-tight md:text-5xl">
+              What our chefs are cooking this week
             </h1>
-            <p className="text-lg text-gray-500">
-              Here&apos;s a taste of what&apos;s included when you subscribe
+            <p className="text-lg text-secondary-text">
+              80+ dishes, every macro accounted for.
             </p>
           </div>
           <div className="mt-8 md:mt-0">
-            <button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 py-3.5 rounded-full font-bold text-base transition-colors shadow-[0_4px_14px_0_rgba(79,70,229,0.39)]">
-              Order Now
-            </button>
+            <Link
+              href="/plans"
+              className="inline-flex rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover"
+            >
+              Start my plan
+            </Link>
           </div>
         </div>
 
+        {activeFilter === "vegetarian" ? (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-primary/20 bg-primary/10 px-5 py-4">
+            <p className="text-sm font-semibold text-foreground">
+              🌱 Showing this week&apos;s vegetarian rotation only
+            </p>
+            <button
+              type="button"
+              onClick={() => setActiveFilter("all")}
+              className="text-sm font-semibold text-primary underline-offset-4 hover:underline"
+            >
+              View full menu
+            </button>
+          </div>
+        ) : null}
+
         {/* Filter Bar */}
-        <FilterBar
-          categories={categories}
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-        />
+        <FilterBar activeFilter={activeFilter} onFilterChange={setActiveFilter} />
 
         {/* Menu Grid */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-10 mt-8">
+          <div className="mt-8 grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="flex flex-col animate-pulse">
-                <div className="w-full aspect-square bg-gray-200 rounded-[32px] mb-4" />
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2 mx-2" />
-                <div className="h-3 bg-gray-200 rounded w-1/2 mx-2" />
+                <div className="mb-4 aspect-square w-full rounded-[2rem] bg-bg-light" />
+                <div className="mx-2 mb-2 h-4 w-3/4 rounded bg-bg-light" />
+                <div className="mx-2 h-3 w-1/2 rounded bg-bg-light" />
               </div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-10 mt-8">
+          <div className="mt-8 grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
             {filteredItems.map((item) => (
               <MenuCard key={item.id} item={item} />
             ))}
@@ -155,15 +162,13 @@ export default function MenuPage() {
         )}
 
         {!loading && filteredItems.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-[#878E99] text-lg font-medium">
+          <div className="py-20 text-center">
+            <p className="text-lg font-medium text-secondary-text">
               No dishes found for this filter.
             </p>
           </div>
         )}
       </main>
-
-      <Footer />
     </div>
   );
 }
