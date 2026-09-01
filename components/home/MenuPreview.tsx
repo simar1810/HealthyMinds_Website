@@ -1,204 +1,206 @@
 "use client";
-import React, { useState } from 'react';
-import Image from 'next/image';
-import { Button } from '../Button';
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "../Button";
+import { api } from "@/lib/api";
+import { MENU_FILTERS } from "@/components/menu/FilterBar";
+import type { PlanFilterId } from "@/lib/planFromMacros";
+import { derivePlanFilterIdFromMacros } from "@/lib/planFromMacros";
 
-const tabs = [
-    { id: 'All', label: 'All', icon: null },
-    { id: 'High Protein', label: 'High Protein', icon: '🍗' },
-    { id: 'Balanced', label: 'Balanced', icon: '⚖️' },
-    { id: 'Vegetarian', label: 'Vegetarian', icon: '🥦' },
-    { id: 'Chef\'s Picks', label: 'Chef\'s Picks', icon: '👨‍🍳' },
-    { id: 'Custom Macros', label: 'Custom Macros', icon: '🧮' },
-    { id: 'Low Carb', label: 'Low Carb', icon: '🥑' },
-];
+const FALLBACK_IMAGE =
+  "https://cdn.calo.app/food/46cfb754-32c1-4f59-93fa-026430ae9918/square@3x.jpg";
 
-const mockMeals = [
-    {
-        id: 1,
-        title: 'Fiesta Chicken Bowl',
-        calories: '371',
-        protein: 35,
-        carbs: 34,
-        fat: 10,
-        image: 'https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-37.webp'
-    },
-    {
-        id: 2,
-        title: 'Mexican Chicken Enchilada',
-        calories: '639',
-        protein: 37,
-        carbs: 58,
-        fat: 29,
-        image: 'https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-7.webp'
-    },
-    {
-        id: 3,
-        title: 'Basil Chicken Alfredo Linguine',
-        calories: '641',
-        protein: 64,
-        carbs: 64,
-        fat: 14,
-        image: 'https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-9-1.webp'
-    },
-    {
-        id: 4,
-        title: 'Koshari',
-        calories: '360',
-        protein: 13,
-        carbs: 65,
-        fat: 5,
-        image: 'https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-37.webp'
-    },
-    {
-        id: 5,
-        title: 'Steak & Mash',
-        calories: null,
-        customText: 'Customisable macros',
-        image: 'https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-9-1.webp'
-    },
-    {
-        id: 6,
-        title: 'Beef and Parm Cannelloni',
-        calories: '462',
-        protein: 33,
-        carbs: 23,
-        fat: 27,
-        image: 'https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-7.webp'
-    },
-    {
-        id: 7,
-        title: 'Fettucine al...',
-        calories: '351',
-        protein: 25,
-        carbs: 40,
-        fat: 12,
-        image: 'https://api-blog.calo.app/wp-content/uploads/2025/10/imaghe-37.webp'
-    }
-];
+interface ApiRecipe {
+  _id: string;
+  title: string;
+  nutrition?: {
+    calories?: number;
+    protein?: number;
+    carbs?: number;
+    fat?: number;
+  };
+  tags?: string[];
+  media?: string[];
+}
+
+interface PreviewMeal {
+  id: string;
+  title: string;
+  image: string;
+  calories: number | null;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+  planFilterId: PlanFilterId;
+}
+
+function mapRecipeToMeal(recipe: ApiRecipe): PreviewMeal {
+  const n = recipe.nutrition;
+  const caloriesNum = n?.calories != null && Number.isFinite(n.calories) ? Math.round(n.calories) : 0;
+  const p = n?.protein ?? 0;
+  const c = n?.carbs ?? 0;
+  const f = n?.fat ?? 0;
+  return {
+    id: recipe._id,
+    title: recipe.title,
+    image: recipe.media?.[0] || FALLBACK_IMAGE,
+    calories: n?.calories != null && Number.isFinite(n.calories) ? caloriesNum : null,
+    protein: n?.protein,
+    carbs: n?.carbs,
+    fat: n?.fat,
+    planFilterId: derivePlanFilterIdFromMacros({
+      calories: caloriesNum,
+      protein: p,
+      carbs: c,
+      fat: f,
+    }),
+  };
+}
 
 export const MenuPreview = () => {
-    const [activeTab, setActiveTab] = useState('All');
+  const [activeTab, setActiveTab] = useState("all");
+  const [meals, setMeals] = useState<PreviewMeal[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-    return (
-        <section className="py-24 bg-white overflow-hidden w-full">
-            <div className="w-full flex flex-col items-center">
-                
-                {/* Header Section */}
-                <div className="text-center px-4 max-w-3xl mx-auto mb-6">
-                    <h2 className="text-[40px] md:text-[56px] leading-[1.1] font-extrabold text-[#2F3337] tracking-tight mb-4">
-                        Discover our<br />daily-changing menu
-                    </h2>
-                    <p className="text-[17px] text-[#6B7280] font-medium mb-10">
-                        80+ new meals options every week, you&#39;ll never get bored.
-                    </p>
+  const fetchRecipes = useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await api.get<{ recipes: ApiRecipe[] }>("/menu/list?type=recipes", {
+        noAuth: true,
+      });
+      setMeals((res.data?.recipes ?? []).map(mapRecipeToMeal));
+    } catch {
+      setMeals([]);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-                    <div className="flex justify-center gap-6 md:gap-8 flex-wrap mb-10 text-[11px] uppercase tracking-wider font-bold text-[#6B7280]">
-                        <div className="flex items-center gap-2">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#6B7280]">
-                                <path d="M12 22c-3.1-6-5.4-9.3-8.8-13A6.2 6.2 0 0 1 12 2C15.4 5.7 17.7 9 14.6 15z" />
-                                <path d="M12 2C8.6 5.7 6.3 9 9.4 15c3.1 6 5.4 9.3 8.8 13" />
-                            </svg>
-                            <span>NATURAL INGREDIENTS</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#6B7280]">
-                                <path d="M12 2v20" />
-                                <path d="m17 7-5 5" />
-                                <path d="m7 7 5 5" />
-                                <path d="m20 12-8 5" />
-                                <path d="m4 12 8 5" />
-                            </svg>
-                            <span>ALLERGEN-FRIENDLY</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#6B7280]">
-                                <path d="m2 22 6-6 m-3-3 6 6 m-3-3c2-2 5-2 7 0s2 5 0 7Z" />
-                            </svg>
-                            <span>VEGETARIAN OPTIONS</span>
-                        </div>
+  useEffect(() => {
+    void fetchRecipes();
+  }, [fetchRecipes]);
+
+  const visibleMeals = useMemo(() => {
+    if (activeTab === "all") return meals;
+    return meals.filter((m) => m.planFilterId === activeTab);
+  }, [meals, activeTab]);
+
+  return (
+    <section className="w-full overflow-hidden bg-white py-24">
+      <div className="flex w-full flex-col items-center">
+        <div className="mx-auto mb-6 max-w-3xl px-4 text-center">
+          <h2 className="mb-4 text-[40px] font-extrabold leading-[1.1] tracking-tight text-[#2F3337] md:text-[56px]">
+            Discover our
+            <br />
+            daily-changing menu
+          </h2>
+          <p className="mb-10 text-[17px] font-medium text-[#6B7280]">
+            Live recipes from this week&apos;s rotation — macros on every plate.
+          </p>
+          <Link href="/menu">
+            <Button
+              className="mb-10 h-11 border-none bg-[#4F46E5] px-8 text-[15px] font-semibold text-white shadow-sm hover:bg-[#4338CA]"
+              size="md"
+            >
+              See full menu
+            </Button>
+          </Link>
+        </div>
+
+        {loading ? (
+          <div className="flex w-full max-w-[100vw] gap-4 overflow-x-auto px-6 pb-10 md:gap-[18px] md:px-12">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-[280px] w-[260px] shrink-0 animate-pulse rounded-[28px] bg-[#F7F7F8] md:w-[280px]"
+              />
+            ))}
+          </div>
+        ) : error ? (
+          <div className="px-6 pb-10 text-center">
+            <p className="mb-4 text-[15px] font-medium text-[#6B7280]">
+              We couldn&apos;t load this week&apos;s menu.
+            </p>
+            <button
+              type="button"
+              onClick={() => void fetchRecipes()}
+              className="inline-flex h-11 min-h-[44px] items-center rounded-full bg-[#4F46E5] px-6 text-sm font-semibold text-white"
+            >
+              Retry
+            </button>
+          </div>
+        ) : visibleMeals.length === 0 ? (
+          <p className="px-6 pb-10 text-center text-[15px] font-medium text-[#6B7280]">
+            {meals.length === 0
+              ? "No recipes in the menu yet."
+              : "No dishes match this filter."}
+          </p>
+        ) : (
+          <div className="hide-scrollbar flex w-full max-w-[100vw] gap-4 overflow-x-auto px-6 pb-10 snap-x md:gap-[18px] md:px-12 xl:justify-center">
+            {visibleMeals.map((meal) => (
+              <div
+                key={meal.id}
+                className="group flex w-[260px] min-w-[260px] snap-center flex-col pt-2 text-left md:w-[280px] md:min-w-[280px]"
+              >
+                <div className="relative mb-[14px] h-[260px] w-full overflow-hidden rounded-[28px] bg-[#F7F7F8] md:h-[280px]">
+                  <Image
+                    src={meal.image}
+                    alt={meal.title}
+                    fill
+                    unoptimized
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    sizes="(max-width: 768px) 260px, 280px"
+                  />
+                  {meal.calories != null ? (
+                    <div className="absolute left-[14px] top-[14px] rounded-full bg-[#F7F7F8]/90 px-[10px] py-[4px] text-[11px] font-bold tracking-tight text-[#2F3337] backdrop-blur-sm">
+                      {meal.calories} kcal
                     </div>
-                    
-                    <Button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 rounded-full mb-10 h-11 text-[15px] shadow-sm font-semibold border-none" size="md">
-                        See full menu
-                    </Button>
+                  ) : null}
                 </div>
-
-                {/* Cards Section */}
-                <div className="w-full">
-                    {/* Centered container but scrollable all the way to edges */}
-                    <div className="flex overflow-x-auto gap-4 md:gap-[18px] pb-10 snap-x hide-scrollbar px-6 md:px-12 xl:justify-center w-full max-w-[100vw]">
-                        {mockMeals.map((meal) => (
-                            <div key={meal.id} className="min-w-[260px] md:min-w-[280px] w-[260px] md:w-[280px] snap-center group cursor-pointer text-left flex flex-col pt-2">
-                                <div className="relative h-[260px] md:h-[280px] w-full rounded-[28px] overflow-hidden mb-[14px] bg-[#F7F7F8]">
-                                    <Image
-                                        src={meal.image}
-                                        alt={meal.title}
-                                        fill
-                                        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                                        sizes="(max-width: 768px) 260px, 280px"
-                                    />
-                                    {meal.calories && (
-                                        <div className="absolute top-[14px] left-[14px] bg-[#F7F7F8]/90 backdrop-blur-sm px-[10px] py-[4px] rounded-full text-[11px] font-bold text-[#2F3337] tracking-tight">
-                                            {meal.calories} kcal
-                                        </div>
-                                    )}
-                                </div>
-                                <h3 className="text-[15px] sm:text-[16px] leading-tight font-extrabold text-[#2F3337] mb-[8px] line-clamp-1">{meal.title}</h3>
-                                
-                                {meal.customText ? (
-                                    <div className="flex items-center gap-[6px] text-[11px] font-bold text-[#6B7280]">
-                                        <div className="flex space-x-[2px]">
-                                            <div className="w-[5px] h-[5px] rounded-full bg-[#8b5cf6]"></div>
-                                            <div className="w-[5px] h-[5px] rounded-full bg-[#f59e0b]"></div>
-                                            <div className="w-[5px] h-[5px] rounded-full bg-[#3b82f6]"></div>
-                                        </div>
-                                        <span>{meal.customText}</span>
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-wrap items-center gap-[10px] text-[11px] font-bold text-[#6B7280]">
-                                        <div className="flex items-center gap-[4px]">
-                                            <div className="w-[5px] h-[5px] rounded-full bg-[#8b5cf6]"></div>
-                                            <span>{meal.protein}g Protein</span>
-                                        </div>
-                                        <div className="flex items-center gap-[4px]">
-                                            <div className="w-[5px] h-[5px] rounded-full bg-[#f59e0b]"></div>
-                                            <span>{meal.carbs}g Carbs</span>
-                                        </div>
-                                        <div className="flex items-center gap-[4px]">
-                                            <div className="w-[5px] h-[5px] rounded-full bg-[#3b82f6]"></div>
-                                            <span>{meal.fat}g Fat</span>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                <h3 className="mb-[8px] line-clamp-1 text-[15px] font-extrabold leading-tight text-[#2F3337] sm:text-[16px]">
+                  {meal.title}
+                </h3>
+                <div className="flex flex-wrap items-center gap-[10px] text-[11px] font-bold text-[#6B7280]">
+                  {meal.protein != null ? (
+                    <span>{Math.round(meal.protein)}g Protein</span>
+                  ) : null}
+                  {meal.carbs != null ? (
+                    <span>{Math.round(meal.carbs)}g Carbs</span>
+                  ) : null}
+                  {meal.fat != null ? (
+                    <span>{Math.round(meal.fat)}g Fat</span>
+                  ) : null}
                 </div>
+              </div>
+            ))}
+          </div>
+        )}
 
-                {/* Bottom Tabs */}
-                <div className="flex overflow-x-auto gap-[10px] pb-4 hide-scrollbar justify-start xl:justify-center px-6 w-full max-w-[100vw] mt-6">
-                    {tabs.map((tab) => {
-                        const isActive = activeTab === tab.id;
-                        return (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center h-[42px] px-[20px] rounded-full text-[13px] font-bold whitespace-nowrap transition-colors ${
-                                    isActive
-                                        ? 'bg-[#3730A3] text-white shadow-sm'
-                                        : 'bg-[#F9FAFB] text-[#2F3337] hover:bg-[#E5E7EB]'
-                                }`}
-                            >
-                                {tab.icon && <span className="mr-[6px] text-[16px]">{tab.icon}</span>}
-                                {tab.label}
-                            </button>
-                        )
-                    })}
-                </div>
-
-            </div>
-        </section>
-    );
+        <div className="mt-6 flex w-full max-w-[100vw] justify-start gap-[10px] overflow-x-auto px-6 pb-4 hide-scrollbar xl:justify-center">
+          {MENU_FILTERS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex h-[44px] items-center whitespace-nowrap rounded-full px-[20px] text-[13px] font-bold transition-colors ${
+                  isActive
+                    ? "bg-[#3730A3] text-white shadow-sm"
+                    : "bg-[#F9FAFB] text-[#2F3337] hover:bg-[#E5E7EB]"
+                }`}
+              >
+                {tab.icon ? <span className="mr-[6px] text-[16px]">{tab.icon}</span> : null}
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
 };
-

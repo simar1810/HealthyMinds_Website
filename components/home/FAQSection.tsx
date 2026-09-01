@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '../Button';
+import { whatsappLink } from '@/lib/site-config';
 
 const faqs = [
     {
@@ -33,8 +34,8 @@ const faqs = [
         answer: "You can pause your subscription anytime directly from your dashboard under 'Manage Subscription'."
     },
     {
-        question: "Do you deliver to all areas in Kuwait?",
-        answer: "We deliver to most areas within Kuwait. You can check if your specific area is covered when entering your address at checkout."
+        question: "Do you deliver to all areas in the UAE?",
+        answer: "We deliver across Dubai, Abu Dhabi, Sharjah, and Ajman. Message WhatsApp and we will confirm your address."
     },
     {
         question: "What are the delivery times and is weekend delivery available?",
@@ -45,8 +46,8 @@ const faqs = [
         answer: "Yes, you have full control to swap any meal you don't like with another option from our weekly menu."
     },
     {
-        question: "What makes the HealthyMinds experience in Kuwait unique?",
-        answer: "We offer completely personalized meal plans tuned to your unique macros, cooked with premium ingredients, and delivered fresh daily."
+        question: "What makes the HealthyMinds experience in Dubai unique?",
+        answer: "We offer personalised meal plans tuned to your macros, cooked with premium ingredients, and delivered fresh across the UAE."
     }
 ];
 
@@ -119,9 +120,15 @@ export const FAQSection = () => {
                            </div>
                         </div>
 
-                        <Button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-7 rounded-full h-[42px] text-[14px] shadow-sm font-bold border-none w-max">
+                        <a
+                            href={whatsappLink("Hi HealthyMinds, I have a question about meal plans.")}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                        <Button className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-7 rounded-full h-[44px] text-[14px] shadow-sm font-bold border-none w-max">
                             Chat with us
                         </Button>
+                        </a>
                     </div>
                 </div>
 

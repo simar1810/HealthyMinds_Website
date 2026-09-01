@@ -1,26 +1,53 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useRequireAuth } from "@/lib/useRequireAuth";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTenant } from "@/contexts/TenantContext";
+import { formatMinorUnits, formatMajorUnits } from "@/lib/formatCurrency";
+import { PlanIconBadge } from "@/components/PlanIconBadge";
+import { PlanPreviewModal } from "@/components/PlanPreviewModal";
+import { TRIAL_PLAN, resolveTrialTemplateId } from "@/lib/trialPlan";
+import {
+  collectRawDurationKeysFromPricing,
+  daysForDurationKey,
+  isPlanDurationDayKey,
+  planDurationListTitle,
+  planDurationShortTitle,
+  supportedDurationKeysPresent,
+} from "@/lib/mealPlanDurationTiers";
 
 const GOAL_EMOJIS: Record<string, string> = {
-  balanced: "⚖️",
-  "high-protein": "🍗",
-  "high protein": "🍗",
-  "low-carb": "🥑",
-  "low carb": "🥑",
-  vegetarian: "🥦",
-  vegan: "🥦",
-  "chef's picks": "👨‍🍳",
-  chefs_picks: "👨‍🍳",
-  custom: "🏋️",
-  "custom macros": "🏋️",
-  keto: "🥑",
-  lose_weight: "⚖️",
-  gain_muscle: "🍗",
-  maintain: "⚖️",
+  "fat loss": "🔥",
+  fat_loss: "🔥",
+  lose_weight: "🔥",
+  "muscle gain": "💪",
+  muscle_gain: "💪",
+  gain_muscle: "💪",
+  "balanced diet": "🥗",
+  balanced: "🥗",
+  maintain: "🥗",
+  diabetic: "❤️",
+  "diabetic friendly": "❤️",
+  detox: "🌿",
+  "body detox": "🌿",
+  gut: "🦠",
+  "gut health": "🦠",
+  "age reverse": "⏳",
+  age_reverse: "⏳",
+  custom: "👨‍🍳",
+  "customized meal plan": "👨‍🍳",
+  "custom macros": "👨‍🍳",
+  pcos: "🌸",
+  pcod: "🌸",
+  "pcod / pcos care": "🌸",
+  "pcod pcos": "🌸",
+  thyroid: "🦋",
+  "thyroid care": "🦋",
+  pregnancy: "🤰",
+  "pregnancy nutrition": "🤰",
 };
 
 interface BackendPlan {
@@ -28,7 +55,9 @@ interface BackendPlan {
   title: string;
   goalType?: string;
   dietType?: string;
-  structure: Record<string, unknown>;
+  structure: Record<string, unknown> & {
+    nutrition?: { calories?: number; protein?: number; carbs?: number; fat?: number };
+  };
   pricing?: {
     breakfast?: Record<string, number>;
     lunch?: Record<string, number>;
@@ -42,6 +71,16 @@ interface PlanType {
   desc: string;
   emoji: string;
   style: string;
+  /** Daily calorie target of the plan, when known. */
+  kcal?: number | null;
+}
+
+function planCalories(p: BackendPlan): number | null {
+  const n = p.structure?.nutrition;
+  if (!n) return null;
+  if (n.calories && n.calories > 0) return Math.round(n.calories);
+  const kcal = (n.protein ?? 0) * 4 + (n.carbs ?? 0) * 4 + (n.fat ?? 0) * 9;
+  return kcal > 0 ? Math.round(kcal) : null;
 }
 
 interface Cycle {
@@ -54,98 +93,162 @@ interface Cycle {
 }
 
 const FALLBACK_PLAN_TYPES: PlanType[] = [
-  { id: "balanced", title: "Balanced", desc: "Provides the nutrients your body needs to thrive", emoji: "⚖️", style: "default" },
-  { id: "custom", title: "Custom Macros", desc: "Designed for athletes and fitness focused individuals", emoji: "🏋️", style: "custom" },
-  { id: "chef", title: "Chef's Picks", desc: "Dishes crafted for your cravings, not your fitness goals", emoji: "👨‍🍳", style: "default" },
-  { id: "low-carb", title: "Low-Carb", desc: "Low in carbs, but high in healthy fats, and non-starchy veggies", emoji: "🥑", style: "default" },
-  { id: "high-protein", title: "High Protein", desc: "Boosts muscle strength and vitality with lean proteins", emoji: "🍗", style: "default" },
-  { id: "vegetarian", title: "Vegetarian", desc: "Plant-based dishes with colorful veggies and hearty grains", emoji: "🥦", style: "default" },
+  { id: "fat-loss", title: "Fat Loss", desc: "Calorie-controlled meals that melt fat, not muscle", emoji: "🔥", style: "default" },
+  { id: "muscle-gain", title: "Muscle Gain", desc: "Protein-forward plates built for strength", emoji: "💪", style: "default" },
+  { id: "balanced", title: "Balanced Diet", desc: "Everyday nutrition, perfectly proportioned", emoji: "🥗", style: "default" },
+  { id: "diabetic", title: "Diabetic Friendly", desc: "Low-GI meals that keep blood sugar steady", emoji: "❤️", style: "default" },
+  { id: "detox", title: "Body Detox", desc: "Clean, plant-rich meals that reset your system", emoji: "🌿", style: "default" },
+  { id: "gut", title: "Gut Health", desc: "Fibre and ferment-rich food for a happy gut", emoji: "🦠", style: "default" },
+  { id: "age", title: "Age Reverse", desc: "Antioxidant-dense menus for longevity", emoji: "⏳", style: "default" },
+  { id: "custom", title: "Customized Meal Plan", desc: "Built with our chef around your exact needs", emoji: "👨‍🍳", style: "custom" },
+  { id: "pcod-pcos", title: "PCOD / PCOS Care", desc: "Hormone-balancing meals for PCOD & PCOS", emoji: "🌸", style: "default" },
+  { id: "thyroid", title: "Thyroid Care", desc: "Nutrient-targeted meals that support thyroid function", emoji: "🦋", style: "default" },
+  { id: "pregnancy", title: "Pregnancy Nutrition", desc: "Wholesome, doctor-informed meals for every trimester", emoji: "🤰", style: "default" },
 ];
 
-const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snack"];
-const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
+/** New pricing model: price = per-meal rate × meals/day × days. */
+const MEALS_PER_DAY_OPTIONS = [2, 3, 4, 5];
 
 const FALLBACK_CYCLES: Cycle[] = [
-  { id: "1 week", title: "Weekly", subtext: "Per week", priceDisplay: "/week", save: null, amount: 0 },
-  { id: "2 weeks", title: "2 Weeks", subtext: "Per 2 weeks", priceDisplay: "/2 weeks", save: null, amount: 0 },
-  { id: "4 weeks", title: "Monthly", subtext: "Per month", priceDisplay: "/month", save: null, amount: 0 },
+  { id: "20", title: "20 days", subtext: "Programme length", priceDisplay: "—", save: null, amount: 0 },
+  { id: "24", title: "24 days", subtext: "Programme length", priceDisplay: "—", save: null, amount: 0 },
+  { id: "30", title: "30 days", subtext: "Programme length", priceDisplay: "—", save: null, amount: 0 },
+  { id: "90", title: "90 days", subtext: "Programme length", priceDisplay: "—", save: null, amount: 0 },
 ];
 
-function buildCycles(pricing: BackendPlan["pricing"], selectedMeals: string[]): Cycle[] {
-  if (!pricing) return FALLBACK_CYCLES;
+const PLANS_SUB_BANNER_DISMISSED_KEY = "healthyminds_plans_sub_banner_dismissed";
 
-  const durationKeys = new Set<string>();
-  const mealKeys = selectedMeals.map((m) => m.toLowerCase() as keyof NonNullable<BackendPlan["pricing"]>);
+interface SubscriptionTemplateRef {
+  _id: string;
+  title?: string;
+  goalType?: string;
+  dietType?: string;
+}
 
-  for (const mk of mealKeys) {
-    const tierObj = pricing[mk];
-    if (tierObj) {
-      for (const k of Object.keys(tierObj)) {
-        durationKeys.add(k);
-      }
-    }
+interface ActiveSubscriptionPayload {
+  _id?: string;
+  status?: string;
+  templateId?: string | SubscriptionTemplateRef;
+  amount?: number;
+  currency?: string;
+  type?: string;
+}
+
+function resolveSubscribedTemplateId(data: ActiveSubscriptionPayload | null): string | null {
+  if (!data?.templateId) return null;
+  const t = data.templateId;
+  if (typeof t === "string" && t.trim()) return t.trim();
+  if (typeof t === "object" && t != null && typeof t._id === "string" && t._id.trim()) return t._id.trim();
+  return null;
+}
+
+function resolveSubscriptionPlanTitle(data: ActiveSubscriptionPayload | null): string | null {
+  const t = data?.templateId;
+  if (t && typeof t === "object" && typeof t.title === "string" && t.title.trim()) {
+    return t.title.trim();
+  }
+  return null;
+}
+
+function isActiveSubscriptionStatus(status: string | undefined): boolean {
+  return typeof status === "string" && status.trim().toLowerCase() === "active";
+}
+
+function formatApiLabel(value: string | undefined): string {
+  if (!value?.trim()) return "";
+  return value
+    .replace(/[-_]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
+}
+
+function buildPlanDescription(goalType?: string, dietType?: string): string {
+  const goal = formatApiLabel(goalType);
+  const diet = formatApiLabel(dietType);
+  if (goal && diet) return `${goal} • ${diet}`;
+  return goal || diet || "Customized meal plan";
+}
+
+/** Per-slot prices are stored as `perMealRate × days`; total = slot price × meals/day. */
+function slotPriceForDuration(
+  pricing: NonNullable<BackendPlan["pricing"]>,
+  dur: string
+): number | null {
+  for (const slot of ["lunch", "breakfast", "dinner"] as const) {
+    const v = pricing[slot]?.[dur];
+    if (v != null && v > 0) return v;
+  }
+  return null;
+}
+
+function buildCycles(
+  pricing: BackendPlan["pricing"],
+  mealsPerDay: number,
+  currency: string
+): { cycles: Cycle[]; unsupportedLegacyOnly: boolean } {
+  if (!pricing) {
+    return { cycles: FALLBACK_CYCLES, unsupportedLegacyOnly: false };
   }
 
-  if (durationKeys.size === 0) return FALLBACK_CYCLES;
+  const raw = collectRawDurationKeysFromPricing(pricing, ["breakfast", "lunch", "dinner"]);
+  const sorted = supportedDurationKeysPresent(raw);
 
-  const sorted = [...durationKeys].sort((a, b) => {
-    const numA = parseInt(a) || 0;
-    const numB = parseInt(b) || 0;
-    return numA - numB;
-  });
-
-  let cheapestPerUnit = Infinity;
-  const cycles: Cycle[] = sorted.map((dur) => {
-    let total = 0;
-    for (const mk of mealKeys) {
-      const tierObj = pricing[mk];
-      if (tierObj && tierObj[dur] != null) {
-        total += tierObj[dur];
-      }
+  if (sorted.length === 0) {
+    if (raw.size > 0) {
+      return { cycles: [], unsupportedLegacyOnly: true };
     }
-    const weeks = parseInt(dur) || 1;
-    const perWeek = total / weeks;
-    if (perWeek < cheapestPerUnit) cheapestPerUnit = perWeek;
+    return { cycles: FALLBACK_CYCLES, unsupportedLegacyOnly: false };
+  }
 
-    return {
+  const cycles: Cycle[] = [];
+  for (const dur of sorted) {
+    const slotPrice = slotPriceForDuration(pricing, dur);
+    const days = daysForDurationKey(dur);
+    if (slotPrice == null || days == null) continue;
+    const total = slotPrice * mealsPerDay;
+    const perMeal = total / (mealsPerDay * days);
+    cycles.push({
       id: dur,
-      title: dur.charAt(0).toUpperCase() + dur.slice(1),
-      subtext: `${total} per ${dur}`,
-      priceDisplay: `${Math.round(total / weeks)}/week`,
+      title: planDurationListTitle(dur),
+      subtext: `${formatMajorUnits(total, currency)} for ${days} days`,
+      priceDisplay: `${formatMajorUnits(perMeal, currency, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      })}/meal`,
       save: null,
       amount: Math.round(total * 100),
-    };
-  });
-
-  if (cycles.length > 1) {
-    const basePerWeek = cycles[0].amount / 100 / (parseInt(cycles[0].id) || 1);
-    for (let i = 1; i < cycles.length; i++) {
-      const weeks = parseInt(cycles[i].id) || 1;
-      const thisPerWeek = cycles[i].amount / 100 / weeks;
-      const saving = Math.round((basePerWeek - thisPerWeek) * weeks);
-      if (saving > 0) {
-        cycles[i].save = `${saving}`;
-      }
-    }
+    });
   }
 
-  return cycles;
+  if (cycles.length === 0) {
+    return { cycles: [], unsupportedLegacyOnly: true };
+  }
+
+  return { cycles, unsupportedLegacyOnly: false };
 }
 
 export default function PlansPage() {
   const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useRequireAuth();
   const { isAuthenticated: loggedIn } = useAuth();
+  const { currency } = useTenant();
 
   const [backendPlans, setBackendPlans] = useState<BackendPlan[]>([]);
   const [planTypes, setPlanTypes] = useState<PlanType[]>(FALLBACK_PLAN_TYPES);
   const [selectedPlan, setSelectedPlan] = useState("");
-  const [selectedMeals, setSelectedMeals] = useState<string[]>(["Lunch", "Snack"]);
-  const [selectedDays, setSelectedDays] = useState<number[]>([0, 1, 2, 3, 4]);
+  const [mealsPerDay, setMealsPerDay] = useState<number>(3);
   const [selectedCycle, setSelectedCycle] = useState("");
   const [cycles, setCycles] = useState<Cycle[]>(FALLBACK_CYCLES);
+  const [unsupportedDurationTiers, setUnsupportedDurationTiers] = useState(false);
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [trialCheckoutLoading, setTrialCheckoutLoading] = useState(false);
+  const [activeSubscription, setActiveSubscription] = useState<ActiveSubscriptionPayload | null>(null);
+  const [subscriptionFetched, setSubscriptionFetched] = useState(false);
+  const [subscriptionBannerDismissed, setSubscriptionBannerDismissed] = useState(false);
+  const [previewPlanId, setPreviewPlanId] = useState<string | null>(null);
 
   const fetchPlans = useCallback(async () => {
     try {
@@ -158,11 +261,10 @@ export default function PlansPage() {
           return {
             id: p._id,
             title: p.title,
-            desc: p.goalType
-              ? `${p.goalType}${p.dietType ? ` - ${p.dietType}` : ""}`
-              : p.dietType || "Customized meal plan",
+            desc: buildPlanDescription(p.goalType, p.dietType),
             emoji: GOAL_EMOJIS[key] || "🍽️",
             style: key.includes("custom") ? "custom" : "default",
+            kcal: planCalories(p),
           };
         });
         setPlanTypes(mapped);
@@ -184,27 +286,61 @@ export default function PlansPage() {
   }, [isAuthenticated, fetchPlans]);
 
   useEffect(() => {
-    const plan = backendPlans.find((p) => p._id === selectedPlan);
-    if (plan?.pricing) {
-      const c = buildCycles(plan.pricing, selectedMeals);
-      setCycles(c);
-      if (c.length > 0 && !c.find((cy) => cy.id === selectedCycle)) {
-        setSelectedCycle(c[0].id);
-      }
+    if (typeof sessionStorage === "undefined") return;
+    if (sessionStorage.getItem(PLANS_SUB_BANNER_DISMISSED_KEY) === "1") {
+      setSubscriptionBannerDismissed(true);
     }
-  }, [selectedPlan, selectedMeals, backendPlans, selectedCycle]);
+  }, []);
 
-  const toggleMeal = (meal: string) => {
-    setSelectedMeals((prev) =>
-      prev.includes(meal) ? prev.filter((m) => m !== meal) : [...prev, meal]
-    );
+  const fetchSubscription = useCallback(async () => {
+    try {
+      const res = await api.get<ActiveSubscriptionPayload>("/payment/subscription");
+      const data = res.data;
+      if (data && isActiveSubscriptionStatus(data.status)) {
+        setActiveSubscription(data);
+      } else {
+        setActiveSubscription(null);
+      }
+    } catch {
+      setActiveSubscription(null);
+    } finally {
+      setSubscriptionFetched(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      void fetchSubscription();
+    }
+  }, [isAuthenticated, fetchSubscription]);
+
+  const dismissSubscriptionBanner = () => {
+    setSubscriptionBannerDismissed(true);
+    if (typeof sessionStorage !== "undefined") {
+      sessionStorage.setItem(PLANS_SUB_BANNER_DISMISSED_KEY, "1");
+    }
   };
 
-  const toggleDay = (idx: number) => {
-    setSelectedDays((prev) =>
-      prev.includes(idx) ? prev.filter((d) => d !== idx) : [...prev, idx].sort()
-    );
-  };
+  useEffect(() => {
+    const plan = backendPlans.find((p) => p._id === selectedPlan);
+    if (!plan?.pricing) {
+      setCycles(FALLBACK_CYCLES);
+      setUnsupportedDurationTiers(false);
+      if (!FALLBACK_CYCLES.find((cy) => cy.id === selectedCycle)) {
+        setSelectedCycle(FALLBACK_CYCLES[0]?.id ?? "");
+      }
+      return;
+    }
+    const { cycles: c, unsupportedLegacyOnly } = buildCycles(plan.pricing, mealsPerDay, currency);
+    setCycles(c);
+    setUnsupportedDurationTiers(unsupportedLegacyOnly);
+    if (c.length > 0 && !c.find((cy) => cy.id === selectedCycle)) {
+      setSelectedCycle(c[0].id);
+    }
+    if (c.length === 0) {
+      setSelectedCycle("");
+    }
+  }, [selectedPlan, mealsPerDay, backendPlans, selectedCycle, currency]);
 
   const getSelectedPlanTitle = () =>
     planTypes.find((p) => p.id === selectedPlan)?.title || "";
@@ -223,15 +359,20 @@ export default function PlansPage() {
     setCheckoutLoading(true);
     try {
       const templateId = backendPlans.find((p) => p._id === selectedPlan)?._id || selectedPlan;
+      const durationLabel = isPlanDurationDayKey(cycle.id)
+        ? planDurationShortTitle(cycle.id)
+        : cycle.title;
       const res = await api.post<{ url: string; orderId: string }>(
         "/checkout/session",
         {
           templateId,
           amount: cycle.amount,
-          currency: "inr",
-          productName: `${getSelectedPlanTitle()} - ${cycle.title}`,
+          currency: currency.toLowerCase(),
+          productName: `${getSelectedPlanTitle()} — ${durationLabel} · ${mealsPerDay} meals/day`,
           successUrl: `${window.location.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: `${window.location.origin}/payment/cancel`,
+          planType: "standard",
+          customer_creation: "always",
         },
         { noAuth: true }
       );
@@ -247,75 +388,294 @@ export default function PlansPage() {
     }
   };
 
+  const handleTrialCheckout = async () => {
+    if (!loggedIn) {
+      router.push("/auth/login?redirect=/plans#trial");
+      return;
+    }
+
+    const templateId = resolveTrialTemplateId(backendPlans, selectedPlan);
+    if (!templateId) {
+      alert("Trial checkout is not available yet. Please pick a programme above or try again shortly.");
+      return;
+    }
+
+    setTrialCheckoutLoading(true);
+    try {
+      const res = await api.post<{ url: string; orderId: string }>(
+        "/checkout/session",
+        {
+          templateId,
+          amount: TRIAL_PLAN.amountMinor,
+          currency: TRIAL_PLAN.currency,
+          productName: TRIAL_PLAN.productName,
+          successUrl: `${window.location.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: `${window.location.origin}/payment/cancel`,
+          planType: "trial",
+          customer_creation: "always",
+        },
+        { noAuth: true }
+      );
+
+      if (res.data?.url) {
+        window.location.href = res.data.url;
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Trial checkout failed";
+      alert(message);
+    } finally {
+      setTrialCheckoutLoading(false);
+    }
+  };
+
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="w-8 h-8 border-3 border-[#4F46E5] border-t-transparent rounded-full animate-spin" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
   }
 
+  const subscribedTemplateId = activeSubscription ? resolveSubscribedTemplateId(activeSubscription) : null;
+  const subscribedPlanTitle = activeSubscription ? resolveSubscriptionPlanTitle(activeSubscription) : null;
+  const showSubscriptionBanner =
+    subscriptionFetched &&
+    activeSubscription &&
+    !subscriptionBannerDismissed &&
+    isActiveSubscriptionStatus(activeSubscription.status);
+
   return (
-    <div className="bg-white min-h-screen pt-[140px] pb-24 w-full">
+    <div className="min-h-screen w-full bg-background pb-24 pt-28 sm:pt-32">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        {showSubscriptionBanner ? (
+          <div
+            className="relative mb-8 flex flex-col gap-4 rounded-2xl border-2 border-primary/30 bg-primary/10 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5"
+            role="status"
+            aria-live="polite"
+          >
+            <button
+              type="button"
+              onClick={dismissSubscriptionBanner}
+              className="absolute right-3 top-3 rounded-lg p-1.5 text-secondary-text transition hover:bg-background/80 hover:text-foreground"
+              aria-label="Dismiss subscription notice"
+            >
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+              </svg>
+            </button>
+            <div className="pr-10 sm:pr-0">
+              <p className="font-heading text-base font-semibold text-foreground sm:text-lg">
+                {subscribedPlanTitle
+                  ? `You're subscribed to ${subscribedPlanTitle}.`
+                  : "You have an active meal plan subscription."}
+              </p>
+              {activeSubscription?.amount != null &&
+              activeSubscription.amount > 0 &&
+              typeof activeSubscription.currency === "string" &&
+              activeSubscription.currency.trim() ? (
+                <p className="mt-1.5 text-sm font-medium text-secondary-text">
+                  Current plan billing:{" "}
+                  {formatMinorUnits(activeSubscription.amount, activeSubscription.currency)}
+                </p>
+              ) : null}
+            </div>
+            <div className="flex shrink-0 flex-wrap gap-3 sm:pl-4">
+              {subscribedTemplateId ? (
+                <Link
+                  href={`/meal-plans/${subscribedTemplateId}`}
+                  className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-hover"
+                >
+                  View your meal plan
+                </Link>
+              ) : (
+                <Link
+                  href="/"
+                  className="inline-flex items-center justify-center rounded-full border border-border-subtle bg-background px-6 py-2.5 text-sm font-semibold text-foreground transition hover:bg-bg-light"
+                >
+                  Browse meal plans
+                </Link>
+              )}
+            </div>
+          </div>
+        ) : null}
+
         {/* Header */}
-        <div className="mb-14">
-          <h1 className="text-[34px] md:text-[44px] font-extrabold text-[#2F3337] leading-[1.05] tracking-tight">
-            Customize Your
+        <div className="mb-10">
+          <h1 className="font-heading text-[34px] font-semibold leading-[1.05] tracking-tight text-foreground md:text-[44px]">
+            Built Around You.
             <br />
-            Perfect Meal Plan
+            Down to the Gram.
           </h1>
+          <p className="mt-4 max-w-xl text-[15px] font-medium leading-relaxed text-secondary-text">
+            Choose your programme, your meals, and your rhythm — our chefs and
+            nutritionist handle everything after checkout.
+          </p>
         </div>
 
-        {/* Two Column Layout */}
-        <div className="flex flex-col lg:flex-row gap-[60px] lg:gap-[80px] relative">
+        {/* Taste Trial — fixed AED 99 Stripe checkout */}
+        <section
+          id="trial"
+          className="relative mb-14 overflow-hidden rounded-[28px] border border-primary/25 bg-[linear-gradient(135deg,#12291c_0%,#1c6b45_48%,#145234_100%)] p-6 text-white shadow-[0_20px_50px_rgba(18,41,28,0.22)] sm:p-8"
+        >
+          <div
+            className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(184,145,46,0.35),transparent_70%)]"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute -bottom-24 left-1/3 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.08),transparent_70%)]"
+            aria-hidden
+          />
+
+          <div className="relative flex flex-col gap-8 lg:flex-row lg:items-stretch lg:justify-between">
+            <div className="min-w-0 flex-1">
+              <div className="mb-4 flex flex-wrap items-center gap-2.5">
+                <span className="rounded-full bg-gold/20 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gold-soft">
+                  {TRIAL_PLAN.badge}
+                </span>
+                <span className="rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white/90">
+                  One-day taste
+                </span>
+              </div>
+
+              <h2 className="font-heading text-[28px] font-semibold leading-tight tracking-tight sm:text-[34px]">
+                {TRIAL_PLAN.title}
+              </h2>
+              <p className="mt-2 max-w-xl text-[15px] font-medium leading-relaxed text-white/80">
+                {TRIAL_PLAN.tagline} Buy one trial for{" "}
+                <span className="font-semibold text-gold-soft">AED 99</span> — then upgrade to a full
+                programme whenever you&apos;re ready.
+              </p>
+
+              <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+                {TRIAL_PLAN.includes.map((item) => (
+                  <li
+                    key={item.label}
+                    className="rounded-[16px] border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-[2px]"
+                  >
+                    <p className="text-[14px] font-semibold text-white">{item.label}</p>
+                    <p className="mt-1 text-[12px] font-medium leading-snug text-white/70">
+                      {item.detail}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="flex w-full shrink-0 flex-col justify-between rounded-[22px] border border-white/15 bg-white/95 p-5 text-foreground shadow-lg sm:max-w-[280px] lg:w-[280px]">
+              <div>
+                <p className="text-[12px] font-bold uppercase tracking-wide text-secondary-text">
+                  Trial price
+                </p>
+                <p className="font-heading mt-1 text-[40px] font-semibold leading-none tracking-tight text-foreground">
+                  AED 99
+                </p>
+                <p className="mt-2 text-[13px] font-medium text-secondary-text">
+                  2 meals + 1 detox + 1 snack
+                </p>
+                <p className="mt-3 text-[12px] font-semibold text-primary">
+                  Secure checkout with Stripe · Free delivery
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => void handleTrialCheckout()}
+                disabled={trialCheckoutLoading || checkoutLoading}
+                className="mt-6 w-full rounded-full bg-primary py-[15px] text-[15px] font-semibold text-white shadow-sm transition hover:bg-primary-hover disabled:bg-primary/60"
+              >
+                {trialCheckoutLoading ? "Opening Stripe…" : "Buy trial — AED 99 →"}
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <div className="mb-6 flex flex-wrap items-center gap-2 rounded-2xl border border-primary/20 bg-primary/10 px-5 py-3.5 text-sm text-foreground">
+          <span aria-hidden>🌱</span>
+          <span>
+            Following a vegetarian diet? Every plan below includes a dedicated
+            vegetarian rotation —{" "}
+            <Link
+              href="/vegetarian-meal-plan-dubai"
+              className="font-semibold text-primary underline-offset-4 hover:underline"
+            >
+              see this week&rsquo;s vegetarian menu
+            </Link>
+            .
+          </span>
+        </div>
+
+        {/* Plan preference heading sits above the two-column row so the
+            pricing card aligns with the first row of plan cards. */}
+        <h2 className="font-heading mb-6 text-[26px] font-semibold tracking-tight text-foreground">
+          What kind of meals do you prefer?
+        </h2>
+
+        {/* Two Column Layout: left scrolls with the page, right stays sticky */}
+        <div className="relative flex flex-col gap-[60px] lg:flex-row lg:items-start lg:gap-[80px]">
           {/* Left Column */}
-          <div className="flex-1 flex flex-col gap-14">
+          <div className="flex min-w-0 flex-1 flex-col gap-14">
             {/* Section 1: Plan Preferences */}
             <section>
-              <h2 className="text-[26px] font-extrabold text-[#2F3337] mb-6 tracking-tight">
-                What kind of meals do you prefer?
-              </h2>
               {loading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-[18px]">
+                <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="rounded-[24px] p-[22px] border-2 border-gray-100 min-h-[170px] animate-pulse bg-gray-50" />
+                    <div
+                      key={i}
+                      className="min-h-[170px] animate-pulse rounded-[24px] border-2 border-border-subtle bg-bg-light p-[22px]"
+                    />
                   ))}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-[18px]">
+                <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2">
                   {planTypes.map((plan) => {
                     const isActive = selectedPlan === plan.id;
                     return (
                       <div
                         key={plan.id}
                         onClick={() => setSelectedPlan(plan.id)}
-                        className={`relative rounded-[24px] p-[22px] border-2 cursor-pointer transition-all flex flex-col justify-between min-h-[170px] ${
+                        className={`relative flex min-h-[170px] cursor-pointer flex-col justify-between rounded-[24px] border-2 p-[22px] transition-all ${
                           isActive
-                            ? "border-[#4F46E5] bg-[#EEF2FF] shadow-sm"
-                            : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
+                            ? "border-primary bg-primary/10 shadow-sm"
+                            : "border-border-subtle bg-surface shadow-sm hover:border-foreground/15"
                         }`}
                       >
-                        <div className="flex justify-between items-start mb-6">
+                        <div className="mb-6 flex items-start justify-between">
                           <div className="pr-4">
-                            <h3 className="text-[17px] font-extrabold text-[#2F3337] mb-1.5">
+                            <h3 className="mb-1.5 text-[17px] font-semibold text-foreground">
                               {plan.title}
                             </h3>
-                            <p className="text-[13px] text-[#878E99] font-medium leading-[1.4] pr-1">
+                            <p className="pr-1 text-[13px] font-medium leading-[1.4] text-secondary-text">
                               {plan.desc}
                             </p>
+                            {plan.kcal ? (
+                              <span
+                                className={`mt-2 inline-block rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                                  isActive
+                                    ? "bg-primary/15 text-primary"
+                                    : "bg-bg-light text-secondary-text"
+                                }`}
+                              >
+                                ~{plan.kcal.toLocaleString()} kcal/day
+                              </span>
+                            ) : null}
                           </div>
                           <div className="text-[42px] leading-none">{plan.emoji}</div>
                         </div>
-                        <div className="flex justify-between items-center mt-auto pt-2">
-                          <span className="text-[#4F46E5] font-bold text-[13px] flex items-center gap-1">
+                        <div className="mt-auto flex items-center justify-between pt-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPreviewPlanId(plan.id);
+                            }}
+                            className="flex items-center gap-1 text-[13px] font-semibold text-primary underline-offset-2 hover:underline"
+                          >
                             Learn More{" "}
                             <span className="text-[12px] font-medium">&rarr;</span>
-                          </span>
+                          </button>
                           {isActive ? (
-                            <div className="bg-[#4338CA] text-white px-3 py-[7px] rounded-full flex items-center gap-1.5 shadow-sm">
+                            <div className="flex items-center gap-1.5 rounded-full bg-primary-hover px-3 py-[7px] text-white shadow-sm">
                               <svg
-                                className="w-3 h-3 ml-0.5"
+                                className="ml-0.5 h-3 w-3"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -325,18 +685,18 @@ export default function PlansPage() {
                               >
                                 <polyline points="20 6 9 17 4 12"></polyline>
                               </svg>
-                              <span className="text-[11.5px] font-[800] tracking-tight mr-1">
+                              <span className="mr-1 text-[11.5px] font-[800] tracking-tight">
                                 Selected
                               </span>
                             </div>
                           ) : plan.style === "custom" ? (
-                            <div className="bg-[#EEF2FF] text-[#4F46E5] px-[18px] py-[7px] rounded-full">
-                              <span className="text-[12px] font-[800] tracking-tight">
+                            <div className="rounded-full bg-primary/10 px-[18px] py-[7px] text-primary">
+                              <span className="text-[12px] font-semibold tracking-tight">
                                 Build my plan
                               </span>
                             </div>
                           ) : (
-                            <div className="bg-[#EEF2FF] text-[#4F46E5] px-[18px] py-[7px] rounded-full hover:bg-[#DDD6FE] transition-colors">
+                            <div className="rounded-full bg-primary/10 px-[18px] py-[7px] text-primary transition-colors hover:bg-primary/15">
                               <span className="text-[12px] font-[800] tracking-tight">
                                 Select Plan
                               </span>
@@ -350,262 +710,220 @@ export default function PlansPage() {
               )}
             </section>
 
-            {/* Section 2: Meal Count */}
+            {/* Section 2: Meals per day (pricing = rate × meals × days) */}
             <section>
-              <h2 className="text-[26px] font-extrabold text-[#2F3337] mb-2 tracking-tight">
+              <h2 className="font-heading mb-2 text-[26px] font-semibold tracking-tight text-foreground">
                 How many meals per day?
               </h2>
-              <p className="text-[#878E99] font-medium text-[14px] mb-6">
-                Select a minimum of 2 meals, including lunch or dinner.
+              <p className="mb-6 text-[14px] font-medium text-secondary-text">
+                Our chefs compose your day around your count — mains, sides, and
+                snacks included.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[18px]">
-                {MEAL_TYPES.map((meal) => {
-                  const isActive = selectedMeals.includes(meal);
-                  return (
-                    <div
-                      key={meal}
-                      onClick={() => toggleMeal(meal)}
-                      className={`rounded-[16px] px-5 py-[18px] border-2 cursor-pointer transition-colors flex justify-between items-center ${
-                        isActive
-                          ? "border-[#4F46E5] bg-[#EEF2FF]"
-                          : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
-                      }`}
-                    >
-                      <span className="text-[#2F3337] font-extrabold text-[15px]">
-                        {meal}
-                      </span>
-                      {isActive ? (
-                        <div className="w-6 h-6 rounded-full bg-[#4F46E5] flex flex-shrink-0 items-center justify-center border-2 border-[#4F46E5]">
-                          <svg
-                            className="w-3.5 h-3.5 text-white"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                          </svg>
-                        </div>
-                      ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-gray-200 flex-shrink-0 bg-white"></div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-
-            {/* Section 3: Days a Week */}
-            <section>
-              <h2 className="text-[26px] font-extrabold text-[#2F3337] mb-2 tracking-tight">
-                How many days a week are you eating
-                <br />
-                HealthyMinds?
-              </h2>
-              <p className="text-[#878E99] font-medium text-[14px] mb-8">
-                Select a minimum of 5 days
-              </p>
-              <div className="flex gap-[12px]">
-                {DAYS.map((day, idx) => {
-                  const isActive = selectedDays.includes(idx);
+              <div className="grid grid-cols-2 gap-[18px] sm:grid-cols-4">
+                {MEALS_PER_DAY_OPTIONS.map((count) => {
+                  const isActive = mealsPerDay === count;
                   return (
                     <button
-                      key={idx}
-                      onClick={() => toggleDay(idx)}
-                      className={`w-[46px] h-[46px] rounded-full flex items-center justify-center text-[15px] font-[800] transition-all duration-200 ${
+                      key={count}
+                      type="button"
+                      onClick={() => setMealsPerDay(count)}
+                      className={`flex cursor-pointer flex-col items-center justify-center rounded-[16px] border-2 px-5 py-6 transition-colors ${
                         isActive
-                          ? "bg-[#4F46E5] text-white shadow-sm"
-                          : "bg-[#F2F4F7] text-[#878E99] hover:bg-gray-200"
+                          ? "border-primary bg-primary/10"
+                          : "border-border-subtle bg-surface shadow-sm hover:border-foreground/15"
                       }`}
                     >
-                      {day}
+                      <span className="font-heading text-[28px] font-semibold leading-none text-foreground">
+                        {count}
+                      </span>
+                      <span className="mt-2 text-[13px] font-semibold text-secondary-text">
+                        meals / day
+                      </span>
                     </button>
                   );
                 })}
               </div>
             </section>
 
-            {/* Section 4: Payment Cycle */}
+            {/* Section 4: Plan duration (API tiers: 7 / 14 / 28 days) */}
             <section>
-              <h2 className="text-[26px] font-extrabold text-[#2F3337] mb-[26px] tracking-tight">
-                Payment Cycle
+              <h2 className="font-heading mb-[26px] text-[26px] font-semibold tracking-tight text-foreground">
+                Plan duration
               </h2>
-              <div className="flex flex-col gap-[18px] mb-[24px]">
+              {unsupportedDurationTiers ? (
+                <p
+                  className="mb-6 rounded-2xl border border-amber-200/80 bg-amber-50 px-4 py-3 text-[13px] font-medium leading-relaxed text-amber-950"
+                  role="status"
+                >
+                  This plan&apos;s pricing is still on an older format we no longer support here. Please refresh
+                  later or pick another plan. Once plans are re-saved in admin, the 20, 24, 30, and 90-day
+                  programmes will appear.
+                </p>
+              ) : null}
+              <div className="mb-[24px] flex flex-col gap-[18px]">
                 {cycles.map((cycle) => {
                   const isActive = selectedCycle === cycle.id;
                   return (
                     <div
                       key={cycle.id}
                       onClick={() => setSelectedCycle(cycle.id)}
-                      className={`rounded-[16px] px-6 py-5 border-2 cursor-pointer transition-colors flex justify-between items-center ${
+                      className={`flex cursor-pointer items-center justify-between rounded-[16px] border-2 px-6 py-5 transition-colors ${
                         isActive
-                          ? "border-[#4F46E5] bg-[#EEF2FF]"
-                          : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
+                          ? "border-primary bg-primary/10"
+                          : "border-border-subtle bg-surface shadow-sm hover:border-foreground/15"
                       }`}
                     >
                       <div className="flex flex-col">
-                        <div className="flex items-center gap-[12px] mb-1.5">
-                          <span className="text-[#2F3337] font-extrabold text-[15px]">
+                        <div className="mb-1.5 flex items-center gap-[12px]">
+                          <span className="text-[15px] font-semibold text-foreground">
                             {cycle.title}
                           </span>
                           {cycle.save && (
-                            <span className="bg-[#4F46E5] text-white text-[10px] font-extrabold px-[10px] py-[3px] rounded-full uppercase tracking-tight">
+                            <span className="rounded-full bg-primary px-[10px] py-[3px] text-[10px] font-semibold uppercase tracking-tight text-white">
                               Save {cycle.save}
                             </span>
                           )}
                         </div>
-                        <span className="text-[#A0A5AE] text-[12px] font-semibold tracking-tight">
+                        <span className="text-[12px] font-semibold tracking-tight text-secondary-text">
                           {cycle.subtext}
                         </span>
                       </div>
                       <div className="flex items-center gap-[14px]">
-                        <span className="text-[#2F3337] font-extrabold text-[13px]">
+                        <span className="text-[13px] font-semibold text-foreground">
                           {cycle.priceDisplay}
                         </span>
                         {isActive ? (
-                          <div className="w-[22px] h-[22px] rounded-full bg-[#4F46E5] flex flex-shrink-0 items-center justify-center border-[5px] border-white ring-1 ring-[#4F46E5]">
-                            <div className="w-full h-full bg-[#4F46E5] rounded-full"></div>
+                          <div className="flex h-[22px] w-[22px] flex-shrink-0 items-center justify-center rounded-full border-[5px] border-surface bg-primary ring-1 ring-primary">
+                            <div className="h-full w-full rounded-full bg-primary" />
                           </div>
                         ) : (
-                          <div className="w-[22px] h-[22px] rounded-full border-2 border-gray-200 flex-shrink-0 bg-white"></div>
+                          <div className="h-[22px] w-[22px] flex-shrink-0 rounded-full border-2 border-border-subtle bg-surface" />
                         )}
                       </div>
                     </div>
                   );
                 })}
               </div>
-
-              <div className="flex justify-between items-center w-full">
-                <p className="text-[#878E99] text-[12px] font-semibold max-w-[280px] leading-[1.35]">
-                  Pay in 4 interest- free payments for our 3-month and monthly
-                  plans.
-                </p>
-                <div className="bg-[#818CF8] text-[#2F3337] text-[18px] tracking-tight font-[900] px-3.5 py-1.5 rounded-md italic">
-                  tabby
-                </div>
-              </div>
             </section>
           </div>
 
-          {/* Right Column (Sticky Sidebar) */}
-          <div className="w-full lg:w-[360px] shrink-0">
-            <div className="sticky top-[140px] w-full">
-              <div className="bg-[#FCFCFC] rounded-[32px] p-7 mb-6 shadow-[0px_4px_24px_rgba(0,0,0,0.04)] ring-1 ring-gray-100">
-                <div className="flex justify-between items-start mb-8">
-                  <div className="flex-1 pr-[18px]">
-                    <h3 className="text-[20px] font-[800] text-[#2F3337] tracking-tight mb-[14px]">
-                      Your package, your way
-                    </h3>
-                    <p className="text-[#878E99] text-[13.5px] font-semibold leading-[1.6]">
-                      {getSelectedPlanTitle()},{" "}
-                      {selectedMeals.length} Meal
-                      {selectedMeals.length !== 1 ? "s" : ""},{" "}
-                      {selectedDays.length} days per week
-                    </p>
-                  </div>
-                  <div className="w-[64px] h-[64px] shrink-0 bg-[#F2F4F7] rounded-[16px] relative flex items-center justify-center font-black">
-                    <span className="text-[36px]">🛍️</span>
-                  </div>
+          {/* Right Column — sticky so pricing stays visible while browsing plans */}
+          <aside className="w-full shrink-0 self-start lg:sticky lg:top-32 lg:w-[360px]">
+            <div className="rounded-[32px] border border-border-subtle bg-bg-light p-7 shadow-[0px_4px_24px_rgba(27,48,34,0.06)]">
+              <div className="mb-8 flex items-start justify-between">
+                <div className="flex-1 pr-[18px]">
+                  <h3 className="font-heading mb-[14px] text-[20px] font-semibold tracking-tight text-foreground">
+                    Your package, your way
+                  </h3>
+                  <p className="text-[13.5px] font-semibold leading-[1.6] text-secondary-text">
+                    {getSelectedPlanTitle()}, {mealsPerDay} meals/day
+                    {selectedCycle ? `, ${getCurrentCycle()?.title ?? ""}` : ""}
+                  </p>
                 </div>
+                <PlanIconBadge size={64} />
+              </div>
 
-                {/* Promo Code */}
-                <div className="flex gap-[10px] mb-8">
-                  <div className="flex-1 relative">
-                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                      <svg
-                        className="w-[18px] h-[18px] text-[#A0A5AE] rotate-90"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <line x1="4" y1="9" x2="20" y2="9"></line>
-                        <line x1="4" y1="15" x2="20" y2="15"></line>
-                        <line x1="10" y1="3" x2="8" y2="21"></line>
-                        <line x1="16" y1="3" x2="14" y2="21"></line>
-                      </svg>
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Add promotion code"
-                      className="w-full border border-gray-200 text-[13px] font-bold rounded-[14px] pl-[38px] pr-4 py-[15px] placeholder:text-[#A0A5AE] focus:outline-none focus:ring-2 focus:ring-[#4F46E5] transition-shadow bg-white"
-                    />
+              {/* Promo Code */}
+              <div className="mb-8 flex gap-[10px]">
+                <div className="relative flex-1">
+                  <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
+                    <svg
+                      className="h-[18px] w-[18px] rotate-90 text-secondary-text"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="4" y1="9" x2="20" y2="9"></line>
+                      <line x1="4" y1="15" x2="20" y2="15"></line>
+                      <line x1="10" y1="3" x2="8" y2="21"></line>
+                      <line x1="16" y1="3" x2="14" y2="21"></line>
+                    </svg>
                   </div>
-                  <button className="bg-[#F2F4F7] text-[#A0A5AE] font-extrabold tracking-tight text-[13px] px-6 py-[15px] rounded-[14px] hover:bg-gray-200 transition-colors">
-                    Apply
-                  </button>
+                  <input
+                    type="text"
+                    placeholder="Add promotion code"
+                    className="w-full rounded-[14px] border border-border-subtle bg-surface py-[15px] pl-[38px] pr-4 text-[13px] font-semibold text-foreground placeholder:text-secondary-text/70 transition-shadow focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
                 </div>
-
-                {/* Subscription Coupon */}
-                <div className="border border-gray-200 border-dashed rounded-[14px] p-4 bg-white mb-10 flex items-center justify-between">
-                  <div className="flex items-center gap-3.5">
-                    <div className="bg-[#4F46E5] text-white text-[8px] font-black italic px-[6px] py-[1.5px] rounded-sm transform -rotate-12 mt-1">
-                      🎟️
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[12.5px] text-[#2F3337] font-[800] leading-[1.3] mb-0.5">
-                        10% off subscription
-                      </span>
-                      <span className="text-[11px] text-[#878E99] font-semibold tracking-tight">
-                        with 6+ days/week on your package.
-                      </span>
-                    </div>
-                  </div>
-                  <div className="w-[30px] h-[30px] rounded-full bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center font-bold text-[18px] cursor-pointer shrink-0 ml-2">
-                    +
-                  </div>
-                </div>
-
-                {/* Payment Summary */}
-                <div className="flex flex-col gap-[14px] mb-[28px]">
-                  <h4 className="text-[14px] font-[800] text-[#2F3337] mb-1 tracking-tight">
-                    Payment summary
-                  </h4>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[#878E99] text-[13px] font-semibold tracking-tight">
-                      Plan price
-                    </span>
-                    <span className="text-[#2F3337] text-[13px] font-[800]">
-                      {getCurrentCycle()
-                        ? `₹${(getCurrentCycle()!.amount / 100).toFixed(0)}`
-                        : "--"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-gray-100 pb-[18px]">
-                    <span className="text-[#878E99] text-[13px] font-semibold tracking-tight">
-                      Delivery fee
-                    </span>
-                    <span className="text-[#2F3337] text-[13px] font-[800]">₹0</span>
-                  </div>
-                  <div className="flex justify-between items-center pt-2">
-                    <span className="text-[#2F3337] text-[16px] font-black tracking-tight">
-                      Total
-                    </span>
-                    <span className="text-[#2F3337] text-[16px] font-black tracking-tight">
-                      {getCurrentCycle()
-                        ? `₹${(getCurrentCycle()!.amount / 100).toFixed(0)}`
-                        : "--"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Checkout Btn */}
                 <button
-                  onClick={handleCheckout}
-                  disabled={checkoutLoading || !selectedCycle}
-                  className="w-full bg-[#4F46E5] hover:bg-[#4338CA] disabled:bg-[#4F46E5]/60 text-white font-[800] text-[15px] py-[16px] rounded-full transition-colors shadow-[0_4px_12px_rgba(79,70,229,0.2)]"
+                  type="button"
+                  className="rounded-[14px] bg-bg-light px-6 py-[15px] text-[13px] font-semibold tracking-tight text-secondary-text transition-colors hover:bg-foreground/10"
                 >
-                  {checkoutLoading ? "Processing..." : "Continue"}
+                  Apply
                 </button>
               </div>
+
+              {/* Rate note */}
+              <div className="mb-10 flex items-center gap-3 rounded-[14px] border border-dashed border-border-subtle bg-surface p-4">
+                <span className="text-[18px]" aria-hidden>
+                  👨‍🍳
+                </span>
+                <span className="text-[12px] font-semibold leading-[1.5] text-secondary-text">
+                  Every programme includes free morning delivery and
+                  nutritionist sign-off.
+                </span>
+              </div>
+
+              {/* Payment Summary */}
+              <div className="mb-[28px] flex flex-col gap-[14px]">
+                <h4 className="mb-1 text-[14px] font-semibold tracking-tight text-foreground">
+                  Payment summary
+                </h4>
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] font-semibold tracking-tight text-secondary-text">
+                    Plan price
+                  </span>
+                  <span className="text-[13px] font-semibold text-foreground">
+                    {getCurrentCycle()
+                      ? formatMinorUnits(getCurrentCycle()!.amount, currency)
+                      : "--"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between border-b border-border-subtle pb-[18px]">
+                  <span className="text-[13px] font-semibold tracking-tight text-secondary-text">
+                    Delivery fee
+                  </span>
+                  <span className="text-[13px] font-semibold text-foreground">
+                    {formatMinorUnits(0, currency)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pt-2">
+                  <span className="font-heading text-[16px] font-semibold tracking-tight text-foreground">
+                    Total
+                  </span>
+                  <span className="font-heading text-[16px] font-semibold tracking-tight text-foreground">
+                    {getCurrentCycle()
+                      ? formatMinorUnits(getCurrentCycle()!.amount, currency)
+                      : "--"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Checkout Btn */}
+              <button
+                type="button"
+                onClick={handleCheckout}
+                disabled={checkoutLoading || !selectedCycle}
+                className="w-full rounded-full bg-primary py-[16px] text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover disabled:bg-primary/60"
+              >
+                {checkoutLoading ? "Processing..." : "Continue"}
+              </button>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
+
+      <PlanPreviewModal
+        open={previewPlanId != null}
+        planId={previewPlanId}
+        planTitle={planTypes.find((p) => p.id === previewPlanId)?.title}
+        planEmoji={planTypes.find((p) => p.id === previewPlanId)?.emoji}
+        onClose={() => setPreviewPlanId(null)}
+        onSelectPlan={(id) => setSelectedPlan(id)}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '../Button';
 
 export const HeroSection = () => {
@@ -17,9 +18,11 @@ export const HeroSection = () => {
                         Designed by nutritionists, crafted by chefs, personalized to your goals. Fresh daily. Just heat and eat.
                     </p>
 
+                    <Link href="/plans">
                     <Button size="lg" className="w-[180px] h-[56px] text-[18px] mb-8 font-semibold shadow-[0_8px_16px_rgba(79,70,229,0.3)] hover:-translate-y-1 transition-transform">
                         See plans
                     </Button>
+                    </Link>
 
                     {/* Sticky Stats Bottom Left */}
                     <div className="absolute bottom-12 left-6 lg:left-[10%] flex items-center space-x-2 text-[15px] font-bold text-primary">
