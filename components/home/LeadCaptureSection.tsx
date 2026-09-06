@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTenant } from "@/contexts/TenantContext";
-import { whatsappLink } from "@/lib/site-config";
+import { leadPhoneForContract, whatsappLink } from "@/lib/site-config";
 
 const GOAL_OPTIONS = [
   "Eat healthy",
@@ -33,10 +33,11 @@ export function LeadCaptureSection() {
     }
     setError("");
 
+    const contractPhone = leadPhoneForContract(trimmedPhone);
     const message = [
       "Hi HealthyMinds, I'd like a meal plan quote.",
       `Name: ${trimmedName}`,
-      `WhatsApp: ${trimmedPhone}`,
+      `WhatsApp: ${contractPhone}`,
       `Goal: ${goal}`,
       `Meals per week: ${mealsPerWeek}`,
     ].join("\n");
