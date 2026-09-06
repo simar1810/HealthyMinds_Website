@@ -40,3 +40,21 @@ export function whatsappLink(message: string, _phone?: string): string {
 export function digitsOnlyPhone(phone: string): string {
   return phone.replace(/\D/g, "");
 }
+
+/**
+ * Phone line in the lead WhatsApp contract. Prefixes +971 when the user
+ * typed a national number. Does not change login/OTP storage.
+ */
+export function leadPhoneForContract(raw: string, defaultCc = "971"): string {
+  const trimmed = String(raw ?? "").trim();
+  if (!trimmed) return "";
+  let digits = trimmed.replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.startsWith("00")) digits = digits.slice(2);
+  const cc = defaultCc.replace(/\D/g, "") || "971";
+  const looksInternational = trimmed.startsWith("+") || trimmed.startsWith("00");
+  if (looksInternational) return `+${digits}`;
+  if (digits.startsWith(cc) && digits.length >= cc.length + 6) return `+${digits}`;
+  digits = digits.replace(/^0+/, "");
+  return `+${cc}${digits}`;
+}
