@@ -10,6 +10,7 @@ import {
   DEFAULT_DIAL_CODE,
   dialCodeForApi,
   findRowBySelection,
+  nationalPhoneForApi,
 } from "@/lib/countryCodes";
 
 export default function LoginPage() {
@@ -50,12 +51,19 @@ function LoginContent() {
 
     const row = findRowBySelection(countrySelection);
     const countryCodeDigits = dialCodeForApi(row?.dialCode ?? DEFAULT_DIAL_CODE);
+    const phoneDigits = nationalPhoneForApi(phone, countryCodeDigits);
+
+    if (phoneDigits.length < 6) {
+      setError("Please enter a valid phone number");
+      setLoading(false);
+      return;
+    }
 
     try {
       await api.post(
         "/auth/otp",
         {
-          phone: phone.trim(),
+          phone: phoneDigits,
           countryCode: countryCodeDigits,
           tenantId: TENANT_ID,
         },
@@ -63,7 +71,7 @@ function LoginContent() {
       );
 
       const params = new URLSearchParams({
-        phone: phone.trim(),
+        phone: phoneDigits,
         countryCode: countryCodeDigits,
         redirect,
       });
@@ -121,7 +129,8 @@ function LoginContent() {
       </form>
 
       <p className="mt-8 text-center text-sm font-medium text-secondary-text">
-        We&apos;ll send you a verification code via WhatsApp
+        We&apos;ll send a verification code on WhatsApp from WellnessZ. If it
+        doesn&apos;t appear, check Message requests.
       </p>
     </AuthPageShell>
   );
