@@ -318,14 +318,7 @@ export const Navbar = () => {
               </button>
               <Link
                 href="/auth/register"
-                className="mt-2 flex min-h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold text-slate-600 transition hover:bg-hm-surface-low"
-                onClick={() => setOpen(false)}
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/auth/register"
-                className="mt-1 flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 text-sm font-semibold text-hm-on-surface transition hover:bg-hm-surface-low"
+                className="mt-2 flex min-h-12 items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-5 text-sm font-bold text-white shadow-md transition active:scale-[0.98]"
                 onClick={() => setOpen(false)}
               >
                 Get started
@@ -360,16 +353,7 @@ export const Navbar = () => {
 
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="hidden items-center gap-3 md:flex md:gap-4">
-              {!isAuthenticated ? (
-                <Link
-                  href="/auth/register"
-                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-hm-primary"
-                >
-                  Sign in
-                </Link>
-              ) : (
-                <NavbarUserMenu />
-              )}
+              {isAuthenticated ? <NavbarUserMenu /> : null}
               {!isAuthenticated ? (
                 <Link
                   href="/auth/register"
