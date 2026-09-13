@@ -243,28 +243,28 @@ export default function PlansPage() {
   const getCurrentCycle = () => cycles.find((c) => c.id === selectedCycle);
 
   return (
-    <div className="min-h-screen w-full bg-hm-surface pb-24 pt-28 text-hm-on-surface sm:pt-32">
+    <div className="min-h-screen w-full max-w-full overflow-x-clip bg-hm-surface pb-24 pt-[6.5rem] text-hm-on-surface sm:pt-32">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-12 rounded-2xl border border-slate-200/90 bg-white px-6 py-10 shadow-sm md:mb-14 md:px-10 md:py-12">
+        <div className="mb-8 rounded-2xl border border-slate-200/90 bg-white px-4 py-8 shadow-sm sm:px-6 md:mb-14 md:px-10 md:py-12">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-hm-primary">Plans</p>
-          <h1 className="font-heading mt-3 text-4xl font-black uppercase leading-[0.95] tracking-tighter text-hm-on-surface md:text-5xl">
+          <h1 className="font-heading mt-3 text-[1.65rem] font-black uppercase leading-snug tracking-tight text-hm-on-surface break-words sm:text-4xl md:text-5xl">
             Customize your
             <br />
             perfect meal plan
           </h1>
-          <p className="mt-4 max-w-2xl text-base text-slate-600 md:text-lg">
+          <p className="mt-4 max-w-full break-words text-base text-slate-600 md:text-lg">
             Browse styles and prices. When you&apos;re ready, tell us your goals — we&apos;ll WhatsApp you. No payment on this site.
           </p>
         </div>
 
         {/* Two Column Layout */}
-        <div className="flex flex-col lg:flex-row gap-[60px] lg:gap-[80px] relative">
+        <div className="relative flex flex-col gap-10 lg:flex-row lg:gap-[80px]">
           {/* Left Column */}
           <div className="flex-1 flex flex-col gap-14">
             {/* Section 1: Plan Preferences */}
             <section>
-              <h2 className="font-heading mb-6 text-2xl font-bold uppercase tracking-tight text-hm-on-surface md:text-[26px]">
+              <h2 className="font-heading mb-6 text-xl font-bold uppercase tracking-tight text-hm-on-surface sm:text-2xl md:text-[26px]">
                 What kind of meals do you prefer?
               </h2>
               {loading ? (
@@ -350,7 +350,7 @@ export default function PlansPage() {
 
             {/* Section 2: Meal Count */}
             <section>
-              <h2 className="font-heading mb-2 text-[26px] font-semibold tracking-tight text-hm-on-surface">
+              <h2 className="font-heading mb-2 text-xl font-semibold tracking-tight text-hm-on-surface sm:text-[26px]">
                 How many meals per day?
               </h2>
               <p className="mb-6 text-[14px] font-medium text-slate-600">
@@ -397,16 +397,14 @@ export default function PlansPage() {
 
             {/* Section 3: Days a Week */}
             <section>
-              <h2 className="font-heading mb-2 text-[26px] font-semibold tracking-tight text-hm-on-surface">
-                How many days a week are you eating
-                <br />
-                Healthy Minds?
+              <h2 className="font-heading mb-2 text-xl font-semibold tracking-tight text-hm-on-surface sm:text-[26px]">
+                How many days a week are you eating Healthy Minds?
               </h2>
               <p className="mb-8 text-[14px] font-medium text-slate-600">
                 Select a minimum of 5 days
               </p>
-              <div className="-mx-1 px-1 overflow-x-auto pb-1 [scrollbar-width:thin]">
-                <div className="flex w-max gap-2 sm:w-full sm:justify-between sm:gap-3 md:gap-[12px]">
+              <div className="overflow-x-auto pb-1 [scrollbar-width:thin]">
+                <div className="flex w-full justify-between gap-1 sm:gap-3 md:gap-[12px]">
                   {DAYS.map((day, idx) => {
                     const isActive = selectedDays.includes(idx);
                     return (
@@ -430,7 +428,7 @@ export default function PlansPage() {
 
             {/* Section 4: Plan duration (API tiers: 7 / 14 / 28 days) */}
             <section>
-              <h2 className="font-heading mb-[26px] text-[26px] font-semibold tracking-tight text-hm-on-surface">
+              <h2 className="font-heading mb-[20px] text-xl font-semibold tracking-tight text-hm-on-surface sm:mb-[26px] sm:text-[26px]">
                 Plan duration
               </h2>
               {unsupportedDurationTiers ? (
@@ -495,7 +493,7 @@ export default function PlansPage() {
           {/* Right Column (Sticky Sidebar) */}
           <div className="w-full lg:w-[360px] shrink-0">
             <div className="sticky top-28 w-full lg:top-32">
-              <div className="mb-6 rounded-[32px] border border-slate-200/90 bg-hm-surface-low p-7 shadow-[0px_4px_24px_rgba(27,48,34,0.06)]">
+              <div className="mb-6 rounded-[24px] border border-slate-200/90 bg-hm-surface-low p-5 shadow-[0px_4px_24px_rgba(27,48,34,0.06)] sm:rounded-[32px] sm:p-7">
                 <div className="mb-8 flex items-start justify-between">
                   <div className="flex-1 pr-[18px]">
                     <h3 className="font-heading mb-[14px] text-[20px] font-semibold tracking-tight text-hm-on-surface">
@@ -514,7 +512,7 @@ export default function PlansPage() {
                 </div>
 
                 {/* Promo Code */}
-                <div className="flex gap-[10px] mb-8">
+                <div className="mb-6 flex flex-col gap-2 sm:mb-8 sm:flex-row sm:gap-[10px]">
                   <div className="flex-1 relative">
                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
                       <svg

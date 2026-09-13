@@ -24,7 +24,7 @@ import {
 
 function LoadingState() {
   return (
-    <div className="mx-auto flex min-h-[50vh] max-w-[1000px] items-center justify-center bg-hm-surface px-4 py-20">
+    <div className="flex min-h-[80vh] items-center justify-center bg-hm-surface px-4 pt-28">
       <div className="h-10 w-10 animate-spin rounded-full border-2 border-hm-primary border-t-transparent" />
     </div>
   );
@@ -296,7 +296,7 @@ function MealPlanDetailInner() {
         </nav>
 
         <header className="mb-12">
-          <div className="relative mb-6 aspect-[21/9] overflow-hidden rounded-2xl border border-slate-200/80 bg-hm-surface-low shadow-sm md:aspect-[21/8]">
+          <div className="relative mb-6 aspect-[16/9] overflow-hidden rounded-2xl border border-slate-200/80 bg-hm-surface-low shadow-sm md:aspect-[21/8]">
             {cover ? (
               <Image
                 src={cover}
@@ -317,7 +317,7 @@ function MealPlanDetailInner() {
               {icon}
             </div>
             <div>
-              <h1 className="font-heading text-[32px] font-black uppercase leading-tight tracking-tighter text-hm-on-surface md:text-[40px]">
+              <h1 className="font-heading text-[1.75rem] font-black uppercase leading-tight tracking-tight text-hm-on-surface md:text-[40px]">
                 {template.title}
               </h1>
               {goalLine ? (
@@ -360,16 +360,16 @@ function MealPlanDetailInner() {
           </div>
         )}
 
-        <div className="mt-14 flex flex-wrap justify-center gap-4">
+        <div className="mt-14 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
           <Link
             href="/auth/register"
-            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-[15px] font-bold text-white shadow-md transition hover:brightness-105"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-[15px] font-bold text-white shadow-md transition hover:brightness-105 sm:w-auto"
           >
             Tell us your goals
           </Link>
           <Link
             href="/#menu"
-            className="inline-flex items-center justify-center rounded-xl border border-slate-200/90 bg-white px-8 py-3.5 text-[15px] font-bold text-hm-on-surface shadow-sm transition hover:bg-hm-surface-low"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-slate-200/90 bg-white px-8 py-3.5 text-[15px] font-bold text-hm-on-surface shadow-sm transition hover:bg-hm-surface-low sm:w-auto"
           >
             Browse full menu
           </Link>

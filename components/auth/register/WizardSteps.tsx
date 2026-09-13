@@ -56,7 +56,7 @@ export function Step1NameEmail({ state, setState }: WizardStepProps) {
         <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-[1.65rem]">
           Tell us a little about yourself
         </h1>
-        <p className={`mt-2 ${bodyMuted}`}>
+        <p className={`mt-2 max-w-full break-words ${bodyMuted}`}>
           No verification code. We use this to personalize your plan and WhatsApp you on Healthy Minds.
         </p>
       </header>
@@ -64,7 +64,7 @@ export function Step1NameEmail({ state, setState }: WizardStepProps) {
         <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-foreground">
           WhatsApp number <span className="text-red-500">*</span>
         </label>
-        <div className="flex gap-3">
+        <div className="flex w-full min-w-0 items-stretch gap-2">
           <CountryCodeSelect
             value={state.countrySelection}
             onChange={(countrySelection) => setState((s) => ({ ...s, countrySelection }))}
@@ -74,7 +74,7 @@ export function Step1NameEmail({ state, setState }: WizardStepProps) {
             value={state.phone}
             onChange={(e) => setState((s) => ({ ...s, phone: e.target.value.replace(/\D/g, "") }))}
             placeholder="50 123 4567"
-            className={inputClass}
+            className="min-w-0 flex-1 rounded-xl border border-border-subtle bg-surface px-3 py-3.5 text-sm font-medium text-foreground placeholder:text-secondary-text/70 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background sm:px-4"
             autoComplete="tel"
             inputMode="numeric"
             autoFocus

@@ -20,7 +20,7 @@ const help = [
 
 export const Footer = () => {
   return (
-    <footer className="relative w-full overflow-hidden bg-gradient-to-b from-[#7a4146] to-hm-footer text-white">
+    <footer className="relative w-full min-w-0 overflow-hidden bg-gradient-to-b from-[#7a4146] to-hm-footer text-white">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.07]"
         style={{
@@ -30,7 +30,7 @@ export const Footer = () => {
         aria-hidden
       />
 
-      <div className="relative mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:py-20">
+      <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-8 sm:py-16 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5">
             <Link href="/" className="mb-8 inline-block">

@@ -8,10 +8,10 @@ export const HeadChefSection = () => {
   return (
     <section
       id="chef"
-      className="scroll-mt-28 border-y border-slate-200/80 bg-white py-24"
+      className="scroll-mt-28 border-y border-slate-200/80 bg-white py-16 sm:py-24"
       aria-labelledby="head-chef-heading"
     >
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="relative lg:col-span-5">
             <div className="relative mx-auto aspect-[4/5] max-w-md overflow-hidden rounded-2xl bg-hm-surface-low shadow-xl ring-1 ring-slate-200/60 lg:mx-0">
@@ -36,7 +36,7 @@ export const HeadChefSection = () => {
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-hm-primary">The kitchen</p>
             <h2
               id="head-chef-heading"
-              className="font-heading text-4xl font-black uppercase leading-[0.95] tracking-tighter text-hm-on-surface md:text-5xl"
+              className="font-heading text-3xl font-black uppercase leading-[1.08] tracking-tight text-hm-on-surface sm:text-4xl sm:tracking-tighter md:text-5xl"
             >
               Flavor with a nutrition lens
             </h2>
@@ -50,18 +50,18 @@ export const HeadChefSection = () => {
               tells. Follow along for menu drops, behind-the-scenes prep, and the occasional reality check on what
               &quot;healthy&quot; should taste like.
             </p>
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <Link
                 href={INSTAGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-sm font-bold text-white shadow-md transition hover:brightness-105"
+                className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-sm font-bold text-white shadow-md transition hover:brightness-105 sm:w-auto"
               >
                 Follow @nutritionist_rad
               </Link>
               <Link
                 href="/#menu"
-                className="inline-flex items-center justify-center rounded-xl border-2 border-hm-primary/30 px-8 py-3.5 text-sm font-bold text-hm-primary transition hover:bg-red-50"
+                className="inline-flex min-h-12 w-full items-center justify-center rounded-xl border-2 border-hm-primary/30 px-8 py-3.5 text-sm font-bold text-hm-primary transition hover:bg-red-50 sm:w-auto"
               >
                 See the menu
               </Link>

@@ -88,7 +88,7 @@ export default function MenuPage() {
   }, [activeFilter, menuItems]);
 
   return (
-    <div className="min-h-screen bg-hm-surface text-hm-on-surface">
+    <div className="min-h-screen max-w-full overflow-x-clip bg-hm-surface pt-[5.75rem] text-hm-on-surface sm:pt-24">
       <EditorialPageHeader
         eyebrow="The menu"
         title={<>This week&apos;s picks</>}
@@ -96,14 +96,14 @@ export default function MenuPage() {
         actions={
           <Link
             href="/auth/register"
-            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-sm font-bold text-white shadow-lg transition hover:brightness-105"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-sm font-bold text-white shadow-lg transition hover:brightness-105 sm:w-auto"
           >
             Tell us your goals
           </Link>
         }
       />
 
-      <main className="mx-auto max-w-7xl px-6 pb-20 pt-4 sm:px-8">
+      <main className="mx-auto max-w-7xl px-4 pb-20 pt-4 sm:px-8">
         <FilterBar activeFilter={activeFilter} onFilterChange={setActiveFilter} />
 
         {/* Menu Grid */}

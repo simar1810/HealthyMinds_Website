@@ -67,7 +67,7 @@ export function CountryCodeSelect({ value, onChange, className = "", id }: Count
   };
 
   const triggerClasses =
-    "flex w-[110px] shrink-0 cursor-pointer items-center justify-between gap-1 rounded-xl border border-border-subtle bg-surface px-3 py-3.5 text-left text-[14px] font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background";
+    "flex w-[5.75rem] shrink-0 cursor-pointer items-center justify-between gap-1 rounded-xl border border-border-subtle bg-surface px-2 py-3.5 text-left text-[13px] font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background sm:w-[110px] sm:px-3 sm:text-[14px]";
 
   return (
     <div ref={rootRef} className={`relative ${className}`}>
@@ -89,7 +89,7 @@ export function CountryCodeSelect({ value, onChange, className = "", id }: Count
         <div
           id={listboxId}
           role="listbox"
-          className="absolute left-0 top-full z-50 mt-1 w-[min(100vw-2rem,280px)] rounded-xl border border-border-subtle bg-surface py-2 shadow-lg"
+          className="absolute left-0 top-full z-50 mt-1 w-[min(18rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] rounded-xl border border-border-subtle bg-surface py-2 shadow-lg"
         >
           <div className="px-2 pb-2">
             <input

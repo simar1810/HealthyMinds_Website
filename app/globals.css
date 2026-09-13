@@ -3,6 +3,8 @@
 
 html {
   color-scheme: light;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 /*
@@ -66,6 +68,13 @@ html {
   }
   100% {
     transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hm-marquee,
+  [class*="animate-hm-marquee"] {
+    animation: none !important;
   }
 }
 
@@ -156,10 +165,27 @@ body {
   margin-top: 0 !important;
   padding-top: 0 !important;
   position: relative !important;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 html {
   margin-top: 0 !important;
+}
+
+iframe.skiptranslate,
+body > .skiptranslate,
+body > .goog-te-banner-frame,
+body > .goog-te-spinner-pos {
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  max-width: 1px !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  pointer-events: none !important;
 }
 
 html.translated-ltr body,
@@ -170,12 +196,13 @@ html.translated-rtl body {
 }
 
 .google-translate-gadget-layer {
-  position: absolute !important;
-  left: -9999px !important;
+  position: fixed !important;
+  left: 0 !important;
   top: 0 !important;
-  width: 280px !important;
-  height: 44px !important;
+  width: 1px !important;
+  height: 1px !important;
   overflow: hidden !important;
+  clip-path: inset(50%) !important;
   pointer-events: none !important;
   z-index: -1 !important;
   opacity: 0 !important;

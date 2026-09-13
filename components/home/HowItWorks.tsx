@@ -33,19 +33,19 @@ const steps = [
 
 export const HowItWorks = () => {
   return (
-    <section className="mx-auto max-w-7xl scroll-mt-28 px-6 py-24">
-      <div className="mb-16 flex flex-col items-center space-y-6 text-center">
-        <h2 className="font-heading text-4xl font-black uppercase tracking-tighter text-hm-on-surface md:text-5xl">
+    <section className="mx-auto max-w-7xl scroll-mt-28 px-4 py-16 sm:px-6 sm:py-24">
+      <div className="mb-10 flex flex-col items-center space-y-6 text-center sm:mb-16">
+        <h2 className="font-heading text-3xl font-black uppercase leading-[1.08] tracking-tight text-hm-on-surface sm:text-4xl sm:tracking-tighter md:text-5xl">
           Three Steps. Zero Drama.
         </h2>
         <Link
           href="/plans"
-          className="rounded-xl bg-hm-primary px-8 py-3 text-sm font-bold text-white shadow-lg transition-colors hover:bg-hm-primary-mid"
+          className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-hm-primary px-8 py-3 text-sm font-bold text-white shadow-lg transition-colors hover:bg-hm-primary-mid sm:w-auto"
         >
           View plans
         </Link>
       </div>
-      <div className="relative grid grid-cols-1 gap-16 md:grid-cols-3">
+      <div className="relative grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-16">
         {steps.map((step) => (
           <div key={step.id} className="group flex flex-col items-center text-center">
             <div className="relative mb-8 aspect-square w-full overflow-hidden rounded-xl bg-hm-surface-low">
