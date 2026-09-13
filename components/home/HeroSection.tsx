@@ -25,7 +25,7 @@ export const HeroSection = () => {
           </p>
           <div className="flex flex-col gap-6 pt-4 sm:flex-row sm:items-center">
             <Link
-              href="/plans"
+              href="/auth/register"
               className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-10 py-4 text-center text-lg font-bold text-white shadow-lg transition hover:shadow-xl"
             >
               Get started
