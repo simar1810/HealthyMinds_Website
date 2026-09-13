@@ -362,10 +362,10 @@ function MealPlanDetailInner() {
 
         <div className="mt-14 flex flex-wrap justify-center gap-4">
           <Link
-            href="/plans"
+            href="/auth/register"
             className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-[15px] font-bold text-white shadow-md transition hover:brightness-105"
           >
-            Subscribe to this style
+            Tell us your goals
           </Link>
           <Link
             href="/#menu"
