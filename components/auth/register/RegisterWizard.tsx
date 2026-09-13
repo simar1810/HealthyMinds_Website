@@ -1,13 +1,19 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
-import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
-import { useAuth } from "@/contexts/AuthContext";
+import React, { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { api, TENANT_ID } from "@/lib/api";
 import { RegisterOnboardingShell } from "@/components/auth/register/RegisterOnboardingShell";
 import {
+  DEFAULT_DIAL_CODE,
+  dialCodeForApi,
+  findRowBySelection,
+  nationalPhoneForApi,
+} from "@/lib/countryCodes";
+import { conciergeWhatsAppUrl, leadWhatsAppSummary } from "@/lib/leadWhatsApp";
+import {
   REGISTER_TOTAL_STEPS,
-  buildRegisterBody,
+  buildLeadBody,
   defaultRegisterWizardState,
   RegisterWizardState,
 } from "@/lib/registerApiMapping";
@@ -26,23 +32,78 @@ import {
   Step9Nutrition,
 } from "@/components/auth/register/WizardSteps";
 
-type Props = {
-  registrationToken: string;
-  redirect: string;
-};
+const STORAGE_KEY = "hm-lead-wizard-v1";
+
+type Draft = { step: number; state: RegisterWizardState };
+
+function loadDraft(): Draft | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<Draft>;
+    if (!parsed?.state || typeof parsed.state !== "object") return null;
+    const base = defaultRegisterWizardState();
+    const step =
+      typeof parsed.step === "number"
+        ? Math.min(REGISTER_TOTAL_STEPS, Math.max(1, Math.floor(parsed.step)))
+        : 1;
+    return { step, state: { ...base, ...parsed.state } };
+  } catch {
+    return null;
+  }
+}
+
+function saveDraft(draft: Draft) {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+  } catch {
+    /* quota / private mode */
+  }
+}
+
+function clearDraft() {
+  try {
+    sessionStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
 
 function validateEmail(email: string): boolean {
   if (!email.trim()) return true;
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
-export function RegisterWizard({ registrationToken, redirect }: Props) {
-  const router = useRouter();
-  const { login } = useAuth();
+function phoneDigitsFromState(state: RegisterWizardState): { phone: string; countryCode: string } {
+  const row = findRowBySelection(state.countrySelection);
+  const countryCode = dialCodeForApi(row?.dialCode ?? DEFAULT_DIAL_CODE);
+  const phone = nationalPhoneForApi(state.phone, countryCode);
+  return { phone, countryCode };
+}
+
+export function RegisterWizard() {
   const [step, setStep] = useState(1);
   const [state, setState] = useState<RegisterWizardState>(defaultRegisterWizardState);
+  const [hydrated, setHydrated] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [whatsappHref, setWhatsappHref] = useState("");
+
+  useEffect(() => {
+    const draft = loadDraft();
+    if (draft) {
+      setStep(draft.step);
+      setState(draft.state);
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated || success) return;
+    saveDraft({ step, state });
+  }, [hydrated, step, state, success]);
 
   const goToStep = useCallback((n: number) => {
     setError("");
@@ -52,10 +113,13 @@ export function RegisterWizard({ registrationToken, redirect }: Props) {
   const validateStep = useCallback(
     (s: number): string | null => {
       switch (s) {
-        case 1:
+        case 1: {
+          const { phone } = phoneDigitsFromState(state);
+          if (phone.length < 6) return "Please enter a valid WhatsApp number";
           if (!state.name.trim()) return "Please enter your name";
           if (!validateEmail(state.email)) return "Please enter a valid email";
           return null;
+        }
         case 3:
           if (!state.gender) return "Please select your gender";
           return null;
@@ -90,26 +154,37 @@ export function RegisterWizard({ registrationToken, redirect }: Props) {
       setError(v);
       return;
     }
+    if (!TENANT_ID) {
+      setError("This site is missing its brand id. Please WhatsApp us instead.");
+      return;
+    }
 
     setLoading(true);
     setError("");
     try {
-      const body = buildRegisterBody(registrationToken, state);
-      const res = await api.post<{
-        accessToken: string;
-        refreshToken: string;
-        user: { _id: string };
-      }>("/auth/register", body, { noAuth: true });
-      await login(res.data.accessToken, res.data.refreshToken);
-      router.push(redirect);
+      const { phone, countryCode } = phoneDigitsFromState(state);
+      const body = buildLeadBody(state, phone, countryCode, TENANT_ID);
+      await api.post("/leads", body, { noAuth: true });
+      clearDraft();
+      setWhatsappHref(
+        conciergeWhatsAppUrl(
+          leadWhatsAppSummary({
+            name: state.name,
+            countryCode,
+            phone,
+            goal: state.goal,
+          }),
+        ),
+      );
+      setSuccess(true);
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Registration failed. Please try again.";
+        err instanceof Error ? err.message : "Could not send your details. Please try again.";
       setError(message);
     } finally {
       setLoading(false);
     }
-  }, [login, redirect, registrationToken, router, state, validateStep]);
+  }, [state, validateStep]);
 
   const onContinue = () => {
     const v = validateStep(step);
@@ -130,8 +205,37 @@ export function RegisterWizard({ registrationToken, redirect }: Props) {
     setStep((x) => Math.max(1, x - 1));
   };
 
-  const primaryLabel =
-    step >= REGISTER_TOTAL_STEPS ? "Create account" : "Continue";
+  const primaryLabel = step >= REGISTER_TOTAL_STEPS ? "Send my details" : "Continue";
+
+  if (success) {
+    return (
+      <RegisterOnboardingShell step={REGISTER_TOTAL_STEPS}>
+        <div className="space-y-5 text-center">
+          <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-[1.65rem]">
+            We have your details
+          </h1>
+          <p className="text-sm font-medium leading-relaxed text-secondary-text">
+            We will contact you on WhatsApp. No payment on this site — a Healthy Minds concierge
+            will follow up.
+          </p>
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-2xl bg-foreground py-4 text-sm font-semibold text-white shadow-sm transition hover:opacity-95"
+          >
+            Message us on WhatsApp
+          </a>
+          <Link
+            href="/"
+            className="inline-flex min-h-12 w-full items-center justify-center rounded-2xl border-2 border-border-subtle py-4 text-sm font-semibold text-foreground transition hover:border-foreground/25"
+          >
+            Back to home
+          </Link>
+        </div>
+      </RegisterOnboardingShell>
+    );
+  }
 
   return (
     <RegisterOnboardingShell step={step}>
@@ -172,7 +276,7 @@ export function RegisterWizard({ registrationToken, redirect }: Props) {
 
       <div className="mt-10 flex flex-col gap-3">
         {error ? (
-          <p className="rounded-xl bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600">
+          <p className="rounded-xl bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600" role="alert">
             {error}
           </p>
         ) : null}
@@ -182,16 +286,16 @@ export function RegisterWizard({ registrationToken, redirect }: Props) {
             type="button"
             onClick={onContinue}
             disabled={loading}
-            className="w-full rounded-2xl bg-foreground py-4 text-sm font-semibold text-white shadow-sm transition hover:opacity-95 disabled:pointer-events-none disabled:opacity-50"
+            className="w-full min-h-12 rounded-2xl bg-foreground py-4 text-sm font-semibold text-white shadow-sm transition hover:opacity-95 disabled:pointer-events-none disabled:opacity-50"
           >
-            {loading ? "Creating account…" : primaryLabel}
+            {loading ? "Sending…" : primaryLabel}
           </button>
           {step > 1 ? (
             <button
               type="button"
               onClick={onBack}
               disabled={loading}
-              className="w-full rounded-2xl border-2 border-border-subtle bg-transparent py-4 text-sm font-semibold text-foreground transition hover:border-foreground/25 disabled:opacity-50"
+              className="w-full min-h-12 rounded-2xl border-2 border-border-subtle bg-transparent py-4 text-sm font-semibold text-foreground transition hover:border-foreground/25 disabled:opacity-50"
             >
               Back
             </button>
@@ -205,7 +309,7 @@ export function RegisterWizard({ registrationToken, redirect }: Props) {
               setError("");
               setStep(9);
             }}
-            className="w-full py-2 text-center text-sm font-medium text-secondary-text underline-offset-2 hover:underline"
+            className="w-full min-h-11 py-2 text-center text-sm font-medium text-secondary-text underline-offset-2 hover:underline"
           >
             Skip for now
           </button>

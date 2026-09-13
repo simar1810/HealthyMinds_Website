@@ -317,14 +317,14 @@ export const Navbar = () => {
                 Full menu
               </button>
               <Link
-                href="/auth/login"
+                href="/auth/register"
                 className="mt-2 flex min-h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold text-slate-600 transition hover:bg-hm-surface-low"
                 onClick={() => setOpen(false)}
               >
                 Sign in
               </Link>
               <Link
-                href="/plans"
+                href="/auth/register"
                 className="mt-1 flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 text-sm font-semibold text-hm-on-surface transition hover:bg-hm-surface-low"
                 onClick={() => setOpen(false)}
               >
@@ -362,7 +362,7 @@ export const Navbar = () => {
             <div className="hidden items-center gap-3 md:flex md:gap-4">
               {!isAuthenticated ? (
                 <Link
-                  href="/auth/login"
+                  href="/auth/register"
                   className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-hm-primary"
                 >
                   Sign in
@@ -372,7 +372,7 @@ export const Navbar = () => {
               )}
               {!isAuthenticated ? (
                 <Link
-                  href="/plans"
+                  href="/auth/register"
                   className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98]"
                 >
                   Get started

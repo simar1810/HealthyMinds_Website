@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { HeightScrollPicker } from "@/components/auth/register/HeightScrollPicker";
 import { WeightDialScrollPicker } from "@/components/auth/register/WeightDialScrollPicker";
+import { CountryCodeSelect } from "@/components/CountryCodeSelect";
 import {
   ACTIVITY_OPTIONS,
   ALLERGY_PRESETS,
@@ -16,6 +17,7 @@ import {
   recommendedWeightRangeKg,
   RegisterWizardState,
 } from "@/lib/registerApiMapping";
+import { DEFAULT_DIAL_CODE, findRowBySelection } from "@/lib/countryCodes";
 
 export type WizardStepProps = {
   state: RegisterWizardState;
@@ -55,10 +57,30 @@ export function Step1NameEmail({ state, setState }: WizardStepProps) {
           Tell us a little about yourself
         </h1>
         <p className={`mt-2 ${bodyMuted}`}>
-          We use this to set up your account and personalize your meal plans. You can update
-          details anytime in settings.
+          No verification code. We use this to personalize your plan and WhatsApp you on Healthy Minds.
         </p>
       </header>
+      <div>
+        <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-foreground">
+          WhatsApp number <span className="text-red-500">*</span>
+        </label>
+        <div className="flex gap-3">
+          <CountryCodeSelect
+            value={state.countrySelection}
+            onChange={(countrySelection) => setState((s) => ({ ...s, countrySelection }))}
+          />
+          <input
+            type="tel"
+            value={state.phone}
+            onChange={(e) => setState((s) => ({ ...s, phone: e.target.value.replace(/\D/g, "") }))}
+            placeholder="50 123 4567"
+            className={inputClass}
+            autoComplete="tel"
+            inputMode="numeric"
+            autoFocus
+          />
+        </div>
+      </div>
       <div>
         <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-foreground">
           Full name <span className="text-red-500">*</span>
@@ -70,7 +92,6 @@ export function Step1NameEmail({ state, setState }: WizardStepProps) {
           placeholder="Your name"
           className={inputClass}
           autoComplete="name"
-          autoFocus
         />
       </div>
       <div>
@@ -802,6 +823,15 @@ export function Step10Review({ state, goToStep }: WizardStepProps) {
         </p>
       </header>
       <div className="flex flex-col gap-2">
+        <ReviewRow
+          label="WhatsApp"
+          value={
+            state.phone
+              ? `${findRowBySelection(state.countrySelection)?.dialCode ?? DEFAULT_DIAL_CODE} ${state.phone}`
+              : "—"
+          }
+          onEdit={() => goToStep(1)}
+        />
         <ReviewRow label="Name" value={state.name || "—"} onEdit={() => goToStep(1)} />
         <ReviewRow
           label="Email"
@@ -856,8 +886,8 @@ export function Step11Legal({ state, setState }: WizardStepProps) {
           className="mt-1 h-4 w-4 rounded border-border-subtle text-primary focus:ring-primary"
         />
         <span className="text-sm font-medium text-foreground">
-          I agree to the processing of my data for account setup and meal personalization, and I
-          confirm I have read the relevant terms and privacy information.
+          I agree to the processing of my data so Healthy Minds can contact me on WhatsApp and
+          personalize meals. I confirm I have read the relevant terms and privacy information.
         </span>
       </label>
     </div>
@@ -872,7 +902,7 @@ export function Step12Submit() {
           You&apos;re ready
         </h1>
         <p className={`mt-2 ${bodyMuted}`}>
-          Tap create account to finish. You can refine preferences anytime in your profile.
+          Send your details and we will WhatsApp you. There is no payment on this site.
         </p>
       </header>
       <p className="text-xs text-secondary-text/90">Don&apos;t worry, your data is secure with us.</p>

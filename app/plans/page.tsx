@@ -1,19 +1,14 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { useRequireAuth } from "@/lib/useRequireAuth";
-import { useAuth } from "@/contexts/AuthContext";
 import { useTenant } from "@/contexts/TenantContext";
 import { formatMinorUnits, formatMajorUnits } from "@/lib/formatCurrency";
 import {
   billingWeeksForDurationKey,
   collectRawDurationKeysFromPricing,
-  isPlanDurationDayKey,
   planDurationListTitle,
   planDurationPeriodPhrase,
-  planDurationShortTitle,
   supportedDurationKeysPresent,
 } from "@/lib/mealPlanDurationTiers";
 
@@ -47,6 +42,7 @@ interface BackendPlan {
     breakfast?: Record<string, number>;
     lunch?: Record<string, number>;
     dinner?: Record<string, number>;
+    snack?: Record<string, number>;
   };
 }
 
@@ -84,44 +80,6 @@ const FALLBACK_CYCLES: Cycle[] = [
   { id: "14", title: "2 weeks", subtext: "Per 2 weeks", priceDisplay: "/2 weeks", save: null, amount: 0 },
   { id: "28", title: "4 weeks", subtext: "Per 4 weeks", priceDisplay: "/month", save: null, amount: 0 },
 ];
-
-const PLANS_SUB_BANNER_DISMISSED_KEY = "healthy_minds_plans_sub_banner_dismissed";
-
-interface SubscriptionTemplateRef {
-  _id: string;
-  title?: string;
-  goalType?: string;
-  dietType?: string;
-}
-
-interface ActiveSubscriptionPayload {
-  _id?: string;
-  status?: string;
-  templateId?: string | SubscriptionTemplateRef;
-  amount?: number;
-  currency?: string;
-  type?: string;
-}
-
-function resolveSubscribedTemplateId(data: ActiveSubscriptionPayload | null): string | null {
-  if (!data?.templateId) return null;
-  const t = data.templateId;
-  if (typeof t === "string" && t.trim()) return t.trim();
-  if (typeof t === "object" && t != null && typeof t._id === "string" && t._id.trim()) return t._id.trim();
-  return null;
-}
-
-function resolveSubscriptionPlanTitle(data: ActiveSubscriptionPayload | null): string | null {
-  const t = data?.templateId;
-  if (t && typeof t === "object" && typeof t.title === "string" && t.title.trim()) {
-    return t.title.trim();
-  }
-  return null;
-}
-
-function isActiveSubscriptionStatus(status: string | undefined): boolean {
-  return typeof status === "string" && status.trim().toLowerCase() === "active";
-}
 
 function formatApiLabel(value: string | undefined): string {
   if (!value?.trim()) return "";
@@ -200,9 +158,6 @@ function buildCycles(
 }
 
 export default function PlansPage() {
-  const router = useRouter();
-  const { isAuthenticated, isLoading: authLoading } = useRequireAuth();
-  const { isAuthenticated: loggedIn } = useAuth();
   const { currency } = useTenant();
 
   const [backendPlans, setBackendPlans] = useState<BackendPlan[]>([]);
@@ -214,15 +169,13 @@ export default function PlansPage() {
   const [cycles, setCycles] = useState<Cycle[]>(FALLBACK_CYCLES);
   const [unsupportedDurationTiers, setUnsupportedDurationTiers] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
-  const [activeSubscription, setActiveSubscription] = useState<ActiveSubscriptionPayload | null>(null);
-  const [subscriptionFetched, setSubscriptionFetched] = useState(false);
-  const [subscriptionBannerDismissed, setSubscriptionBannerDismissed] = useState(false);
 
   const fetchPlans = useCallback(async () => {
     try {
-      const res = await api.get<BackendPlan[]>("/menu/plans");
-      const plans = Array.isArray(res.data) ? res.data : [];
+      const res = await api.get<{ templates: BackendPlan[] }>("/menu/list?type=templates", {
+        noAuth: true,
+      });
+      const plans = Array.isArray(res.data?.templates) ? res.data.templates : [];
       if (plans.length > 0) {
         setBackendPlans(plans);
         const mapped: PlanType[] = plans.map((p) => {
@@ -248,46 +201,8 @@ export default function PlansPage() {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchPlans();
-    }
-  }, [isAuthenticated, fetchPlans]);
-
-  useEffect(() => {
-    if (typeof sessionStorage === "undefined") return;
-    if (sessionStorage.getItem(PLANS_SUB_BANNER_DISMISSED_KEY) === "1") {
-      setSubscriptionBannerDismissed(true);
-    }
-  }, []);
-
-  const fetchSubscription = useCallback(async () => {
-    try {
-      const res = await api.get<ActiveSubscriptionPayload>("/payment/subscription");
-      const data = res.data;
-      if (data && isActiveSubscriptionStatus(data.status)) {
-        setActiveSubscription(data);
-      } else {
-        setActiveSubscription(null);
-      }
-    } catch {
-      setActiveSubscription(null);
-    } finally {
-      setSubscriptionFetched(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      void fetchSubscription();
-    }
-  }, [isAuthenticated, fetchSubscription]);
-
-  const dismissSubscriptionBanner = () => {
-    setSubscriptionBannerDismissed(true);
-    if (typeof sessionStorage !== "undefined") {
-      sessionStorage.setItem(PLANS_SUB_BANNER_DISMISSED_KEY, "1");
-    }
-  };
+    void fetchPlans();
+  }, [fetchPlans]);
 
   useEffect(() => {
     const plan = backendPlans.find((p) => p._id === selectedPlan);
@@ -327,118 +242,9 @@ export default function PlansPage() {
 
   const getCurrentCycle = () => cycles.find((c) => c.id === selectedCycle);
 
-  const handleCheckout = async () => {
-    if (!loggedIn) {
-      router.push("/auth/login?redirect=/plans");
-      return;
-    }
-
-    const cycle = getCurrentCycle();
-    if (!cycle || cycle.amount <= 0) return;
-
-    setCheckoutLoading(true);
-    try {
-      const templateId = backendPlans.find((p) => p._id === selectedPlan)?._id || selectedPlan;
-      const durationLabel = isPlanDurationDayKey(cycle.id)
-        ? planDurationShortTitle(cycle.id)
-        : cycle.title;
-      const res = await api.post<{ url: string; orderId: string }>(
-        "/checkout/session",
-        {
-          templateId,
-          amount: cycle.amount,
-          currency: currency.toLowerCase(),
-          productName: `${getSelectedPlanTitle()} - ${durationLabel}`,
-          successUrl: `${window.location.origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-          cancelUrl: `${window.location.origin}/payment/cancel`,
-          /** Ask Stripe to always attach a Customer so /payment/success can resolve stripeCustomerId. */
-          customer_creation: "always",
-        },
-        { noAuth: true }
-      );
-
-      if (res.data?.url) {
-        window.location.href = res.data.url;
-      }
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Checkout failed";
-      alert(message);
-    } finally {
-      setCheckoutLoading(false);
-    }
-  };
-
-  if (authLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-hm-surface">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-hm-primary border-t-transparent" />
-      </div>
-    );
-  }
-
-  const subscribedTemplateId = activeSubscription ? resolveSubscribedTemplateId(activeSubscription) : null;
-  const subscribedPlanTitle = activeSubscription ? resolveSubscriptionPlanTitle(activeSubscription) : null;
-  const showSubscriptionBanner =
-    subscriptionFetched &&
-    activeSubscription &&
-    !subscriptionBannerDismissed &&
-    isActiveSubscriptionStatus(activeSubscription.status);
-
   return (
     <div className="min-h-screen w-full bg-hm-surface pb-24 pt-28 text-hm-on-surface sm:pt-32">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        {showSubscriptionBanner ? (
-          <div
-            className="relative mb-8 flex flex-col gap-4 rounded-2xl border border-hm-primary/25 bg-white px-4 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-5"
-            role="status"
-            aria-live="polite"
-          >
-            <button
-              type="button"
-              onClick={dismissSubscriptionBanner}
-              className="absolute right-3 top-3 rounded-lg p-1.5 text-slate-500 transition hover:bg-hm-surface-low hover:text-hm-on-surface"
-              aria-label="Dismiss subscription notice"
-            >
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
-              </svg>
-            </button>
-            <div className="pr-10 sm:pr-0">
-              <p className="font-heading text-base font-bold text-hm-on-surface sm:text-lg">
-                {subscribedPlanTitle
-                  ? `You're subscribed to ${subscribedPlanTitle}.`
-                  : "You have an active meal plan subscription."}
-              </p>
-              {activeSubscription?.amount != null &&
-              activeSubscription.amount > 0 &&
-              typeof activeSubscription.currency === "string" &&
-              activeSubscription.currency.trim() ? (
-                <p className="mt-1.5 text-sm font-medium text-slate-600">
-                  Current plan billing:{" "}
-                  {formatMinorUnits(activeSubscription.amount, activeSubscription.currency)}
-                </p>
-              ) : null}
-            </div>
-            <div className="flex shrink-0 flex-wrap gap-3 sm:pl-4">
-              {subscribedTemplateId ? (
-                <Link
-                  href={`/meal-plans/${subscribedTemplateId}`}
-                  className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-6 py-2.5 text-sm font-bold text-white shadow-md transition hover:brightness-105"
-                >
-                  View your meal plan
-                </Link>
-              ) : (
-                <Link
-                  href="/"
-                  className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-2.5 text-sm font-bold text-hm-on-surface transition hover:bg-hm-surface-low"
-                >
-                  Browse meal plans
-                </Link>
-              )}
-            </div>
-          </div>
-        ) : null}
-
         {/* Header */}
         <div className="mb-12 rounded-2xl border border-slate-200/90 bg-white px-6 py-10 shadow-sm md:mb-14 md:px-10 md:py-12">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-hm-primary">Plans</p>
@@ -448,7 +254,7 @@ export default function PlansPage() {
             perfect meal plan
           </h1>
           <p className="mt-4 max-w-2xl text-base text-slate-600 md:text-lg">
-            Pick a style, set your rhythm, and subscribe when you&apos;re ready.
+            Browse styles and prices. When you&apos;re ready, tell us your goals — we&apos;ll WhatsApp you. No payment on this site.
           </p>
         </div>
 
@@ -760,10 +566,10 @@ export default function PlansPage() {
                   </div>
                 </div>
 
-                {/* Payment Summary */}
+                {/* Indicative pricing */}
                 <div className="flex flex-col gap-[14px] mb-[28px]">
                   <h4 className="mb-1 text-[14px] font-semibold tracking-tight text-hm-on-surface">
-                    Payment summary
+                    Indicative price
                   </h4>
                   <div className="flex items-center justify-between">
                     <span className="text-[13px] font-semibold tracking-tight text-slate-600">
@@ -795,15 +601,12 @@ export default function PlansPage() {
                   </div>
                 </div>
 
-                {/* Checkout Btn */}
-                <button
-                  type="button"
-                  onClick={handleCheckout}
-                  disabled={checkoutLoading || !selectedCycle}
-                  className="w-full rounded-full bg-primary py-[16px] text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover disabled:bg-primary/60"
+                <Link
+                  href="/auth/register"
+                  className="flex w-full min-h-12 items-center justify-center rounded-full bg-primary py-[16px] text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover"
                 >
-                  {checkoutLoading ? "Processing..." : "Continue"}
-                </button>
+                  Tell us your goals
+                </Link>
               </div>
             </div>
           </div>

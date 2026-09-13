@@ -1,19 +1,14 @@
 /**
- * Maps onboarding UI values to `/auth/register` payload.
+ * Maps onboarding UI values to POST /leads (website client, no OTP).
  *
  * Backend checklist (confirm enums with your API and adjust `*_OPTIONS` if requests fail):
- * - `type`: set via `NEXT_PUBLIC_REGISTER_USER_TYPE` only if required (e.g. `client`).
  * - `goal`: e.g. fatloss, health, weight_gain, muscle_gain, maintenance.
  * - `activityLevel`: e.g. sedentary, light, moderate, active, very_active.
  * - `dietPreference`: e.g. vegetarian, non_vegetarian, eggetarian, vegan.
  * - `macroGoal`: UI only until the API exposes a field name and allowed values.
  */
 
-/** If set (e.g. "client"), sent as `type`. Omit from env to exclude the field. */
-export const REGISTER_BODY_TYPE =
-  typeof process !== "undefined"
-    ? process.env.NEXT_PUBLIC_REGISTER_USER_TYPE?.trim() || undefined
-    : undefined;
+import { DEFAULT_COUNTRY_CODE_SELECTION } from "@/lib/countryCodes";
 
 export const REGISTER_TOTAL_STEPS = 12;
 
@@ -135,6 +130,8 @@ export const NONE_ALLERGY = "none";
 export const NONE_CONDITION = "none";
 
 export type RegisterWizardState = {
+  phone: string;
+  countrySelection: string;
   name: string;
   email: string;
   age: number;
@@ -154,6 +151,8 @@ export type RegisterWizardState = {
 };
 
 export const defaultRegisterWizardState = (): RegisterWizardState => ({
+  phone: "",
+  countrySelection: DEFAULT_COUNTRY_CODE_SELECTION,
   name: "",
   email: "",
   age: 28,
@@ -241,8 +240,9 @@ function round1(n: number): number {
 }
 
 export type RegisterApiBody = {
-  registrationToken: string;
-  type?: string;
+  phone: string;
+  countryCode: string;
+  tenantId?: string;
   name: string;
   email?: string;
   gender: string;
@@ -257,13 +257,16 @@ export type RegisterApiBody = {
   conditions: string[];
 };
 
-export function buildRegisterBody(
-  registrationToken: string,
+export function buildLeadBody(
   state: RegisterWizardState,
+  phoneDigits: string,
+  countryCodeDigits: string,
+  tenantId: string,
 ): RegisterApiBody {
   return {
-    ...(REGISTER_BODY_TYPE ? { type: REGISTER_BODY_TYPE } : {}),
-    registrationToken,
+    phone: phoneDigits,
+    countryCode: countryCodeDigits,
+    tenantId,
     name: state.name.trim(),
     email: state.email.trim() || undefined,
     gender: state.gender,
