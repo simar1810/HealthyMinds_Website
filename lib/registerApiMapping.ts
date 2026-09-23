@@ -1,7 +1,8 @@
 /**
- * Maps onboarding UI values to POST /leads (website client, no OTP).
+ * Maps onboarding UI values to `/auth/register` payload (after WhatsApp OTP).
  *
  * Backend checklist (confirm enums with your API and adjust `*_OPTIONS` if requests fail):
+ * - `type`: set via `NEXT_PUBLIC_REGISTER_USER_TYPE` only if required (e.g. `client`).
  * - `goal`: e.g. fatloss, health, weight_gain, muscle_gain, maintenance.
  * - `activityLevel`: e.g. sedentary, light, moderate, active, very_active.
  * - `dietPreference`: e.g. vegetarian, non_vegetarian, eggetarian, vegan.
@@ -9,6 +10,12 @@
  */
 
 import { DEFAULT_COUNTRY_CODE_SELECTION } from "@/lib/countryCodes";
+
+/** If set (e.g. "client"), sent as `type`. Omit from env to exclude the field. */
+export const REGISTER_BODY_TYPE =
+  typeof process !== "undefined"
+    ? process.env.NEXT_PUBLIC_REGISTER_USER_TYPE?.trim() || undefined
+    : undefined;
 
 export const REGISTER_TOTAL_STEPS = 12;
 
@@ -240,9 +247,8 @@ function round1(n: number): number {
 }
 
 export type RegisterApiBody = {
-  phone: string;
-  countryCode: string;
-  tenantId?: string;
+  registrationToken: string;
+  type?: string;
   name: string;
   email?: string;
   gender: string;
@@ -257,16 +263,13 @@ export type RegisterApiBody = {
   conditions: string[];
 };
 
-export function buildLeadBody(
+export function buildRegisterBody(
+  registrationToken: string,
   state: RegisterWizardState,
-  phoneDigits: string,
-  countryCodeDigits: string,
-  tenantId: string,
 ): RegisterApiBody {
   return {
-    phone: phoneDigits,
-    countryCode: countryCodeDigits,
-    tenantId,
+    ...(REGISTER_BODY_TYPE ? { type: REGISTER_BODY_TYPE } : {}),
+    registrationToken,
     name: state.name.trim(),
     email: state.email.trim() || undefined,
     gender: state.gender,

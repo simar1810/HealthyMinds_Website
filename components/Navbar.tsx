@@ -317,7 +317,7 @@ export const Navbar = () => {
                 Full menu
               </button>
               <Link
-                href="/auth/register"
+                href="/auth/login"
                 className="mt-2 flex min-h-12 items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-5 text-sm font-bold text-white shadow-md transition active:scale-[0.98]"
                 onClick={() => setOpen(false)}
               >
@@ -362,7 +362,7 @@ export const Navbar = () => {
               {isAuthenticated ? <NavbarUserMenu /> : null}
               {!isAuthenticated ? (
                 <Link
-                  href="/auth/register"
+                  href="/auth/login"
                   className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98]"
                 >
                   Get started

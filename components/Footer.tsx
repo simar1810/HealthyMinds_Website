@@ -15,7 +15,7 @@ const explore = [
 
 const help = [
   { href: "/#faq", label: "FAQ" },
-  { href: "/auth/register", label: "Get started" },
+  { href: "/auth/login", label: "Get started" },
 ] as const;
 
 export const Footer = () => {

@@ -362,7 +362,7 @@ function MealPlanDetailInner() {
 
         <div className="mt-14 flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
           <Link
-            href="/auth/register"
+            href="/auth/login"
             className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-[15px] font-bold text-white shadow-md transition hover:brightness-105 sm:w-auto"
           >
             Tell us your goals

@@ -605,7 +605,7 @@ export default function PlansPage() {
                 </div>
 
                 <Link
-                  href="/auth/register"
+                  href="/auth/login"
                   className="flex w-full min-h-12 items-center justify-center rounded-full bg-primary py-[16px] text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover"
                 >
                   Tell us your goals

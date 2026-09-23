@@ -95,7 +95,7 @@ export default function MenuPage() {
         description="Here&apos;s a taste of what&apos;s included when you subscribe—same kitchen, rotating plates."
         actions={
           <Link
-            href="/auth/register"
+            href="/auth/login"
             className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-8 py-3.5 text-sm font-bold text-white shadow-lg transition hover:brightness-105 sm:w-auto"
           >
             Tell us your goals
