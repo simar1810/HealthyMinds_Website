@@ -5,10 +5,9 @@ import { api } from "@/lib/api";
 import { useTenant } from "@/contexts/TenantContext";
 import { formatMinorUnits, formatMajorUnits } from "@/lib/formatCurrency";
 import {
-  billingWeeksForDurationKey,
   collectRawDurationKeysFromPricing,
+  daysForDurationKey,
   planDurationListTitle,
-  planDurationPeriodPhrase,
   supportedDurationKeysPresent,
 } from "@/lib/mealPlanDurationTiers";
 
@@ -76,9 +75,10 @@ const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snack"];
 const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
 
 const FALLBACK_CYCLES: Cycle[] = [
-  { id: "7", title: "1 week", subtext: "Per week", priceDisplay: "/week", save: null, amount: 0 },
-  { id: "14", title: "2 weeks", subtext: "Per 2 weeks", priceDisplay: "/2 weeks", save: null, amount: 0 },
-  { id: "28", title: "4 weeks", subtext: "Per 4 weeks", priceDisplay: "/month", save: null, amount: 0 },
+  { id: "20", title: "20 days", subtext: "Programme length", priceDisplay: "—", save: null, amount: 0 },
+  { id: "24", title: "24 days", subtext: "Programme length", priceDisplay: "—", save: null, amount: 0 },
+  { id: "30", title: "30 days", subtext: "Programme length", priceDisplay: "—", save: null, amount: 0 },
+  { id: "90", title: "90 days", subtext: "Programme length", priceDisplay: "—", save: null, amount: 0 },
 ];
 
 function formatApiLabel(value: string | undefined): string {
@@ -108,7 +108,12 @@ function buildCycles(
   }
 
   const mealKeys = selectedMeals.map((m) => m.toLowerCase());
-  const raw = collectRawDurationKeysFromPricing(pricing, mealKeys);
+  const raw = collectRawDurationKeysFromPricing(pricing, [
+    "breakfast",
+    "lunch",
+    "dinner",
+    "snack",
+  ]);
   const sorted = supportedDurationKeysPresent(raw);
 
   if (sorted.length === 0) {
@@ -118,40 +123,37 @@ function buildCycles(
     return { cycles: FALLBACK_CYCLES, unsupportedLegacyOnly: false };
   }
 
-  const cycles: Cycle[] = sorted.map((dur) => {
+  const cycles: Cycle[] = [];
+  for (const dur of sorted) {
+    const days = daysForDurationKey(dur);
+    if (days == null) continue;
     let total = 0;
+    let pricedSlots = 0;
     for (const mk of mealKeys) {
       const tierObj = pricing[mk as keyof NonNullable<BackendPlan["pricing"]>];
-      if (tierObj && tierObj[dur] != null) {
-        total += tierObj[dur];
+      const slotPrice = tierObj?.[dur];
+      if (slotPrice != null && slotPrice > 0) {
+        total += slotPrice;
+        pricedSlots += 1;
       }
     }
-    const weeksInPeriod = billingWeeksForDurationKey(dur) ?? 1;
-    const perWeekRounded = Math.round(total / weeksInPeriod);
-    return {
+    const mealCount = pricedSlots > 0 ? pricedSlots : Math.max(mealKeys.length, 1);
+    const perMeal = mealCount * days > 0 ? total / (mealCount * days) : 0;
+    cycles.push({
       id: dur,
       title: planDurationListTitle(dur),
-      subtext: `${formatMajorUnits(total, currency)} ${planDurationPeriodPhrase(dur)}`,
-      priceDisplay: `${formatMajorUnits(perWeekRounded, currency)}/week`,
+      subtext: `${formatMajorUnits(total, currency)} for ${days} days`,
+      priceDisplay: `${formatMajorUnits(perMeal, currency, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      })}/meal`,
       save: null,
       amount: Math.round(total * 100),
-    };
-  });
+    });
+  }
 
-  if (cycles.length > 1) {
-    const w0 = billingWeeksForDurationKey(cycles[0].id) ?? 1;
-    const basePerWeek = cycles[0].amount / 100 / w0;
-    for (let i = 1; i < cycles.length; i++) {
-      const weeks = billingWeeksForDurationKey(cycles[i].id) ?? 1;
-      const thisPerWeek = cycles[i].amount / 100 / weeks;
-      const saving = Math.round((basePerWeek - thisPerWeek) * weeks);
-      if (saving > 0) {
-        cycles[i].save = formatMajorUnits(saving, currency, {
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0,
-        });
-      }
-    }
+  if (cycles.length === 0) {
+    return { cycles: [], unsupportedLegacyOnly: true };
   }
 
   return { cycles, unsupportedLegacyOnly: false };
@@ -163,7 +165,7 @@ export default function PlansPage() {
   const [backendPlans, setBackendPlans] = useState<BackendPlan[]>([]);
   const [planTypes, setPlanTypes] = useState<PlanType[]>(FALLBACK_PLAN_TYPES);
   const [selectedPlan, setSelectedPlan] = useState("");
-  const [selectedMeals, setSelectedMeals] = useState<string[]>(["Lunch", "Snack"]);
+  const [selectedMeals, setSelectedMeals] = useState<string[]>(["Breakfast", "Lunch", "Dinner"]);
   const [selectedDays, setSelectedDays] = useState<number[]>([0, 1, 2, 3, 4]);
   const [selectedCycle, setSelectedCycle] = useState("");
   const [cycles, setCycles] = useState<Cycle[]>(FALLBACK_CYCLES);
@@ -243,25 +245,25 @@ export default function PlansPage() {
   const getCurrentCycle = () => cycles.find((c) => c.id === selectedCycle);
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-clip bg-hm-surface pb-24 pt-[6.5rem] text-hm-on-surface sm:pt-32">
+    <div className="min-h-screen w-full max-w-full overflow-x-clip bg-hm-surface pb-24 pt-[calc(5.75rem+env(safe-area-inset-top,0px))] text-hm-on-surface landscape:max-lg:pt-[calc(4.75rem+env(safe-area-inset-top,0px))] sm:pt-32">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8 rounded-2xl border border-slate-200/90 bg-white px-4 py-8 shadow-sm sm:px-6 md:mb-14 md:px-10 md:py-12">
+        <div className="mb-8 rounded-2xl border border-slate-200/90 bg-white px-4 py-6 shadow-sm sm:px-6 sm:py-8 md:mb-14 md:px-10 md:py-12">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-hm-primary">Plans</p>
-          <h1 className="font-heading mt-3 text-[1.65rem] font-black uppercase leading-snug tracking-tight text-hm-on-surface break-words sm:text-4xl md:text-5xl">
+          <h1 className="font-heading mt-3 text-[1.5rem] font-black uppercase leading-snug tracking-tight break-words text-hm-on-surface sm:text-4xl md:text-5xl">
             Customize your
             <br />
             perfect meal plan
           </h1>
-          <p className="mt-4 max-w-full break-words text-base text-slate-600 md:text-lg">
+          <p className="mt-4 max-w-full break-words text-[15px] leading-relaxed text-slate-600 sm:text-base md:text-lg">
             Browse styles and prices. When you&apos;re ready, tell us your goals — we&apos;ll WhatsApp you. No payment on this site.
           </p>
         </div>
 
         {/* Two Column Layout */}
-        <div className="relative flex flex-col gap-10 lg:flex-row lg:gap-[80px]">
+        <div className="relative flex min-w-0 flex-col gap-10 lg:flex-row lg:gap-[80px]">
           {/* Left Column */}
-          <div className="flex-1 flex flex-col gap-14">
+          <div className="flex min-w-0 flex-1 flex-col gap-10 sm:gap-14">
             {/* Section 1: Plan Preferences */}
             <section>
               <h2 className="font-heading mb-6 text-xl font-bold uppercase tracking-tight text-hm-on-surface sm:text-2xl md:text-[26px]">
@@ -284,22 +286,24 @@ export default function PlansPage() {
                       <div
                         key={plan.id}
                         onClick={() => setSelectedPlan(plan.id)}
-                        className={`relative flex min-h-[170px] cursor-pointer flex-col justify-between rounded-2xl border-2 p-[22px] transition-all ${
+                        className={`relative flex min-h-[160px] cursor-pointer flex-col justify-between rounded-2xl border-2 p-4 transition-all sm:min-h-[170px] sm:p-[22px] ${
                           isActive
                             ? "border-hm-primary bg-red-50/80 shadow-md"
                             : "border-slate-200/90 bg-white shadow-sm hover:border-hm-primary/25"
                         }`}
                       >
-                        <div className="flex justify-between items-start mb-6">
-                          <div className="pr-4">
-                            <h3 className="mb-1.5 text-[17px] font-bold text-hm-on-surface">
+                        <div className="mb-4 flex items-start justify-between gap-3 sm:mb-6">
+                          <div className="min-w-0 flex-1 pr-1">
+                            <h3 className="mb-1.5 break-words text-[16px] font-bold text-hm-on-surface sm:text-[17px]">
                               {plan.title}
                             </h3>
-                            <p className="pr-1 text-[13px] font-medium leading-[1.4] text-slate-600">
+                            <p className="break-words text-[13px] font-medium leading-[1.4] text-slate-600">
                               {plan.desc}
                             </p>
                           </div>
-                          <div className="text-[42px] leading-none">{plan.emoji}</div>
+                          <div className="shrink-0 text-3xl leading-none sm:text-[42px]" aria-hidden>
+                            {plan.emoji}
+                          </div>
                         </div>
                         <div className="flex justify-between items-center mt-auto pt-2">
                           <Link
@@ -356,14 +360,16 @@ export default function PlansPage() {
               <p className="mb-6 text-[14px] font-medium text-slate-600">
                 Select a minimum of 2 meals, including lunch or dinner.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-[18px]">
+              <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2">
                 {MEAL_TYPES.map((meal) => {
                   const isActive = selectedMeals.includes(meal);
                   return (
-                    <div
+                    <button
                       key={meal}
+                      type="button"
+                      aria-pressed={isActive}
                       onClick={() => toggleMeal(meal)}
-                      className={`flex cursor-pointer items-center justify-between rounded-[16px] border-2 px-5 py-[18px] transition-colors ${
+                      className={`flex min-h-12 w-full cursor-pointer items-center justify-between gap-3 rounded-[16px] border-2 px-4 py-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:px-5 sm:py-[18px] ${
                         isActive
                           ? "border-primary bg-primary/10"
                           : "border-slate-200/90 bg-white shadow-sm hover:border-slate-300"
@@ -373,9 +379,9 @@ export default function PlansPage() {
                         {meal}
                       </span>
                       {isActive ? (
-                        <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 border-primary bg-primary">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-primary" aria-hidden>
                           <svg
-                            className="w-3.5 h-3.5 text-white"
+                            className="h-3.5 w-3.5 text-white"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -385,11 +391,11 @@ export default function PlansPage() {
                           >
                             <polyline points="20 6 9 17 4 12"></polyline>
                           </svg>
-                        </div>
+                        </span>
                       ) : (
-                        <div className="h-6 w-6 flex-shrink-0 rounded-full border-2 border-slate-200/90 bg-white" />
+                        <span className="h-6 w-6 shrink-0 rounded-full border-2 border-slate-200/90 bg-white" aria-hidden />
                       )}
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -403,32 +409,30 @@ export default function PlansPage() {
               <p className="mb-8 text-[14px] font-medium text-slate-600">
                 Select a minimum of 5 days
               </p>
-              <div className="overflow-x-auto pb-1 [scrollbar-width:thin]">
-                <div className="flex w-full justify-between gap-1 sm:gap-3 md:gap-[12px]">
-                  {DAYS.map((day, idx) => {
-                    const isActive = selectedDays.includes(idx);
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => toggleDay(idx)}
-                        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[14px] font-semibold transition-all duration-200 sm:h-[46px] sm:w-[46px] sm:text-[15px] ${
-                          isActive
-                            ? "bg-primary text-white shadow-sm"
-                            : "bg-hm-surface-low text-slate-600 hover:bg-slate-200/50"
-                        }`}
-                      >
-                        {day}
-                      </button>
-                    );
-                  })}
-                </div>
+              <div className="grid w-full grid-cols-7 gap-1.5 sm:gap-3">
+                {DAYS.map((day, idx) => {
+                  const isActive = selectedDays.includes(idx);
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => toggleDay(idx)}
+                      className={`flex min-h-11 w-full items-center justify-center rounded-full text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:min-h-[46px] sm:text-[15px] ${
+                        isActive
+                          ? "bg-primary text-white shadow-sm"
+                          : "bg-hm-surface-low text-slate-600 hover:bg-slate-200/50"
+                      }`}
+                    >
+                      {day}
+                    </button>
+                  );
+                })}
               </div>
             </section>
 
-            {/* Section 4: Plan duration (API tiers: 7 / 14 / 28 days) */}
+            {/* Section 4: Plan duration (API tiers: 20 / 24 / 30 / 90 days) */}
             <section>
-              <h2 className="font-heading mb-[20px] text-xl font-semibold tracking-tight text-hm-on-surface sm:mb-[26px] sm:text-[26px]">
+              <h2 className="font-heading mb-5 text-xl font-semibold tracking-tight text-hm-on-surface sm:mb-[26px] sm:text-[26px]">
                 Plan duration
               </h2>
               {unsupportedDurationTiers ? (
@@ -437,77 +441,78 @@ export default function PlansPage() {
                   role="status"
                 >
                   This plan&apos;s pricing is still on an older format we no longer support here. Please refresh
-                  later or pick another plan. Once plans are re-saved in admin, 1, 2, and 4 week options
-                  (7, 14, and 28 days) will appear.
+                  later or pick another plan. Once plans are re-saved in admin, the 20, 24, 30, and 90-day
+                  programmes will appear.
                 </p>
               ) : null}
-              <div className="flex flex-col gap-[18px] mb-[24px]">
+              <div
+                className="mb-6 flex flex-col gap-[14px] sm:mb-[24px] sm:gap-[18px]"
+                role="radiogroup"
+                aria-label="Plan duration"
+              >
                 {cycles.map((cycle) => {
                   const isActive = selectedCycle === cycle.id;
                   return (
-                    <div
+                    <button
                       key={cycle.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={isActive}
                       onClick={() => setSelectedCycle(cycle.id)}
-                      className={`flex cursor-pointer items-center justify-between rounded-[16px] border-2 px-6 py-5 transition-colors ${
+                      className={`flex min-h-14 w-full min-w-0 cursor-pointer items-center justify-between gap-3 rounded-[16px] border-2 px-4 py-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:gap-[14px] sm:px-6 sm:py-5 ${
                         isActive
                           ? "border-primary bg-primary/10"
                           : "border-slate-200/90 bg-white shadow-sm hover:border-slate-300"
                       }`}
                     >
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-[12px] mb-1.5">
-                          <span className="text-[15px] font-semibold text-hm-on-surface">
-                            {cycle.title}
-                          </span>
-                          {cycle.save && (
-                            <span className="rounded-full bg-primary px-[10px] py-[3px] text-[10px] font-semibold uppercase tracking-tight text-white">
-                              Save {cycle.save}
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-[12px] font-semibold tracking-tight text-slate-600">
+                      <div className="flex min-w-0 flex-1 flex-col">
+                        <span className="mb-1 text-[15px] font-semibold text-hm-on-surface">
+                          {cycle.title}
+                        </span>
+                        <span className="break-words text-[12px] font-semibold tracking-tight text-slate-600">
                           {cycle.subtext}
                         </span>
                       </div>
-                      <div className="flex items-center gap-[14px]">
-                        <span className="text-[13px] font-semibold text-hm-on-surface">
+                      <div className="flex shrink-0 items-center gap-2 sm:gap-[14px]">
+                        <span className="whitespace-nowrap text-[12px] font-semibold tabular-nums text-hm-on-surface sm:text-[13px]">
                           {cycle.priceDisplay}
                         </span>
-                        {isActive ? (
-                          <div className="flex h-[22px] w-[22px] flex-shrink-0 items-center justify-center rounded-full border-[5px] border-surface bg-primary ring-1 ring-primary">
-                            <div className="h-full w-full rounded-full bg-primary" />
-                          </div>
-                        ) : (
-                          <div className="h-[22px] w-[22px] flex-shrink-0 rounded-full border-2 border-slate-200/90 bg-white" />
-                        )}
+                        <span
+                          className={`h-[22px] w-[22px] shrink-0 rounded-full ${
+                            isActive
+                              ? "bg-primary"
+                              : "border-2 border-slate-200/90 bg-white"
+                          }`}
+                          aria-hidden
+                        />
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
-
-             
             </section>
           </div>
 
           {/* Right Column (Sticky Sidebar) */}
-          <div className="w-full lg:w-[360px] shrink-0">
-            <div className="sticky top-28 w-full lg:top-32">
-              <div className="mb-6 rounded-[24px] border border-slate-200/90 bg-hm-surface-low p-5 shadow-[0px_4px_24px_rgba(27,48,34,0.06)] sm:rounded-[32px] sm:p-7">
-                <div className="mb-8 flex items-start justify-between">
-                  <div className="flex-1 pr-[18px]">
-                    <h3 className="font-heading mb-[14px] text-[20px] font-semibold tracking-tight text-hm-on-surface">
+          <div className="w-full min-w-0 shrink-0 lg:w-[360px]">
+            <div className="w-full lg:sticky lg:top-32">
+              <div className="mb-6 rounded-[24px] border border-slate-200/90 bg-hm-surface-low p-4 shadow-[0px_4px_24px_rgba(27,48,34,0.06)] sm:rounded-[32px] sm:p-7">
+                <div className="mb-6 flex items-start justify-between gap-3 sm:mb-8">
+                  <div className="min-w-0 flex-1 pr-2 sm:pr-[18px]">
+                    <h3 className="font-heading mb-3 text-[18px] font-semibold tracking-tight text-hm-on-surface sm:mb-[14px] sm:text-[20px]">
                       Your package, your way
                     </h3>
-                    <p className="text-[13.5px] font-semibold leading-[1.6] text-slate-600">
-                      {getSelectedPlanTitle()},{" "}
-                      {selectedMeals.length} Meal
-                      {selectedMeals.length !== 1 ? "s" : ""},{" "}
+                    <p className="break-words text-[13.5px] font-semibold leading-[1.6] text-slate-600">
+                      {getSelectedPlanTitle()}, {selectedMeals.length}{" "}
+                      {selectedMeals.length === 1 ? "meal" : "meals"},{" "}
                       {selectedDays.length} days per week
+                      {selectedCycle ? `, ${getCurrentCycle()?.title ?? ""}` : ""}
                     </p>
                   </div>
-                  <div className="relative flex h-[64px] w-[64px] shrink-0 items-center justify-center rounded-[16px] bg-white font-black shadow-sm">
-                    <span className="text-[36px]">🛍️</span>
+                  <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] bg-white font-black shadow-sm sm:h-[64px] sm:w-[64px]">
+                    <span className="text-[28px] sm:text-[36px]" aria-hidden>
+                      🛍️
+                    </span>
                   </div>
                 </div>
 
@@ -545,21 +550,21 @@ export default function PlansPage() {
                 </div>
 
                 {/* Subscription Coupon */}
-                <div className="mb-10 flex items-center justify-between rounded-[14px] border border-dashed border-slate-200/90 bg-white p-4">
-                  <div className="flex items-center gap-3.5">
-                    <div className="mt-1 -rotate-12 transform rounded-sm bg-primary px-[6px] py-[1.5px] text-[8px] font-black italic text-white">
+                <div className="mb-8 flex items-center justify-between gap-3 rounded-[14px] border border-dashed border-slate-200/90 bg-white p-4 sm:mb-10">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="mt-1 shrink-0 -rotate-12 transform rounded-sm bg-primary px-[6px] py-[1.5px] text-[8px] font-black italic text-white">
                       🎟️
                     </div>
-                    <div className="flex flex-col">
-                      <span className="mb-0.5 text-[12.5px] font-semibold leading-[1.3] text-hm-on-surface">
+                    <div className="flex min-w-0 flex-col">
+                      <span className="mb-0.5 break-words text-[12.5px] font-semibold leading-[1.3] text-hm-on-surface">
                         10% off subscription
                       </span>
-                      <span className="text-[11px] font-semibold tracking-tight text-slate-600">
+                      <span className="break-words text-[11px] font-semibold tracking-tight text-slate-600">
                         with 6+ days/week on your package.
                       </span>
                     </div>
                   </div>
-                  <div className="ml-2 flex h-[30px] w-[30px] shrink-0 cursor-pointer items-center justify-center rounded-full bg-primary/15 text-[18px] font-bold text-primary">
+                  <div className="ml-2 flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-primary/15 text-[18px] font-bold text-primary">
                     +
                   </div>
                 </div>

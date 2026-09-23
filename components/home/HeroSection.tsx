@@ -10,7 +10,7 @@ const HERO_IMAGE =
 
 export const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-hm-surface px-4 pb-16 pt-[calc(6rem+env(safe-area-inset-top,0px))] sm:px-6 md:py-24">
+    <section className="relative overflow-hidden bg-hm-surface px-4 pb-16 pt-[calc(5.75rem+env(safe-area-inset-top,0px))] sm:px-6 md:py-24 landscape:max-md:pb-10 landscape:max-md:pt-[calc(4.75rem+env(safe-area-inset-top,0px))]">
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 md:grid-cols-12 md:gap-12">
         <div className="space-y-6 md:col-span-6 md:space-y-8">
           <span className="block text-xs font-bold uppercase tracking-[0.2em] text-hm-primary">
