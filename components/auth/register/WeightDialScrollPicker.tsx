@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { kgToLb, lbToKg } from "@/lib/registerApiMapping";
-
-const WEIGHT_FRAME_SRC = "/weight_selector_container.png";
 
 const KG_MIN = 40;
 const KG_MAX = 160;
@@ -250,7 +247,7 @@ export function WeightDialScrollPicker({
 
   return (
     <div
-      className="overflow-hidden rounded-2xl border border-border-subtle bg-surface px-4 pb-5 pt-4 shadow-sm"
+      className="min-w-0 overflow-hidden rounded-2xl border border-border-subtle bg-surface px-3 pb-4 pt-3 shadow-sm sm:px-4 sm:pb-5 sm:pt-4"
       role="slider"
       aria-valuemin={minV}
       aria-valuemax={maxV}
@@ -284,14 +281,18 @@ export function WeightDialScrollPicker({
         }
       }}
     >
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-secondary-text">
+      <div className="mb-3 flex min-w-0 items-center justify-between gap-2">
+        <span
+          className="notranslate shrink-0 text-[11px] font-semibold uppercase tracking-normal text-secondary-text"
+          translate="no"
+        >
           Weight
         </span>
         <div
-          className="inline-flex shrink-0 rounded-full bg-bg-light p-1"
+          className="notranslate inline-flex shrink-0 rounded-full bg-bg-light p-1"
           role="group"
           aria-label="Weight unit"
+          translate="no"
         >
           {(
             [
@@ -319,27 +320,16 @@ export function WeightDialScrollPicker({
       </div>
 
       <div
-        className="mx-auto max-w-[330px] pt-2"
+        className="mx-auto w-full min-w-0 max-w-[330px] pt-1"
         style={{
           backgroundImage:
             "radial-gradient(ellipse 118% 72% at 50% -8%, rgba(125,177,70,0.12) 0%, rgba(125,177,70,0.03) 45%, transparent 62%)",
         }}
       >
         <div className="overflow-hidden rounded-2xl border border-border-subtle bg-white shadow-[0_1px_0_rgba(27,48,34,0.04)]">
-          <div className="relative isolate h-[60px] w-full shrink-0 overflow-hidden border-b border-border-subtle/60">
-            <Image
-              src={WEIGHT_FRAME_SRC}
-              alt=""
-              fill
-              className="pointer-events-none select-none object-cover object-top"
-              sizes="330px"
-              draggable={false}
-              priority={false}
-            />
-          </div>
           <div
             ref={wrapRef}
-            className="relative h-[180px] w-full touch-none select-none bg-gradient-to-b from-[#f6faf5] to-white"
+            className="relative h-[140px] w-full touch-none select-none bg-gradient-to-b from-[#f6faf5] to-white sm:h-[180px]"
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
@@ -353,7 +343,7 @@ export function WeightDialScrollPicker({
         </div>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-baseline justify-center gap-2">
+      <div className="notranslate mt-4 flex items-baseline justify-center gap-1.5 sm:mt-6 sm:gap-2" translate="no">
         <input
           type="text"
           inputMode="decimal"
@@ -368,10 +358,10 @@ export function WeightDialScrollPicker({
             requestAnimationFrame(() => e.target.select());
           }}
           onBlur={onFieldBlur}
-          className="min-w-[5rem] max-w-[12rem] border-0 bg-transparent text-center text-4xl font-bold tabular-nums text-[#4CAF50] outline-none focus:ring-0 sm:text-5xl"
+          className="min-w-[4.5rem] max-w-[10rem] border-0 bg-transparent text-center text-3xl font-bold tabular-nums tracking-normal text-[#4CAF50] outline-none focus:ring-0 sm:min-w-[5rem] sm:max-w-[12rem] sm:text-5xl"
           aria-label="Weight value"
         />
-        <span className="pb-1 text-2xl font-bold text-[#4CAF50] sm:text-3xl">
+        <span className="pb-0.5 text-xl font-bold tracking-normal text-[#4CAF50] sm:pb-1 sm:text-3xl">
           {weightUnit === "kg" ? "kg" : "lb"}
         </span>
       </div>

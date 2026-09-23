@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Epilogue, Inter } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { AppChrome } from "@/components/AppChrome";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { TenantProvider } from "@/contexts/TenantContext";
 
@@ -52,9 +51,7 @@ export default function RootLayout({
       >
         <AuthProvider>
           <TenantProvider>
-            <Navbar />
-            <main className="min-w-0 flex-grow overflow-x-clip">{children}</main>
-            <Footer />
+            <AppChrome>{children}</AppChrome>
           </TenantProvider>
         </AuthProvider>
       </body>
