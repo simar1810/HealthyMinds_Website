@@ -11,7 +11,7 @@ export function useRequireAuth() {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace(`/auth/register?redirect=${encodeURIComponent(pathname)}`);
+      router.replace(`/auth/login?redirect=${encodeURIComponent(pathname)}`);
     }
   }, [isLoading, isAuthenticated, router, pathname]);
 
