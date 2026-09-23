@@ -11,13 +11,13 @@ type Props = {
 
 export function RegisterOnboardingShell({ children, step }: Props) {
   return (
-    <div className="relative min-h-screen overflow-x-clip bg-hm-surface px-4 pb-28 pt-[6.5rem] text-hm-on-surface sm:pt-28">
+    <div className="relative min-h-dvh overflow-x-clip bg-hm-surface px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))] pt-[max(1.25rem,env(safe-area-inset-top,0px))] text-hm-on-surface sm:px-6 sm:pt-10">
       <div
         className="pointer-events-none absolute -right-32 top-16 h-72 w-72 rounded-full bg-hm-primary/10 blur-3xl"
         aria-hidden
       />
       <div className="relative mx-auto w-full max-w-[480px]">
-        <div className="mb-8 flex justify-center">
+        <div className="mb-5 flex justify-center sm:mb-8">
           <Link
             href="/"
             className="rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hm-primary focus-visible:ring-offset-2 focus-visible:ring-offset-hm-surface"

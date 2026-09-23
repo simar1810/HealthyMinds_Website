@@ -94,12 +94,12 @@ export function Step2Vitals({ state, setState }: WizardStepProps) {
   const bmi = bmiFromMetric(state.weightKg, state.heightCm);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 sm:space-y-5">
       <header>
-        <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-[1.65rem]">
+        <h1 className="font-heading text-xl font-semibold tracking-tight text-foreground sm:text-[1.65rem]">
           Your vitals
         </h1>
-        <p className={`mt-2 ${bodyMuted}`}>
+        <p className={`mt-1.5 ${bodyMuted}`}>
           Adjust the sliders to match you. We use height and weight to estimate energy needs
           and portion sizes.
         </p>
@@ -110,7 +110,7 @@ export function Step2Vitals({ state, setState }: WizardStepProps) {
           <span className="text-xs font-bold uppercase tracking-wide text-foreground">Age</span>
           <span className="text-lg font-semibold text-foreground">
             {state.age}
-            <span className="ml-1 text-sm font-semibold text-secondary-text">years</span>
+            <span className="ml-1 text-sm font-semibold text-secondary-text"> years</span>
           </span>
         </div>
         <input
@@ -147,9 +147,9 @@ export function Step2Vitals({ state, setState }: WizardStepProps) {
         }}
       />
 
-      <p className="text-center text-sm text-secondary-text">
+      <p className="text-center text-sm leading-relaxed tracking-normal text-secondary-text">
         Your estimated BMI is{" "}
-        <strong className="font-semibold text-foreground">
+        <strong className="notranslate font-semibold tabular-nums text-foreground" translate="no">
           {(Math.round(bmi * 10) / 10).toFixed(1)}
         </strong>
       </p>
@@ -802,15 +802,6 @@ export function Step10Review({ state, goToStep }: WizardStepProps) {
         </p>
       </header>
       <div className="flex flex-col gap-2">
-        <ReviewRow
-          label="WhatsApp"
-          value={
-            state.phone
-              ? `${findRowBySelection(state.countrySelection)?.dialCode ?? DEFAULT_DIAL_CODE} ${state.phone}`
-              : "—"
-          }
-          onEdit={() => goToStep(1)}
-        />
         <ReviewRow label="Name" value={state.name || "—"} onEdit={() => goToStep(1)} />
         <ReviewRow
           label="Email"

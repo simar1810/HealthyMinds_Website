@@ -170,7 +170,7 @@ export function RegisterWizard({ registrationToken, redirect }: Props) {
       ) : null}
       {step === 12 ? <Step12Submit /> : null}
 
-      <div className="mt-10 flex flex-col gap-3">
+      <div className="sticky bottom-0 z-10 -mx-4 mt-6 border-t border-border-subtle bg-hm-surface/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] backdrop-blur-sm sm:static sm:mx-0 sm:mt-10 sm:border-0 sm:bg-transparent sm:px-0 sm:pt-0 sm:pb-0 sm:backdrop-blur-none">
         {error ? (
           <p className="rounded-xl bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600" role="alert">
             {error}
@@ -182,7 +182,8 @@ export function RegisterWizard({ registrationToken, redirect }: Props) {
             type="button"
             onClick={onContinue}
             disabled={loading}
-            className="w-full min-h-12 rounded-2xl bg-foreground py-4 text-sm font-semibold text-white shadow-sm transition hover:opacity-95 disabled:pointer-events-none disabled:opacity-50"
+            className="notranslate w-full min-h-12 whitespace-nowrap rounded-2xl bg-foreground px-4 py-4 text-sm font-semibold tracking-normal text-white shadow-sm transition hover:opacity-95 disabled:pointer-events-none disabled:opacity-50"
+            translate="no"
           >
             {loading ? "Creating account…" : primaryLabel}
           </button>

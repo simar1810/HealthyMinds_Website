@@ -11,8 +11,8 @@ export function OnboardingProgress({ step }: Props) {
   const pct = (safe / REGISTER_TOTAL_STEPS) * 100;
 
   return (
-    <div className="mb-6" aria-current="step">
-      <p className="mb-2.5 font-heading text-2xl font-semibold tracking-tight text-foreground">
+    <div className="mb-4 sm:mb-6" aria-current="step">
+      <p className="mb-2 font-heading text-xl font-semibold tracking-tight text-foreground sm:mb-2.5 sm:text-2xl">
         Step {safe}
         <span className="text-base font-medium text-secondary-text/80">
           {" "}
