@@ -56,9 +56,9 @@ export const MealPlansSection = () => {
   };
 
   return (
-    <section className="mx-auto max-w-7xl scroll-mt-28 px-6 py-24">
-      <div className="mb-12 flex flex-col items-end justify-between gap-6 sm:flex-row sm:items-center">
-        <h2 className="font-heading text-center text-4xl font-black uppercase tracking-tighter text-hm-on-surface sm:text-left md:text-5xl">
+    <section className="mx-auto max-w-7xl scroll-mt-28 overflow-x-clip px-4 py-16 sm:px-6 sm:py-24">
+      <div className="mb-8 flex flex-col items-stretch justify-between gap-6 sm:mb-12 sm:flex-row sm:items-center">
+        <h2 className="font-heading text-center text-3xl font-black uppercase leading-[1.05] tracking-tight text-hm-on-surface sm:text-left sm:text-4xl sm:tracking-tighter md:text-5xl">
           Lock the Plan. Love the Plates.
         </h2>
         <div className="hidden gap-2 sm:flex">
@@ -104,11 +104,11 @@ export const MealPlansSection = () => {
       </p>
 
       {loading ? (
-        <div className="flex gap-8 overflow-x-auto pb-4 hide-scrollbar">
+        <div className="flex w-full min-w-0 gap-8 overflow-x-auto pb-4 hide-scrollbar">
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="min-h-[420px] min-w-[380px] shrink-0 animate-pulse rounded-xl border border-hm-outline-variant/30 bg-white"
+              className="min-h-[380px] w-72 max-w-full shrink-0 animate-pulse rounded-xl border border-hm-outline-variant/30 bg-white"
             />
           ))}
         </div>
@@ -117,7 +117,7 @@ export const MealPlansSection = () => {
       ) : (
         <div
           ref={scrollContainerRef}
-          className="flex gap-8 overflow-x-auto pb-12 hide-scrollbar"
+          className="flex w-full min-w-0 gap-8 overflow-x-auto pb-12 hide-scrollbar"
         >
           {plans.map((plan, index) => {
             const pg = macroCell(plan.labels.p);
@@ -127,7 +127,7 @@ export const MealPlansSection = () => {
             return (
               <div
                 key={plan.id}
-                className={`flex min-h-[420px] min-w-[380px] shrink-0 flex-col rounded-xl p-8 shadow-sm ${
+                className={`flex min-h-[380px] w-72 max-w-full shrink-0 flex-col rounded-xl p-5 shadow-sm sm:p-8 ${
                   featured
                     ? "relative overflow-hidden bg-gradient-to-br from-hm-primary to-hm-primary-mid text-white shadow-xl"
                     : "border border-hm-outline-variant/20 bg-white"

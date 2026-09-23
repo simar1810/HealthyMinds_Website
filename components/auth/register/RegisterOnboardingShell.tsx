@@ -11,7 +11,7 @@ type Props = {
 
 export function RegisterOnboardingShell({ children, step }: Props) {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-hm-surface px-4 pb-28 pt-24 text-hm-on-surface sm:pt-28">
+    <div className="relative min-h-screen overflow-x-clip bg-hm-surface px-4 pb-28 pt-[6.5rem] text-hm-on-surface sm:pt-28">
       <div
         className="pointer-events-none absolute -right-32 top-16 h-72 w-72 rounded-full bg-hm-primary/10 blur-3xl"
         aria-hidden

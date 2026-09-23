@@ -17,8 +17,8 @@ interface FilterBarProps {
 
 export const FilterBar = ({ activeFilter, onFilterChange }: FilterBarProps) => {
   return (
-    <div className="sticky top-0 z-40 -mx-1 my-8 flex flex-col justify-between gap-4 rounded-xl border border-slate-200/80 bg-white/95 px-3 py-4 shadow-sm backdrop-blur-md md:flex-row md:items-center md:px-4">
-      <div className="hide-scrollbar flex w-full gap-2 overflow-x-auto pb-1 md:w-auto md:pb-0">
+    <div className="sticky top-[4.75rem] z-40 my-6 flex min-w-0 flex-col justify-between gap-3 rounded-xl border border-slate-200/80 bg-white/95 px-2 py-3 shadow-sm backdrop-blur-md sm:my-8 sm:px-3 sm:py-4 md:flex-row md:items-center md:px-4">
+      <div className="flex w-full min-w-0 flex-wrap gap-2">
         {MENU_FILTERS.map((filter) => {
           const isActive = activeFilter === filter.id;
           return (
@@ -26,7 +26,7 @@ export const FilterBar = ({ activeFilter, onFilterChange }: FilterBarProps) => {
               key={filter.id}
               type="button"
               onClick={() => onFilterChange(filter.id)}
-              className={`flex items-center justify-center whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-bold uppercase tracking-wide transition-all duration-300 ${
+              className={`flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-4 py-2.5 text-xs font-bold uppercase tracking-wide transition-all duration-300 sm:px-5 sm:text-sm ${
                 isActive
                   ? "bg-hm-primary text-white shadow-md"
                   : "bg-hm-surface-low text-hm-on-surface hover:bg-hm-surface-container-high"

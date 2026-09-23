@@ -232,7 +232,7 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="fixed top-0 z-50 w-full pt-[env(safe-area-inset-top,0px)]">
+    <header className="fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top,0px)]">
       {open ? (
         <>
           <button
@@ -258,7 +258,7 @@ export const Navbar = () => {
               <button
                 ref={panelCloseRef}
                 type="button"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-hm-on-surface transition hover:border-hm-primary hover:text-hm-primary"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-hm-on-surface transition hover:border-hm-primary hover:text-hm-primary"
                 aria-label="Close menu"
                 onClick={() => setOpen(false)}
               >
@@ -317,15 +317,8 @@ export const Navbar = () => {
                 Full menu
               </button>
               <Link
-                href="/auth/register"
-                className="mt-2 flex min-h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold text-slate-600 transition hover:bg-hm-surface-low"
-                onClick={() => setOpen(false)}
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/auth/register"
-                className="mt-1 flex min-h-11 items-center justify-center rounded-xl border border-slate-200 px-5 text-sm font-semibold text-hm-on-surface transition hover:bg-hm-surface-low"
+                href="/auth/login"
+                className="mt-2 flex min-h-12 items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-5 text-sm font-bold text-white shadow-md transition active:scale-[0.98]"
                 onClick={() => setOpen(false)}
               >
                 Get started
@@ -336,13 +329,19 @@ export const Navbar = () => {
       ) : null}
 
       <div className="border-b border-slate-200/90 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)]">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 sm:py-3.5 lg:gap-8" aria-label="Main">
+        <nav
+          className="mx-auto grid w-full max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3 md:flex md:justify-between lg:gap-8 landscape:max-md:py-1.5"
+          aria-label="Main"
+        >
           <Link
             href="/"
-            className="flex min-h-11 min-w-0 shrink-0 items-center py-1"
+            className="flex min-h-11 min-w-0 items-center overflow-hidden py-1"
             onClick={() => setOpen(false)}
           >
-            <BrandLogo priority className="!h-[3.25rem] max-w-[min(300px,72vw)] sm:!h-[3.75rem] md:!h-[4.25rem] lg:!h-[4.75rem]" />
+            <BrandLogo
+              priority
+              className="!h-14 !max-w-[4.5rem] sm:!h-16 sm:!max-w-[5.5rem] md:!h-[4.75rem] md:!max-w-[7rem]"
+            />
           </Link>
 
           <div className="hidden items-center gap-1 md:flex">
@@ -358,21 +357,12 @@ export const Navbar = () => {
             ))}
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="col-start-2 flex shrink-0 items-center gap-2 sm:gap-3">
             <div className="hidden items-center gap-3 md:flex md:gap-4">
+              {isAuthenticated ? <NavbarUserMenu /> : null}
               {!isAuthenticated ? (
                 <Link
-                  href="/auth/register"
-                  className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-hm-primary"
-                >
-                  Sign in
-                </Link>
-              ) : (
-                <NavbarUserMenu />
-              )}
-              {!isAuthenticated ? (
-                <Link
-                  href="/auth/register"
+                  href="/auth/login"
                   className="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-hm-primary to-hm-primary-mid px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:brightness-105 active:scale-[0.98]"
                 >
                   Get started
@@ -391,7 +381,7 @@ export const Navbar = () => {
               {isAuthenticated ? <NavbarUserMenu /> : null}
               <button
                 type="button"
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-hm-on-surface transition hover:border-hm-primary hover:text-hm-primary"
+                className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-hm-on-surface transition hover:border-hm-primary hover:text-hm-primary"
                 aria-expanded={open}
                 aria-controls={open ? menuId : undefined}
                 aria-label={open ? "Close menu" : "Open menu"}

@@ -17,14 +17,14 @@ const gridImages = [
 
 export const CommunitySection = () => {
   return (
-    <section id="community" className="scroll-mt-28 overflow-hidden bg-hm-surface-low py-24">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="flex flex-col items-start gap-16 md:flex-row">
-          <div className="md:w-1/2">
+    <section id="community" className="scroll-mt-28 overflow-hidden bg-hm-surface-low py-16 sm:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="flex flex-col items-start gap-10 md:flex-row md:gap-16">
+          <div className="w-full min-w-0 md:w-1/2">
             <span className="mb-4 block text-xs font-bold uppercase tracking-[0.2em] text-hm-primary">
               Community feed
             </span>
-            <h2 className="font-heading mb-12 text-5xl font-black uppercase leading-[0.9] tracking-tighter text-hm-on-surface md:text-7xl">
+            <h2 className="font-heading mb-8 text-3xl font-black uppercase leading-[1.08] tracking-tight text-hm-on-surface sm:mb-12 sm:text-5xl sm:leading-[0.9] sm:tracking-tighter md:text-7xl">
               Real People.
               <br />
               Real Plates.
@@ -38,8 +38,8 @@ export const CommunitySection = () => {
                 sizes="(max-width: 768px) 100vw, 45vw"
                 priority
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-8 text-white">
-                <p className="mb-2 text-xl font-bold italic">&ldquo;{featured.quote}&rdquo;</p>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white sm:p-8">
+                <p className="mb-2 text-base font-bold italic sm:text-xl">&ldquo;{featured.quote}&rdquo;</p>
                 <p className="font-sans text-sm font-bold uppercase tracking-widest">
                   — {featured.handle}
                 </p>
@@ -47,7 +47,7 @@ export const CommunitySection = () => {
             </div>
           </div>
 
-          <div className="grid flex-1 grid-cols-2 gap-4 md:mt-24">
+          <div className="grid w-full flex-1 grid-cols-2 gap-3 sm:gap-4 md:mt-24">
             <div className="space-y-4">
               <div className="relative aspect-square overflow-hidden rounded-xl">
                 <Image src={gridImages[0]} alt="" fill className="object-cover" sizes="25vw" />
@@ -56,7 +56,7 @@ export const CommunitySection = () => {
                 <Image src={gridImages[1]} alt="" fill className="object-cover" sizes="25vw" />
               </div>
             </div>
-            <div className="space-y-4 pt-12">
+            <div className="space-y-4 pt-8 sm:pt-12">
               <div className="relative aspect-[3/4] overflow-hidden rounded-xl">
                 <Image src={gridImages[2]} alt="" fill className="object-cover" sizes="25vw" />
               </div>

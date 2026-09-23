@@ -118,16 +118,16 @@ export const MenuPreview = () => {
   );
 
   return (
-    <section id="menu" className="relative scroll-mt-28 bg-hm-surface-low py-24">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="mb-12 flex flex-col items-end justify-between gap-8 md:flex-row">
-          <div>
-            <h2 className="font-heading text-4xl font-black uppercase leading-tight tracking-tighter text-hm-on-surface md:text-5xl">
+    <section id="menu" className="relative scroll-mt-28 overflow-x-clip bg-hm-surface-low py-16 sm:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mb-10 flex flex-col items-start justify-between gap-6 md:mb-12 md:flex-row md:items-end md:gap-8">
+          <div className="min-w-0">
+            <h2 className="font-heading text-3xl font-black uppercase leading-[1.08] tracking-tight text-hm-on-surface sm:text-4xl sm:tracking-tighter md:text-5xl">
               Same Kitchen.
               <br />
               New Picks Weekly.
             </h2>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-2 sm:mt-8 sm:gap-3">
               {MENU_FILTERS.map((tab) => {
                 const selected = activeTab === tab.id;
                 return (
@@ -135,7 +135,7 @@ export const MenuPreview = () => {
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`rounded-full px-6 py-2 text-sm font-bold uppercase tracking-wide transition-colors ${
+                  className={`flex min-h-11 items-center rounded-full px-5 py-2 text-sm font-bold uppercase tracking-wide transition-colors ${
                       selected
                         ? "bg-hm-primary text-white"
                         : "bg-white text-hm-on-surface hover:bg-hm-surface-container-high"
@@ -156,11 +156,11 @@ export const MenuPreview = () => {
         </div>
 
         {loading ? (
-          <div className="flex gap-8 overflow-x-auto pb-12 hide-scrollbar">
+          <div className="flex w-full min-w-0 gap-8 overflow-x-auto pb-12 hide-scrollbar">
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="min-w-[320px] shrink-0 rounded-xl bg-white p-4"
+                className="w-72 max-w-full shrink-0 rounded-xl bg-white p-4"
               >
                 <div className="mb-6 aspect-square animate-pulse rounded-lg bg-hm-surface-container" />
                 <div className="h-4 w-[66%] animate-pulse rounded bg-hm-surface-container" />
@@ -174,7 +174,7 @@ export const MenuPreview = () => {
               : "No dishes match this filter."}
           </p>
         ) : (
-          <div className="flex gap-8 overflow-x-auto pb-12 hide-scrollbar">
+          <div className="flex w-full min-w-0 gap-8 overflow-x-auto pb-12 hide-scrollbar">
             {visibleMeals.map((meal) => {
               const tag = tagForMeal(meal);
               return (
@@ -182,7 +182,7 @@ export const MenuPreview = () => {
                   key={meal.id}
                   type="button"
                   onClick={() => router.push("/menu")}
-                  className="min-w-[320px] shrink-0 rounded-xl bg-white p-4 text-left transition-shadow hover:shadow-lg"
+                  className="w-72 max-w-full shrink-0 rounded-xl bg-white p-4 text-left transition-shadow hover:shadow-lg"
                 >
                   <div className="group relative mb-6 aspect-square overflow-hidden rounded-lg">
                     <Image

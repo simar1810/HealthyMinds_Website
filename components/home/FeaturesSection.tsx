@@ -35,10 +35,10 @@ const features = [
 
 export const FeaturesSection = () => {
   return (
-    <section id="features" className="scroll-mt-28 bg-hm-surface px-6 py-24">
+    <section id="features" className="scroll-mt-28 bg-hm-surface px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-16 text-center">
-          <h2 className="font-heading text-4xl font-black uppercase leading-tight tracking-tighter text-hm-on-surface md:text-5xl">
+        <div className="mb-10 text-center sm:mb-16">
+          <h2 className="font-heading text-3xl font-black uppercase leading-[1.08] tracking-tight text-hm-on-surface sm:text-4xl sm:tracking-tighter md:text-5xl">
             Built Like a Restaurant.
             <br />
             Priced Like a Plan.
@@ -49,7 +49,7 @@ export const FeaturesSection = () => {
           {features.map(({ title, description, Icon }) => (
             <article
               key={title}
-              className="space-y-4 rounded-xl bg-hm-surface-low p-8 transition-all duration-300 hover:bg-white hover:shadow-xl"
+              className="space-y-4 rounded-xl bg-hm-surface-low p-6 transition-all duration-300 hover:bg-white hover:shadow-xl sm:p-8"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-hm-primary-mid/10">
                 <Icon className="h-7 w-7 text-hm-primary" />

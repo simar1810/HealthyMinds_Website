@@ -27,9 +27,9 @@ function ImageStrip() {
 
 export const InstagramFeed = () => {
   return (
-    <section className="border-y border-hm-surface-container py-12">
-      <div className="flex overflow-hidden">
-        <div className="flex min-w-max animate-hm-marquee gap-4 pr-4">
+    <section className="overflow-x-clip border-y border-hm-surface-container py-12">
+      <div className="w-full overflow-hidden">
+        <div className="flex w-max animate-hm-marquee gap-4 pr-4">
           <ImageStrip />
           <ImageStrip />
         </div>

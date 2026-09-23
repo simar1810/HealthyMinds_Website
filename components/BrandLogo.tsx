@@ -18,13 +18,15 @@ export function BrandLogo({
     <Image
       src="/healthy-minds-logo.png"
       alt="Healthy Minds Restaurant"
-      width={280}
-      height={120}
+      width={206}
+      height={208}
       className={
         onDark
-          ? `h-16 w-auto max-w-[260px] object-contain object-left sm:h-[4.5rem] ${className}`
-          : `h-14 w-auto max-w-[min(280px,78vw)] object-contain object-left sm:h-16 md:h-[4.75rem] lg:h-[5.25rem] ${className}`
+          ? `h-14 w-auto max-w-[4.5rem] object-contain object-left sm:h-16 sm:max-w-[5.5rem] ${className}`
+          : `h-14 w-auto max-w-[4.5rem] object-contain object-left sm:h-16 sm:max-w-[5.5rem] md:h-[4.75rem] md:max-w-[7rem] ${className}`
       }
+      style={{ width: "auto", maxWidth: "100%" }}
+      sizes="(max-width: 768px) 72px, 112px"
       priority={priority && !onDark}
     />
   );

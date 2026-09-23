@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { HeightScrollPicker } from "@/components/auth/register/HeightScrollPicker";
 import { WeightDialScrollPicker } from "@/components/auth/register/WeightDialScrollPicker";
-import { CountryCodeSelect } from "@/components/CountryCodeSelect";
 import {
   ACTIVITY_OPTIONS,
   ALLERGY_PRESETS,
@@ -17,7 +16,6 @@ import {
   recommendedWeightRangeKg,
   RegisterWizardState,
 } from "@/lib/registerApiMapping";
-import { DEFAULT_DIAL_CODE, findRowBySelection } from "@/lib/countryCodes";
 
 export type WizardStepProps = {
   state: RegisterWizardState;
@@ -56,31 +54,11 @@ export function Step1NameEmail({ state, setState }: WizardStepProps) {
         <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-[1.65rem]">
           Tell us a little about yourself
         </h1>
-        <p className={`mt-2 ${bodyMuted}`}>
-          No verification code. We use this to personalize your plan and WhatsApp you on Healthy Minds.
+        <p className={`mt-2 max-w-full break-words ${bodyMuted}`}>
+          We use this to set up your account and personalize your meal plans. You can update
+          details anytime in settings.
         </p>
       </header>
-      <div>
-        <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-foreground">
-          WhatsApp number <span className="text-red-500">*</span>
-        </label>
-        <div className="flex gap-3">
-          <CountryCodeSelect
-            value={state.countrySelection}
-            onChange={(countrySelection) => setState((s) => ({ ...s, countrySelection }))}
-          />
-          <input
-            type="tel"
-            value={state.phone}
-            onChange={(e) => setState((s) => ({ ...s, phone: e.target.value.replace(/\D/g, "") }))}
-            placeholder="50 123 4567"
-            className={inputClass}
-            autoComplete="tel"
-            inputMode="numeric"
-            autoFocus
-          />
-        </div>
-      </div>
       <div>
         <label className="mb-2 block text-xs font-bold uppercase tracking-wide text-foreground">
           Full name <span className="text-red-500">*</span>
@@ -92,6 +70,7 @@ export function Step1NameEmail({ state, setState }: WizardStepProps) {
           placeholder="Your name"
           className={inputClass}
           autoComplete="name"
+          autoFocus
         />
       </div>
       <div>
@@ -902,7 +881,7 @@ export function Step12Submit() {
           You&apos;re ready
         </h1>
         <p className={`mt-2 ${bodyMuted}`}>
-          Send your details and we will WhatsApp you. There is no payment on this site.
+          Your phone is verified. Create your account to save your preferences.
         </p>
       </header>
       <p className="text-xs text-secondary-text/90">Don&apos;t worry, your data is secure with us.</p>
