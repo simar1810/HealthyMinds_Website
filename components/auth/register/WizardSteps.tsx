@@ -802,15 +802,6 @@ export function Step10Review({ state, goToStep }: WizardStepProps) {
         </p>
       </header>
       <div className="flex flex-col gap-2">
-        <ReviewRow
-          label="WhatsApp"
-          value={
-            state.phone
-              ? `${findRowBySelection(state.countrySelection)?.dialCode ?? DEFAULT_DIAL_CODE} ${state.phone}`
-              : "—"
-          }
-          onEdit={() => goToStep(1)}
-        />
         <ReviewRow label="Name" value={state.name || "—"} onEdit={() => goToStep(1)} />
         <ReviewRow
           label="Email"
