@@ -16,6 +16,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const navLinks = [
   { href: "/#menu", label: "Menu", match: "menu" },
+  { href: "/plans", label: "Plans", match: "plans" },
   { href: "/#features", label: "Features", match: "features" },
   { href: "/#chef", label: "Chef", match: "chef" },
   { href: "/#community", label: "Community", match: "community" },
@@ -222,7 +223,10 @@ export const Navbar = () => {
   }, [open]);
 
   const navLinkClass = (match: string) => {
-    const active = pathname === "/" && activeSlug === match;
+    const active =
+      match === "plans"
+        ? pathname === "/plans" || pathname.startsWith("/meal-plans")
+        : pathname === "/" && activeSlug === match;
     return [
       "relative rounded-lg px-3 py-2 text-sm font-bold uppercase tracking-widest transition-colors md:px-3.5",
       active
@@ -287,7 +291,9 @@ export const Navbar = () => {
                   key={href}
                   href={href}
                   className={`flex min-h-12 items-center rounded-xl px-4 text-sm font-bold uppercase tracking-widest transition ${
-                    pathname === "/" && activeSlug === match
+                    (match === "plans" &&
+                      (pathname === "/plans" || pathname.startsWith("/meal-plans"))) ||
+                    (pathname === "/" && activeSlug === match)
                       ? "bg-red-50 text-hm-primary"
                       : "text-slate-600 hover:bg-hm-surface-low hover:text-hm-primary"
                   }`}
