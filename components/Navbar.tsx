@@ -258,7 +258,7 @@ export const Navbar = () => {
               <button
                 ref={panelCloseRef}
                 type="button"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-hm-on-surface transition hover:border-hm-primary hover:text-hm-primary"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 text-hm-on-surface transition hover:border-hm-primary hover:text-hm-primary"
                 aria-label="Close menu"
                 onClick={() => setOpen(false)}
               >
@@ -330,7 +330,7 @@ export const Navbar = () => {
 
       <div className="border-b border-slate-200/90 bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)]">
         <nav
-          className="mx-auto grid w-full max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3 md:flex md:justify-between lg:gap-8"
+          className="mx-auto grid w-full max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 py-2 sm:gap-4 sm:px-6 sm:py-3 md:flex md:justify-between lg:gap-8 landscape:max-md:py-1.5"
           aria-label="Main"
         >
           <Link
