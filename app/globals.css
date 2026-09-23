@@ -195,6 +195,12 @@ html.translated-rtl body {
   background: var(--background) !important;
 }
 
+/* GT wraps each word in <font> and drops the space → Howmanymealsperday */
+html.translated-ltr font + font,
+html.translated-rtl font + font {
+  margin-inline-start: 0.2em;
+}
+
 .google-translate-gadget-layer {
   position: fixed !important;
   left: 0 !important;

@@ -353,8 +353,8 @@ export default function PlansPage() {
             </section>
 
             {/* Section 2: Meal Count */}
-            <section>
-              <h2 className="font-heading mb-2 text-xl font-semibold tracking-tight text-hm-on-surface sm:text-[26px]">
+            <section className="notranslate" translate="no">
+              <h2 className="font-heading mb-2 text-xl font-semibold tracking-normal text-hm-on-surface sm:text-[26px]">
                 How many meals per day?
               </h2>
               <p className="mb-6 text-[14px] font-medium text-slate-600">
@@ -402,8 +402,8 @@ export default function PlansPage() {
             </section>
 
             {/* Section 3: Days a Week */}
-            <section>
-              <h2 className="font-heading mb-2 text-xl font-semibold tracking-tight text-hm-on-surface sm:text-[26px]">
+            <section className="notranslate" translate="no">
+              <h2 className="font-heading mb-2 text-xl font-semibold tracking-normal text-hm-on-surface sm:text-[26px]">
                 How many days a week are you eating Healthy Minds?
               </h2>
               <p className="mb-8 text-[14px] font-medium text-slate-600">
@@ -431,8 +431,8 @@ export default function PlansPage() {
             </section>
 
             {/* Section 4: Plan duration (API tiers: 20 / 24 / 30 / 90 days) */}
-            <section>
-              <h2 className="font-heading mb-5 text-xl font-semibold tracking-tight text-hm-on-surface sm:mb-[26px] sm:text-[26px]">
+            <section className="notranslate" translate="no">
+              <h2 className="font-heading mb-5 text-xl font-semibold tracking-normal text-hm-on-surface sm:mb-[26px] sm:text-[26px]">
                 Plan duration
               </h2>
               {unsupportedDurationTiers ? (

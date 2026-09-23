@@ -235,15 +235,19 @@ export function HeightScrollPicker({
   const ftSubtitle = heightUnit === "ft" ? formatFtIn(Math.round(heightToDisplay(heightCm, "ft"))) : null;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border-subtle bg-surface p-4 shadow-sm">
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-secondary-text">
+    <div className="min-w-0 overflow-hidden rounded-2xl border border-border-subtle bg-surface p-3 shadow-sm sm:p-4">
+      <div className="mb-2 flex min-w-0 items-center justify-between gap-2">
+        <span
+          className="notranslate shrink-0 text-[11px] font-semibold uppercase tracking-normal text-secondary-text"
+          translate="no"
+        >
           Height
         </span>
         <div
-          className="inline-flex shrink-0 rounded-full bg-bg-light p-1"
+          className="notranslate inline-flex shrink-0 rounded-full bg-bg-light p-1"
           role="group"
           aria-label="Height unit"
+          translate="no"
         >
           {(
             [
@@ -273,8 +277,7 @@ export function HeightScrollPicker({
       <div className="flex gap-3">
         <div
           ref={wrapRef}
-          className="relative w-[110px] shrink-0 touch-none select-none"
-          style={{ height: 280 }}
+          className="relative h-[200px] w-[88px] shrink-0 touch-none select-none sm:h-[260px] sm:w-[110px]"
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={endDrag}
@@ -299,10 +302,10 @@ export function HeightScrollPicker({
                 requestAnimationFrame(() => e.target.select());
               }}
               onBlur={onFieldBlur}
-              className="min-w-[4rem] max-w-[11rem] border-0 bg-transparent text-right text-4xl font-bold tabular-nums text-[#4CAF50] outline-none focus:ring-0 sm:text-5xl"
+              className="min-w-[4rem] max-w-[11rem] border-0 bg-transparent text-right text-3xl font-bold tabular-nums tracking-normal text-[#4CAF50] outline-none focus:ring-0 sm:text-5xl"
               aria-label="Height value"
             />
-            <span className="text-3xl font-bold text-[#4CAF50] sm:text-4xl">
+            <span className="text-2xl font-bold tracking-normal text-[#4CAF50] sm:text-4xl">
               {heightUnit === "cm" ? "cm" : "in"}
             </span>
           </div>
