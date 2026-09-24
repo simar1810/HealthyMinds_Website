@@ -41,6 +41,8 @@ interface BackendPlan {
     breakfast?: Record<string, number>;
     lunch?: Record<string, number>;
     dinner?: Record<string, number>;
+    am_meal?: Record<string, number>;
+    pm_meal?: Record<string, number>;
     snack?: Record<string, number>;
   };
 }
@@ -71,7 +73,18 @@ const FALLBACK_PLAN_TYPES: PlanType[] = [
   { id: "vegetarian", title: "Vegetarian", desc: "Plant-based dishes with colorful veggies and hearty grains", emoji: "🥦", style: "default" },
 ];
 
-const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snack"];
+const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "AM Meal", "PM Meal"] as const;
+type MealType = (typeof MEAL_TYPES)[number];
+
+const MEAL_TO_PRICING_KEY: Record<MealType, keyof NonNullable<BackendPlan["pricing"]>> = {
+  Breakfast: "breakfast",
+  Lunch: "lunch",
+  Dinner: "dinner",
+  "AM Meal": "am_meal",
+  "PM Meal": "pm_meal",
+};
+
+const PRICING_SLOT_KEYS = ["breakfast", "lunch", "dinner", "am_meal", "pm_meal"] as const;
 const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
 
 const FALLBACK_CYCLES: Cycle[] = [
@@ -107,13 +120,11 @@ function buildCycles(
     return { cycles: FALLBACK_CYCLES, unsupportedLegacyOnly: false };
   }
 
-  const mealKeys = selectedMeals.map((m) => m.toLowerCase());
-  const raw = collectRawDurationKeysFromPricing(pricing, [
-    "breakfast",
-    "lunch",
-    "dinner",
-    "snack",
-  ]);
+  const mealKeys = selectedMeals.map((m) => {
+    const mapped = MEAL_TO_PRICING_KEY[m as MealType];
+    return mapped ?? m.toLowerCase().replace(/\s+/g, "_");
+  });
+  const raw = collectRawDurationKeysFromPricing(pricing, [...PRICING_SLOT_KEYS]);
   const sorted = supportedDurationKeysPresent(raw);
 
   if (sorted.length === 0) {
@@ -358,7 +369,7 @@ export default function PlansPage() {
                 How many meals per day?
               </h2>
               <p className="mb-6 text-[14px] font-medium text-slate-600">
-                Select a minimum of 2 meals, including lunch or dinner.
+                Select a minimum of 2 meals, including lunch or dinner. AM and PM meals are the mid-morning and evening plates — not snacks.
               </p>
               <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2">
                 {MEAL_TYPES.map((meal) => {
