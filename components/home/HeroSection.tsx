@@ -5,8 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { IconStarFilled } from "@/components/icons/HmFeatureIcons";
 
-const HERO_IMAGE =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuB59vfaJ5t_jZFOXkFL7dHgp7SLcExlJgkm3J01n1TshleNGJJG1VMR2GjD3y7amHqFz2i0NwUu0x9VOZN5-PFNqQRbxIygyrFZrF-1bnNTyf-4wWTwrcwRM5SlEF7MyyVSlhF5Ufmnn_qkSq9ieEo4Sik6ZT0fCzeqk7mnnQSpv4QKKx4C4PmVCdan4OpVvpy74m-h7u788v3d07mvCVkAqtwkukqhilRzqDlcBhvrwjBSqCC1zTRgkfBHxkPJNVecs9EQdfKMLR0F";
+const HERO_IMAGE = "/hm-stories/plates-rainbow-boxes.jpg";
+
+const AVATARS = [
+  { src: "/hm-stories/customers-burj.jpg", position: "18% 20%" },
+  { src: "/hm-stories/customers-burj.jpg", position: "78% 22%" },
+  { src: "/hm-stories/customers-mall.jpg", position: "22% 18%" },
+] as const;
 
 export const HeroSection = () => {
   return (
@@ -31,19 +36,22 @@ export const HeroSection = () => {
               Get started
             </Link>
             <div className="flex items-center gap-4">
-              <div className="flex -space-x-3">
-                <div
-                  className="h-10 w-10 rounded-full border-2 border-white bg-slate-200"
-                  aria-hidden
-                />
-                <div
-                  className="h-10 w-10 rounded-full border-2 border-white bg-slate-300"
-                  aria-hidden
-                />
-                <div
-                  className="h-10 w-10 rounded-full border-2 border-white bg-slate-400"
-                  aria-hidden
-                />
+              <div className="flex -space-x-3" aria-hidden>
+                {AVATARS.map((avatar) => (
+                  <div
+                    key={`${avatar.src}-${avatar.position}`}
+                    className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-white"
+                  >
+                    <Image
+                      src={avatar.src}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      style={{ objectPosition: avatar.position }}
+                      sizes="40px"
+                    />
+                  </div>
+                ))}
               </div>
               <div className="text-sm font-semibold">
                 <span className="block text-hm-primary">290K+ Customers</span>
@@ -57,7 +65,7 @@ export const HeroSection = () => {
           <div className="relative z-10 aspect-[4/5] overflow-hidden rounded-2xl bg-hm-surface-container shadow-2xl">
             <Image
               src={HERO_IMAGE}
-              alt="Premium healthy salad bowl with salmon, avocado, and greens"
+              alt="Healthy Minds chef-prepared meal boxes"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
