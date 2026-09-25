@@ -7,6 +7,8 @@ import { HowItWorks } from "@/components/home/HowItWorks";
 import { InstagramFeed } from "@/components/home/InstagramFeed";
 import { MealPlansSection } from "@/components/home/MealPlansSection";
 import { MenuPreview } from "@/components/home/MenuPreview";
+import { OurCustomersSection } from "@/components/home/OurCustomersSection";
+import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 
 export default function Home() {
   return (
@@ -16,6 +18,8 @@ export default function Home() {
       <FeaturesSection />
       <HowItWorks />
       <HeadChefSection />
+      <TestimonialsSection />
+      <OurCustomersSection />
       <CommunitySection />
       <MealPlansSection />
       <FAQSection />

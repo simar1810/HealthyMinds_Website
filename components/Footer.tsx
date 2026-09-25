@@ -10,6 +10,8 @@ const explore = [
   { href: "/plans", label: "Plans" },
   { href: "/#features", label: "Features" },
   { href: "/#chef", label: "Chef" },
+  { href: "/#testimonials", label: "Testimonials" },
+  { href: "/#customers", label: "Customers" },
   { href: "/#community", label: "Community" },
 ] as const;
 
@@ -61,12 +63,21 @@ export const Footer = () => {
               <ul className="space-y-3 text-sm font-medium">
                 {explore.map(({ href, label }) => (
                   <li key={href}>
-                    <Link
-                      href={href}
-                      className="text-white/80 transition hover:text-white hover:underline hover:underline-offset-4"
-                    >
-                      {label}
-                    </Link>
+                    {href.startsWith("/#") ? (
+                      <a
+                        href={href}
+                        className="inline-flex min-h-11 items-center text-white/80 transition hover:text-white hover:underline hover:underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                      >
+                        {label}
+                      </a>
+                    ) : (
+                      <Link
+                        href={href}
+                        className="inline-flex min-h-11 items-center text-white/80 transition hover:text-white hover:underline hover:underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                      >
+                        {label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
