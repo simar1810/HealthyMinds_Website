@@ -10,21 +10,6 @@ const customers = [
   {
     src: "/hm-stories/customers-mall.jpg",
     alt: "Healthy Minds customer",
-    frame: "aspect-square",
-  },
-  {
-    src: "/hm-stories/customers-pink-bowl.jpg",
-    alt: "Healthy Minds customer",
-    frame: "aspect-[3/4]",
-  },
-  {
-    src: "/hm-stories/customers-pink-toast.jpg",
-    alt: "Healthy Minds customer",
-    frame: "aspect-square",
-  },
-  {
-    src: "/hm-stories/customers-pink-plate.jpg",
-    alt: "Healthy Minds customer",
     frame: "aspect-[3/4]",
   },
 ] as const;
@@ -42,13 +27,11 @@ export const OurCustomersSection = () => {
         <h2 className="font-heading mb-8 text-3xl font-black uppercase leading-[1.08] tracking-tight text-hm-on-surface sm:mb-12 sm:text-5xl sm:leading-[0.9] sm:tracking-tighter md:text-7xl">
           People We Cook For.
         </h2>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
-          {customers.map((customer, i) => (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+          {customers.map((customer) => (
             <div
               key={customer.src}
-              className={`relative overflow-hidden rounded-2xl shadow-2xl ${customer.frame} ${
-                i === 0 ? "col-span-2 md:col-span-1" : ""
-              }`}
+              className={`relative overflow-hidden rounded-2xl shadow-2xl ${customer.frame}`}
             >
               <Image
                 src={customer.src}
