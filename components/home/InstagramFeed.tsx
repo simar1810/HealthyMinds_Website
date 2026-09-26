@@ -5,7 +5,7 @@ const images = [
   "/hm-stories/plates-salad-pizza.jpg",
   "/hm-stories/plates-rainbow-boxes.jpg",
   "/hm-stories/plates-bento-dark.jpg",
-  "/hm-stories/customers-pink-bowl.jpg",
+  "/hm-stories/plates-black-bag.jpg",
   "/hm-stories/plates-hand-box.jpg",
   "/hm-stories/plates-teal-tray.jpg",
 ] as const;
