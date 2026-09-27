@@ -35,8 +35,8 @@ export const HowItWorks = () => {
   return (
     <section className="mx-auto max-w-7xl scroll-mt-28 px-4 py-16 sm:px-6 sm:py-24">
       <div className="mb-10 flex flex-col items-center space-y-6 text-center sm:mb-16">
-        <h2 className="font-heading text-3xl font-black uppercase leading-[1.08] tracking-tight text-hm-on-surface sm:text-4xl sm:tracking-tighter md:text-5xl">
-          Three Steps. Zero Drama.
+        <h2 className="notranslate font-heading max-w-full px-1 text-3xl font-black leading-[1.08] tracking-tight text-hm-on-surface sm:text-4xl md:text-5xl" translate="no">
+          Start Your Healthy Meal Plan
         </h2>
         <Link
           href="/plans"
