@@ -4,6 +4,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTenant } from "@/contexts/TenantContext";
 import { formatMajorUnits } from "@/lib/formatCurrency";
 import {
@@ -23,6 +24,8 @@ function macroCell(label: string): string {
 export const MealPlansSection = () => {
   const router = useRouter();
   const { currency } = useTenant();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const canSeePrices = isAuthenticated && !authLoading;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [plans, setPlans] = useState<CarouselPlanCard[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,11 +100,25 @@ export const MealPlansSection = () => {
         </div>
       </div>
 
-      <p className="mb-10 text-center text-sm text-slate-600 sm:text-left">
-        From{" "}
-        {formatMajorUnits(2.5, currency, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
-        /meal — explore every template and subscribe when you are ready.
-      </p>
+      <div className="mb-10 text-center sm:text-left">
+        {canSeePrices ? (
+          <p className="text-sm text-slate-600">
+            From{" "}
+            {formatMajorUnits(2.5, currency, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+            /meal — explore every template and subscribe when you are ready.
+          </p>
+        ) : (
+          <div className="flex flex-col items-center gap-3 sm:items-start">
+            <p className="text-sm text-slate-600">Prices show after you log in.</p>
+            <Link
+              href="/auth/login?redirect=/"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-hm-primary px-5 text-sm font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hm-primary"
+            >
+              Log in to see meal prices
+            </Link>
+          </div>
+        )}
+      </div>
 
       {loading ? (
         <div className="flex w-full min-w-0 gap-8 overflow-x-auto pb-4 hide-scrollbar">
@@ -196,8 +213,10 @@ export const MealPlansSection = () => {
                   </button>
                   <Link
                     href="/plans"
-                    className={`text-center text-xs font-semibold underline-offset-4 hover:underline ${
-                      featured ? "text-white/90" : "text-hm-primary"
+                    className={`inline-flex min-h-11 items-center justify-center text-center text-xs font-semibold underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                      featured
+                        ? "text-white/90 focus-visible:outline-white"
+                        : "text-hm-primary focus-visible:outline-hm-primary"
                     }`}
                   >
                     Compare on plans page

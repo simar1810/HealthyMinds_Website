@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTenant } from "@/contexts/TenantContext";
 import { formatMinorUnits, formatMajorUnits } from "@/lib/formatCurrency";
 import {
@@ -73,6 +74,7 @@ const FALLBACK_PLAN_TYPES: PlanType[] = [
 
 const MEAL_TYPES = ["Breakfast", "Lunch", "Dinner", "Snack"];
 const DAYS = ["S", "M", "T", "W", "T", "F", "S"];
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 const FALLBACK_CYCLES: Cycle[] = [
   { id: "20", title: "20 days", subtext: "Programme length", priceDisplay: "—", save: null, amount: 0 },
@@ -161,6 +163,8 @@ function buildCycles(
 
 export default function PlansPage() {
   const { currency } = useTenant();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const canSeePrices = isAuthenticated && !authLoading;
 
   const [backendPlans, setBackendPlans] = useState<BackendPlan[]>([]);
   const [planTypes, setPlanTypes] = useState<PlanType[]>(FALLBACK_PLAN_TYPES);
@@ -171,6 +175,9 @@ export default function PlansPage() {
   const [cycles, setCycles] = useState<Cycle[]>(FALLBACK_CYCLES);
   const [unsupportedDurationTiers, setUnsupportedDurationTiers] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoNote, setPromoNote] = useState("");
+  const [couponNoted, setCouponNoted] = useState(false);
 
   const fetchPlans = useCallback(async () => {
     try {
@@ -256,7 +263,9 @@ export default function PlansPage() {
             perfect meal plan
           </h1>
           <p className="mt-4 max-w-full break-words text-[15px] leading-relaxed text-slate-600 sm:text-base md:text-lg">
-            Browse styles and prices. When you&apos;re ready, tell us your goals — we&apos;ll WhatsApp you. No payment on this site.
+            {canSeePrices
+              ? "Browse styles and prices. When you're ready, tell us your goals — we'll WhatsApp you. No payment on this site."
+              : "Browse styles. Prices show after you log in. When you're ready, tell us your goals — we'll WhatsApp you. No payment on this site."}
           </p>
         </div>
 
@@ -315,34 +324,41 @@ export default function PlansPage() {
                             <span className="text-[12px] font-medium">&rarr;</span>
                           </Link>
                           {isActive ? (
-                            <div className="flex items-center gap-1.5 rounded-full bg-primary-hover px-3 py-[7px] text-white shadow-sm">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedPlan(plan.id);
+                              }}
+                              className="flex min-h-11 items-center gap-1.5 rounded-full bg-primary-hover px-3 text-white shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                            >
                               <svg
-                                className="w-3 h-3 ml-0.5"
+                                className="ml-0.5 h-3 w-3"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
                                 strokeWidth="4"
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
+                                aria-hidden
                               >
                                 <polyline points="20 6 9 17 4 12"></polyline>
                               </svg>
-                              <span className="text-[11.5px] font-[800] tracking-tight mr-1">
+                              <span className="mr-1 text-[11.5px] font-[800] tracking-tight">
                                 Selected
                               </span>
-                            </div>
-                          ) : plan.style === "custom" ? (
-                            <div className="rounded-full bg-primary/10 px-[18px] py-[7px] text-primary">
-                              <span className="text-[12px] font-semibold tracking-tight">
-                                Build my plan
-                              </span>
-                            </div>
+                            </button>
                           ) : (
-                            <div className="rounded-full bg-primary/10 px-[18px] py-[7px] text-primary transition-colors hover:bg-primary/15">
-                              <span className="text-[12px] font-[800] tracking-tight">
-                                Select Plan
-                              </span>
-                            </div>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedPlan(plan.id);
+                              }}
+                              className="min-h-11 rounded-full bg-primary/10 px-[18px] text-[12px] font-[800] tracking-tight text-primary transition-colors hover:bg-primary/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                            >
+                              {plan.style === "custom" ? "Build my plan" : "Select Plan"}
+                            </button>
                           )}
                         </div>
                       </div>
@@ -416,6 +432,8 @@ export default function PlansPage() {
                     <button
                       key={idx}
                       type="button"
+                      aria-label={DAY_NAMES[idx]}
+                      aria-pressed={isActive}
                       onClick={() => toggleDay(idx)}
                       className={`flex min-h-11 w-full items-center justify-center rounded-full text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:min-h-[46px] sm:text-[15px] ${
                         isActive
@@ -470,13 +488,15 @@ export default function PlansPage() {
                           {cycle.title}
                         </span>
                         <span className="break-words text-[12px] font-semibold tracking-tight text-slate-600">
-                          {cycle.subtext}
+                          {canSeePrices ? cycle.subtext : "Programme length"}
                         </span>
                       </div>
                       <div className="flex shrink-0 items-center gap-2 sm:gap-[14px]">
-                        <span className="whitespace-nowrap text-[12px] font-semibold tabular-nums text-hm-on-surface sm:text-[13px]">
-                          {cycle.priceDisplay}
-                        </span>
+                        {canSeePrices ? (
+                          <span className="whitespace-nowrap text-[12px] font-semibold tabular-nums text-hm-on-surface sm:text-[13px]">
+                            {cycle.priceDisplay}
+                          </span>
+                        ) : null}
                         <span
                           className={`h-[22px] w-[22px] shrink-0 rounded-full ${
                             isActive
@@ -516,7 +536,7 @@ export default function PlansPage() {
                   </div>
                 </div>
 
-                {/* Promo Code */}
+                {canSeePrices ? (
                 <div className="mb-6 flex flex-col gap-2 sm:mb-8 sm:flex-row sm:gap-[10px]">
                   <div className="flex-1 relative">
                     <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
@@ -537,78 +557,108 @@ export default function PlansPage() {
                     </div>
                     <input
                       type="text"
+                      value={promoCode}
+                      onChange={(e) => {
+                        setPromoCode(e.target.value);
+                        setPromoNote("");
+                      }}
                       placeholder="Add promotion code"
+                      aria-label="Promotion code"
                       className="w-full rounded-[14px] border border-slate-200/90 bg-white py-[15px] pl-[38px] pr-4 text-[13px] font-semibold text-hm-on-surface placeholder:text-slate-600/70 transition-shadow focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <button
                     type="button"
-                    className="rounded-[14px] bg-hm-surface-low px-6 py-[15px] text-[13px] font-semibold tracking-tight text-slate-600 transition-colors hover:bg-slate-200/50"
+                    onClick={() => {
+                      if (!promoCode.trim()) {
+                        setPromoNote("Enter a promotion code.");
+                        return;
+                      }
+                      setPromoNote("Saved on this page. We'll confirm the code on WhatsApp. It does not change the total here.");
+                    }}
+                    className="min-h-12 rounded-[14px] bg-hm-surface-low px-6 py-[15px] text-[13px] font-semibold tracking-tight text-slate-600 transition-colors hover:bg-slate-200/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     Apply
                   </button>
                 </div>
+                ) : null}
+                {canSeePrices && promoNote ? (
+                  <p className="-mt-4 mb-6 text-[13px] font-medium leading-relaxed text-slate-600" role="status">
+                    {promoNote}
+                  </p>
+                ) : null}
 
-                {/* Subscription Coupon */}
-                <div className="mb-8 flex items-center justify-between gap-3 rounded-[14px] border border-dashed border-slate-200/90 bg-white p-4 sm:mb-10">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="mt-1 shrink-0 -rotate-12 transform rounded-sm bg-primary px-[6px] py-[1.5px] text-[8px] font-black italic text-white">
-                      🎟️
+                {canSeePrices ? (
+                  <div className="mb-8 flex items-center justify-between gap-3 rounded-[14px] border border-dashed border-slate-200/90 bg-white p-4 sm:mb-10">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className="flex min-w-0 flex-col">
+                        <span className="mb-0.5 break-words text-[12.5px] font-semibold leading-[1.3] text-hm-on-surface">
+                          10% off subscription
+                        </span>
+                        <span className="break-words text-[11px] font-semibold tracking-tight text-slate-600">
+                          {couponNoted
+                            ? "Noted. We'll confirm it on WhatsApp. The total on this page stays the list price."
+                            : "with 6+ days/week on your package."}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex min-w-0 flex-col">
-                      <span className="mb-0.5 break-words text-[12.5px] font-semibold leading-[1.3] text-hm-on-surface">
-                        10% off subscription
-                      </span>
-                      <span className="break-words text-[11px] font-semibold tracking-tight text-slate-600">
-                        with 6+ days/week on your package.
-                      </span>
-                    </div>
+                    <button
+                      type="button"
+                      aria-pressed={couponNoted}
+                      aria-label={couponNoted ? "Remove subscription note" : "Note 10% subscription offer"}
+                      onClick={() => setCouponNoted((on) => !on)}
+                      className="ml-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/15 text-[18px] font-bold text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    >
+                      {couponNoted ? "✓" : "+"}
+                    </button>
                   </div>
-                  <div className="ml-2 flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-primary/15 text-[18px] font-bold text-primary">
-                    +
-                  </div>
-                </div>
+                ) : null}
 
-                {/* Indicative pricing */}
-                <div className="flex flex-col gap-[14px] mb-[28px]">
-                  <h4 className="mb-1 text-[14px] font-semibold tracking-tight text-hm-on-surface">
-                    Indicative price
-                  </h4>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[13px] font-semibold tracking-tight text-slate-600">
-                      Plan price
-                    </span>
-                    <span className="text-[13px] font-semibold text-hm-on-surface">
-                      {getCurrentCycle()
-                        ? formatMinorUnits(getCurrentCycle()!.amount, currency)
-                        : "--"}
-                    </span>
+                {canSeePrices ? (
+                  <div className="mb-[28px] flex flex-col gap-[14px]">
+                    <h4 className="mb-1 text-[14px] font-semibold tracking-tight text-hm-on-surface">
+                      Indicative price
+                    </h4>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[13px] font-semibold tracking-tight text-slate-600">
+                        Plan price
+                      </span>
+                      <span className="text-[13px] font-semibold text-hm-on-surface">
+                        {getCurrentCycle()
+                          ? formatMinorUnits(getCurrentCycle()!.amount, currency)
+                          : "--"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between border-b border-slate-200/90 pb-[18px]">
+                      <span className="text-[13px] font-semibold tracking-tight text-slate-600">
+                        Delivery fee
+                      </span>
+                      <span className="text-[13px] font-semibold text-hm-on-surface">
+                        {formatMinorUnits(0, currency)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between pt-2">
+                      <span className="font-heading text-[16px] font-semibold tracking-tight text-hm-on-surface">
+                        Total
+                      </span>
+                      <span className="font-heading text-[16px] font-semibold tracking-tight text-hm-on-surface">
+                        {getCurrentCycle()
+                          ? formatMinorUnits(getCurrentCycle()!.amount, currency)
+                          : "--"}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between border-b border-slate-200/90 pb-[18px]">
-                    <span className="text-[13px] font-semibold tracking-tight text-slate-600">
-                      Delivery fee
-                    </span>
-                    <span className="text-[13px] font-semibold text-hm-on-surface">
-                      {formatMinorUnits(0, currency)}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between pt-2">
-                    <span className="font-heading text-[16px] font-semibold tracking-tight text-hm-on-surface">
-                      Total
-                    </span>
-                    <span className="font-heading text-[16px] font-semibold tracking-tight text-hm-on-surface">
-                      {getCurrentCycle()
-                        ? formatMinorUnits(getCurrentCycle()!.amount, currency)
-                        : "--"}
-                    </span>
-                  </div>
-                </div>
+                ) : (
+                  <p className="mb-[28px] text-[14px] font-medium leading-relaxed text-slate-600">
+                    Plan price, per-meal rate, and total show after you log in.
+                  </p>
+                )}
 
                 <Link
-                  href="/auth/login"
-                  className="flex w-full min-h-12 items-center justify-center rounded-full bg-primary py-[16px] text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover"
+                  href="/auth/login?redirect=/plans"
+                  className="flex min-h-12 w-full items-center justify-center rounded-full bg-primary py-[16px] text-[15px] font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                 >
-                  Tell us your goals
+                  {canSeePrices ? "Tell us your goals" : "Log in to see prices"}
                 </Link>
               </div>
             </div>
