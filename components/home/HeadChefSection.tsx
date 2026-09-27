@@ -16,10 +16,10 @@ export const HeadChefSection = () => {
           <div className="relative lg:col-span-5">
             <div className="relative mx-auto aspect-[4/5] max-w-md overflow-hidden rounded-2xl bg-hm-surface-low shadow-xl ring-1 ring-slate-200/60 lg:mx-0">
               <Image
-                src="/Radhey.jpg"
-                alt="Radhey, Head Chef at Healthy Minds Restaurant"
+                src="/hm-stories/chef-radhey.jpg"
+                alt="Chef Radhey with a client at Healthy Minds Restaurant"
                 fill
-                className="object-cover object-top"
+                className="object-cover object-center"
                 sizes="(max-width: 1024px) 100vw, 42vw"
                 priority={false}
               />
@@ -36,19 +36,18 @@ export const HeadChefSection = () => {
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-hm-primary">The kitchen</p>
             <h2
               id="head-chef-heading"
-              className="font-heading text-3xl font-black uppercase leading-[1.08] tracking-tight text-hm-on-surface sm:text-4xl sm:tracking-tighter md:text-5xl"
+              className="font-heading max-w-full text-3xl font-black leading-[1.08] tracking-tight text-hm-on-surface sm:text-4xl md:text-5xl"
             >
-              Flavor with a nutrition lens
+              Leading Nutritionist Chefs &amp; Private Services
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-slate-600">
-              Radhey leads our menu and kitchen direction—where chef-driven plates meet real-world nutrition. He
-              shapes how we think about balance on the line, what makes the weekly rotation, and how every box should
-              feel worth opening.
+              Chef Radhey (NutriChef): Known as one of Dubai&apos;s most prominent celebrity nutritionist chefs.
+              Boasting over 17 years of healthy culinary experience, Chef Radhey specializes in tailoring precise,
+              macro-focused meal plans for high-profile clients—including stars from Netflix&apos;s Dubai Bling.
             </p>
             <p className="mt-4 text-base leading-relaxed text-slate-600">
-              You&apos;ll spot him behind the standards we hold for ingredients, portions, and the story each dish
-              tells. Follow along for menu drops, behind-the-scenes prep, and the occasional reality check on what
-              &quot;healthy&quot; should taste like.
+              Operating a professional wellness kitchen in Business Bay, his culinary brand, Healthy Minds, delivers
+              chef-crafted, premium macro meal plans directly across the UAE.
             </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <Link
