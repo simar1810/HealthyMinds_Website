@@ -4,30 +4,29 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+const STEP_IMAGE = "/hm-stories/how-it-works-boxes.jpg";
+
 const steps = [
   {
     id: "01",
     title: "Pick Your Plan",
     description:
       "Choose from Weight Loss, Muscle Gain, or Healthy Balance to suit your lifestyle goals.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuB5eIDoINzq0cPVz1r-5sNSO2T0aAaekp49zbo7KGU930SReFW139SoIAxhLwjpYi1nl9h3FSflAnAXd0wqFTttzQSsRJmkQrA7tPUVwKIJoax876jTZbr6UbmrbfPX8AsECF6WTlXXQihsrCml4jkjB0wv0iXA7xlwL8wAZ4zCUdTS7BAarSmUmWyD_yrgBeCajdRxavc9u4-TfnA4eROeV2-W7Ag-sqAknRAPLJn9wk0NcAbIKA4Aj36Kd01bNC0ZxgtZ6qWFBkNZ",
+    image: STEP_IMAGE,
   },
   {
     id: "02",
     title: "Choose Your Plates",
     description:
       "Select from over 30 rotating weekly recipes that fit your macronutrient needs.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCm3U0Dl8zyI2k4s90yXdAhxGoOBqzv_Bf77h4W88tO94A-IZxwki1R1gjuocVzTaz91N02TRBR4pLEsacrecAPuqGVXIojlQJjeNZ072oFS1Bp-aZbzziLJ6p9G3kNEuwbDfCU2PRwQS3xnqt9bjp0ehhDcGUF4A58cizcvE9qHsgPNOIkhGdGD-hiMGA5mBEj16XlaPJIHD-ijGbR4BPDz8lCHGgivQMVDHa-_KfUBrY3pIq4beigwplaD__08mL06fq3yvCWQrMT",
+    image: STEP_IMAGE,
   },
   {
     id: "03",
     title: "Eat on Autopilot",
     description:
       "Delivered fresh. Ready in minutes. No grocery shopping, no prepping, no cleaning.",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuDCKMeutCZwoJ5j-_Te-tGjhM4Wvo1jqTxAJc4PyRPC3Zdb3my3-kOpHZdtsJockGft-oRk8lGJnl-YWuM6J5UHMoL_R9MGcAf7pljjzurfHC3pu2Lv7xDmwobb4Kf8S6JWPgYIhZsbS7_wypiUn6SfoWWeY23Y6g8A6W0jorA4jfLS7-xYM2EongyD56KPTolga-fLvAdjnVuQxpi5S0OWKUPFftaBkcnOHWnc1OJOwnz2EPb0Eq6DNZ4UxspOlBYTsJDM_q5bD_8P",
+    image: STEP_IMAGE,
   },
 ];
 
@@ -70,7 +69,7 @@ export const HowItWorks = () => {
                 src={step.image}
                 alt={step.title}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover object-center motion-reduce:transition-none transition-transform duration-500 group-hover:scale-105 motion-reduce:group-hover:transform-none"
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
             </div>
