@@ -4,29 +4,27 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-const STEP_IMAGE = "/hm-stories/how-it-works-boxes.jpg";
-
 const steps = [
   {
     id: "01",
     title: "Pick Your Plan",
     description:
       "Choose from Weight Loss, Muscle Gain, or Healthy Balance to suit your lifestyle goals.",
-    image: STEP_IMAGE,
+    image: "/hm-stories/how-it-works-boxes.jpg",
   },
   {
     id: "02",
     title: "Choose Your Plates",
     description:
       "Select from over 30 rotating weekly recipes that fit your macronutrient needs.",
-    image: STEP_IMAGE,
+    image: "/hm-stories/plates-bento-dark.jpg",
   },
   {
     id: "03",
     title: "Eat on Autopilot",
     description:
       "Delivered fresh. Ready in minutes. No grocery shopping, no prepping, no cleaning.",
-    image: STEP_IMAGE,
+    image: "/hm-stories/plates-hand-box.jpg",
   },
 ];
 
