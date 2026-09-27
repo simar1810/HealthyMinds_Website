@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { IconStarFilled } from "@/components/icons/HmFeatureIcons";
 
-const HERO_IMAGE = "/hm-stories/plates-rainbow-boxes.jpg";
+const HERO_IMAGE = "/hm-stories/hero-journey.jpg";
 
 const AVATARS = [
   { src: "/hm-stories/customers-burj.jpg", position: "18% 20%" },
@@ -65,20 +65,20 @@ export const HeroSection = () => {
           <div className="relative z-10 aspect-[4/5] overflow-hidden rounded-2xl bg-hm-surface-container shadow-2xl">
             <Image
               src={HERO_IMAGE}
-              alt="Healthy Minds chef-prepared meal boxes"
+              alt="Healthy Minds meal boxes with a customer"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 50vw"
               priority
             />
           </div>
-          <div className="absolute bottom-3 left-3 z-20 max-w-[min(16rem,calc(100%-1.5rem))] rounded-xl bg-white p-4 shadow-xl sm:p-6 md:-bottom-6 md:-left-12 md:max-w-xs">
+          <div className="absolute bottom-3 left-3 z-20 max-w-[min(18.5rem,calc(100%-1.5rem))] rounded-xl bg-white p-4 shadow-xl sm:p-6 md:-bottom-6 md:-left-12 md:max-w-xs">
             <div className="mb-2 flex items-center gap-2">
               <IconStarFilled className="h-5 w-5 text-hm-primary" />
               <span className="font-heading text-sm font-bold tracking-tight">CHEF FAVORITES</span>
             </div>
-            <p className="text-sm text-slate-600">
-              The Miso-Glazed Salmon Bowl was recently voted #1 by our community.
+            <p className="notranslate text-sm text-slate-600" translate="no">
+              Your Journey to Fat Loss, Muscle Gain &amp; a Balanced Lifestyle 🌿
             </p>
           </div>
         </div>
