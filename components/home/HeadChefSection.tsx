@@ -49,6 +49,10 @@ export const HeadChefSection = () => {
               Operating a professional wellness kitchen in Business Bay, his culinary brand, Healthy Minds, delivers
               chef-crafted, premium macro meal plans directly across the UAE.
             </p>
+            <p className="mt-4 text-base leading-relaxed text-slate-600">
+              One of those clients is Farhana Bodi. The Dubai Bling star has worked with Chef Radhey for 11 years.
+              Her plates skip fad diets: omega-3 salmon cakes and fresh avocado, built for filming and travel.
+            </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
               <Link
                 href={INSTAGRAM_URL}
