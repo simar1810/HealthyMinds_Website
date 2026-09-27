@@ -4,59 +4,46 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-const STEP_IMAGE = "/hm-stories/how-it-works-boxes.jpg";
-
 const steps = [
   {
     id: "01",
     title: "Pick Your Plan",
     description:
       "Choose from Weight Loss, Muscle Gain, or Healthy Balance to suit your lifestyle goals.",
-    image: STEP_IMAGE,
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuB5eIDoINzq0cPVz1r-5sNSO2T0aAaekp49zbo7KGU930SReFW139SoIAxhLwjpYi1nl9h3FSflAnAXd0wqFTttzQSsRJmkQrA7tPUVwKIJoax876jTZbr6UbmrbfPX8AsECF6WTlXXQihsrCml4jkjB0wv0iXA7xlwL8wAZ4zCUdTS7BAarSmUmWyD_yrgBeCajdRxavc9u4-TfnA4eROeV2-W7Ag-sqAknRAPLJn9wk0NcAbIKA4Aj36Kd01bNC0ZxgtZ6qWFBkNZ",
   },
   {
     id: "02",
     title: "Choose Your Plates",
     description:
       "Select from over 30 rotating weekly recipes that fit your macronutrient needs.",
-    image: STEP_IMAGE,
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuCm3U0Dl8zyI2k4s90yXdAhxGoOBqzv_Bf77h4W88tO94A-IZxwki1R1gjuocVzTaz91N02TRBR4pLEsacrecAPuqGVXIojlQJjeNZ072oFS1Bp-aZbzziLJ6p9G3kNEuwbDfCU2PRwQS3xnqt9bjp0ehhDcGUF4A58cizcvE9qHsgPNOIkhGdGD-hiMGA5mBEj16XlaPJIHD-ijGbR4BPDz8lCHGgivQMVDHa-_KfUBrY3pIq4beigwplaD__08mL06fq3yvCWQrMT",
   },
   {
     id: "03",
     title: "Eat on Autopilot",
     description:
       "Delivered fresh. Ready in minutes. No grocery shopping, no prepping, no cleaning.",
-    image: STEP_IMAGE,
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuDCKMeutCZwoJ5j-_Te-tGjhM4Wvo1jqTxAJc4PyRPC3Zdb3my3-kOpHZdtsJockGft-oRk8lGJnl-YWuM6J5UHMoL_R9MGcAf7pljjzurfHC3pu2Lv7xDmwobb4Kf8S6JWPgYIhZsbS7_wypiUn6SfoWWeY23Y6g8A6W0jorA4jfLS7-xYM2EongyD56KPTolga-fLvAdjnVuQxpi5S0OWKUPFftaBkcnOHWnc1OJOwnz2EPb0Eq6DNZ4UxspOlBYTsJDM_q5bD_8P",
   },
 ];
 
 export const HowItWorks = () => {
   return (
     <section className="mx-auto max-w-7xl scroll-mt-28 px-4 py-16 sm:px-6 sm:py-24">
-      <div className="mb-10 grid grid-cols-[minmax(0,42%)_minmax(0,1fr)] items-center gap-4 sm:mb-16 sm:gap-8 md:grid-cols-2 md:gap-12">
-        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-hm-surface-low">
-          <Image
-            src="/hm-stories/how-it-works-start.jpg"
-            alt="Healthy Minds customer holding a plate"
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 42vw, 40vw"
-          />
-        </div>
-        <div className="flex min-w-0 flex-col items-start gap-4 text-left sm:gap-6">
-          <h2
-            className="notranslate font-heading max-w-full text-[1.65rem] font-black leading-[1.08] tracking-tight text-hm-on-surface sm:text-4xl md:text-5xl"
-            translate="no"
-          >
-            Start Your Healthy Meal Plan
-          </h2>
-          <Link
-            href="/plans"
-            className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-hm-primary px-8 py-3 text-sm font-bold text-white shadow-lg transition-colors hover:bg-hm-primary-mid focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hm-primary sm:w-auto"
-          >
-            View plans
-          </Link>
-        </div>
+      <div className="mb-10 flex flex-col items-center space-y-6 text-center sm:mb-16">
+        <h2 className="font-heading text-3xl font-black uppercase leading-[1.08] tracking-tight text-hm-on-surface sm:text-4xl sm:tracking-tighter md:text-5xl">
+          Three Steps. Zero Drama.
+        </h2>
+        <Link
+          href="/plans"
+          className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-hm-primary px-8 py-3 text-sm font-bold text-white shadow-lg transition-colors hover:bg-hm-primary-mid sm:w-auto"
+        >
+          View plans
+        </Link>
       </div>
       <div className="relative grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-16">
         {steps.map((step) => (
@@ -69,7 +56,7 @@ export const HowItWorks = () => {
                 src={step.image}
                 alt={step.title}
                 fill
-                className="object-cover object-center motion-reduce:transition-none transition-transform duration-500 group-hover:scale-105 motion-reduce:group-hover:transform-none"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
             </div>
