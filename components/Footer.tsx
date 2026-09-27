@@ -11,7 +11,7 @@ const explore = [
   { href: "/#features", label: "Features" },
   { href: "/#chef", label: "Chef" },
   { href: "/#testimonials", label: "Testimonials" },
-  { href: "/#customers", label: "Customers" },
+  { href: "/#customers", label: "VVIP Customers" },
   { href: "/#community", label: "Community" },
 ] as const;
 
