@@ -34,8 +34,8 @@ export const HowItWorks = () => {
       <div className="mb-10 grid grid-cols-[minmax(0,42%)_minmax(0,1fr)] items-center gap-4 sm:mb-16 sm:gap-8 md:grid-cols-2 md:gap-12">
         <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-hm-surface-low">
           <Image
-            src="/hm-stories/how-it-works-start.jpg"
-            alt="Healthy Minds customer holding a plate"
+            src="/hm-stories/plates-salad-pizza.jpg"
+            alt="Healthy Minds salad and pizza plates"
             fill
             className="object-cover"
             sizes="(max-width: 768px) 42vw, 40vw"
