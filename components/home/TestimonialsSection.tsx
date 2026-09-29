@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 
 const posters = [
   {
@@ -64,6 +65,7 @@ export const TestimonialsSection = () => {
             </figure>
           ))}
         </div>
+        <SectionPlansCta />
       </div>
     </section>
   );
