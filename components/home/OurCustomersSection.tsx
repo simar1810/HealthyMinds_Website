@@ -15,18 +15,6 @@ const customers = [
       "Fresh avocado for sustained energy and healthy fats.",
     ],
   },
-  {
-    src: "/hm-stories/customers-mall.jpg",
-    alt: "Sahil Khan with Nutritionist Chef Radhey in Dubai",
-    name: "Sahil Khan",
-    role: "Dubai · Fitness",
-    story:
-      "Sahil Khan, in Dubai. He is known for the films Style and Xcuse Me, then built a fitness career around training and nutrition. As a VVIP customer, his Healthy Minds plates stay high-protein and ready between those days.",
-    plate: [
-      "High-protein plates between training sessions.",
-      "Weighed meals, ready when the day is already full.",
-    ],
-  },
 ] as const;
 
 export const OurCustomersSection = () => {
@@ -46,7 +34,7 @@ export const OurCustomersSection = () => {
         >
           People We Cook For.
         </h2>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-6">
+        <div className="mx-auto grid w-full max-w-xl grid-cols-1">
           {customers.map((customer) => (
             <article
               key={customer.name}
@@ -58,7 +46,7 @@ export const OurCustomersSection = () => {
                   alt={customer.alt}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 640px) 100vw, 50vw"
+                  sizes="(max-width: 576px) 100vw, 36rem"
                 />
               </div>
               <div className="p-5 sm:p-6">
