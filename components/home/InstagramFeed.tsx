@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 
 const images = [
   "/hm-stories/plates-salad-pizza.jpg",
@@ -34,6 +35,7 @@ export const InstagramFeed = () => {
           <ImageStrip suffix="b" />
         </div>
       </div>
+      <SectionPlansCta />
     </section>
   );
 };

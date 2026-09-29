@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTenant } from "@/contexts/TenantContext";
+import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 import { formatMajorUnits } from "@/lib/formatCurrency";
 import {
   type ApiTemplate,
@@ -227,6 +228,7 @@ export const MealPlansSection = () => {
           })}
         </div>
       )}
+      <SectionPlansCta />
     </section>
   );
 };

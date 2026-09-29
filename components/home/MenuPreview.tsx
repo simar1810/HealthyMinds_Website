@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MENU_FILTERS } from "@/components/menu/FilterBar";
 import { api } from "@/lib/api";
+import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 import type { PlanFilterId } from "@/lib/planFromMacros";
 import { derivePlanFilterIdFromMacros } from "@/lib/planFromMacros";
 
@@ -212,6 +213,7 @@ export const MenuPreview = () => {
             })}
           </div>
         )}
+        <SectionPlansCta />
       </div>
     </section>
   );

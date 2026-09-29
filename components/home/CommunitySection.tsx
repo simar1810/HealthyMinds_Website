@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 
 const featured = {
   img: "/hm-stories/plates-rainbow-boxes.jpg",
@@ -62,6 +63,7 @@ export const CommunitySection = () => {
             </div>
           </div>
         </div>
+        <SectionPlansCta />
       </div>
     </section>
   );
