@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { IconStarFilled } from "@/components/icons/HmFeatureIcons";
+import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 
 const HERO_IMAGE = "/hm-stories/hero-journey.jpg";
 
@@ -83,6 +84,7 @@ export const HeroSection = () => {
           </div>
         </div>
       </div>
+      <SectionPlansCta />
     </section>
   );
 };

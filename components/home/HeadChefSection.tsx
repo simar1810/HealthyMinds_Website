@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 
 const INSTAGRAM_URL = "https://www.instagram.com/nutritionist_rad/";
 
@@ -74,6 +75,7 @@ export const HeadChefSection = () => {
             </p> */}
           </div>
         </div>
+        <SectionPlansCta />
       </div>
     </section>
   );

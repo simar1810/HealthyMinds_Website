@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 
 const steps = [
   {
@@ -76,6 +77,7 @@ export const HowItWorks = () => {
           </div>
         ))}
       </div>
+      <SectionPlansCta />
     </section>
   );
 };

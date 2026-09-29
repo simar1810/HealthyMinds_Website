@@ -1,4 +1,5 @@
 import React from "react";
+import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 import {
   IconTotalControl,
   IconChefCrafted,
@@ -59,6 +60,7 @@ export const FeaturesSection = () => {
             </article>
           ))}
         </div>
+        <SectionPlansCta />
       </div>
     </section>
   );

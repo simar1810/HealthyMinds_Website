@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 
 const customers = [
   {
@@ -83,6 +84,7 @@ export const OurCustomersSection = () => {
             </article>
           ))}
         </div>
+        <SectionPlansCta />
       </div>
     </section>
   );
