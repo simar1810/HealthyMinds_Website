@@ -6,7 +6,7 @@ import Link from "next/link";
 import { IconStarFilled } from "@/components/icons/HmFeatureIcons";
 import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 
-const HERO_IMAGE = "/hm-stories/hero-journey.jpg";
+const HERO_IMAGE = "/hm-stories/hero-lcp.webp";
 
 const AVATARS = [
   {
@@ -76,13 +76,14 @@ export const HeroSection = () => {
 
         <div className="relative md:col-span-6">
           <div className="relative z-10 aspect-[4/5] overflow-hidden rounded-2xl bg-hm-surface-container shadow-2xl">
-            <Image
+            <img
               src={HERO_IMAGE}
               alt="Healthy Minds meal boxes with a customer"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              priority
+              width={750}
+              height={750}
+              fetchPriority="high"
+              decoding="sync"
+              className="absolute inset-0 h-full w-full object-cover"
             />
           </div>
           <div className="absolute bottom-3 left-3 z-20 max-w-[min(18.5rem,calc(100%-1.5rem))] rounded-xl bg-white p-4 shadow-xl sm:p-6 md:-bottom-6 md:-left-12 md:max-w-xs">
