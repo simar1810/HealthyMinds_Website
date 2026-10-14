@@ -52,11 +52,11 @@ export const MenuOverlay = ({
         <div className="relative z-10 hidden h-full flex-col border-r-2 border-border-subtle shadow-xl lg:flex lg:w-[58%] xl:w-[62%]">
           <div className="relative flex-1 overflow-hidden bg-burgundy-deep">
             <Image
-              src="https://images.unsplash.com/photo-1543353071-873f17a7a088?q=80&w=2070&auto=format&fit=crop"
-              alt=""
+              src="/hm-stories/plates-salad-pizza.jpg"
+              alt="Healthy Minds salad and pizza plates"
               fill
               className="object-cover object-center opacity-80"
-              unoptimized
+              sizes="60vw"
             />
             <div className="absolute inset-0 bg-gradient-to-tr from-burgundy-deep/95 via-primary/40 to-brand-green/30" />
             <div className="absolute bottom-10 left-10 max-w-lg">
