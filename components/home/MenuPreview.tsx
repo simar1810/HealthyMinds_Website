@@ -192,7 +192,6 @@ export const MenuPreview = () => {
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
                       sizes="320px"
-                      unoptimized={meal.image.startsWith("http")}
                     />
                   </div>
                   <div className="space-y-1">
