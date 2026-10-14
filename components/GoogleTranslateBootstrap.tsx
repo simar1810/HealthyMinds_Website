@@ -1,10 +1,12 @@
 'use client';
 
-import { useLayoutEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   CB_NAME,
   SCRIPT_ID,
   SCRIPT_SRC,
+  TRANSLATE_NEEDED_EVENT,
+  parseGoogtransTarget,
   scheduleInit,
 } from '@/lib/googleTranslateShared';
 
@@ -16,7 +18,20 @@ declare global {
 
 /** Loads the script once and mounts the single `#google_translate_element` host. */
 export function GoogleTranslateBootstrap() {
-  useLayoutEffect(() => {
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    if (parseGoogtransTarget()) {
+      setShouldLoad(true);
+      return;
+    }
+    const onNeed = () => setShouldLoad(true);
+    window.addEventListener(TRANSLATE_NEEDED_EVENT, onNeed);
+    return () => window.removeEventListener(TRANSLATE_NEEDED_EVENT, onNeed);
+  }, []);
+
+  useEffect(() => {
+    if (!shouldLoad) return;
     const onReady = () => scheduleInit();
     window[CB_NAME] = onReady;
 
@@ -31,7 +46,7 @@ export function GoogleTranslateBootstrap() {
     }
 
     onReady();
-  }, []);
+  }, [shouldLoad]);
 
   return (
     <div

@@ -9,6 +9,9 @@ import {
   syncComboToLang,
   dispatchLanguageChange,
   LANGUAGE_CHANGE_EVENT,
+  TRANSLATE_NEEDED_EVENT,
+  requestGoogleTranslate,
+  SCRIPT_ID,
 } from '@/lib/googleTranslateShared';
 
 const selectStyles =
@@ -59,26 +62,41 @@ export function LanguageSelect({ selectId, className = '' }: LanguageSelectProps
   }, []);
 
   useEffect(() => {
+    let intervalId = 0;
     let ticks = 0;
-    const id = window.setInterval(() => {
-      ticks++;
-      const combo = getGoogleCombo();
-      if (combo && combo.options.length > 0) {
-        syncComboToLang(combo, parseGoogtransTarget());
-        combo.addEventListener('change', syncFromCombo);
-        window.clearInterval(id);
-        return;
-      }
-      if (ticks > 200) window.clearInterval(id);
-    }, 100);
 
+    const stop = () => {
+      if (intervalId) window.clearInterval(intervalId);
+      intervalId = 0;
+    };
+
+    const start = () => {
+      if (intervalId) return;
+      intervalId = window.setInterval(() => {
+        if (!document.getElementById(SCRIPT_ID)) return;
+        ticks++;
+        const combo = getGoogleCombo();
+        if (combo && combo.options.length > 0) {
+          syncComboToLang(combo, parseGoogtransTarget());
+          combo.addEventListener('change', syncFromCombo);
+          stop();
+          return;
+        }
+        if (ticks > 200) stop();
+      }, 100);
+    };
+
+    if (parseGoogtransTarget() || document.getElementById(SCRIPT_ID)) start();
+    window.addEventListener(TRANSLATE_NEEDED_EVENT, start);
     return () => {
-      window.clearInterval(id);
+      stop();
+      window.removeEventListener(TRANSLATE_NEEDED_EVENT, start);
       getGoogleCombo()?.removeEventListener('change', syncFromCombo);
     };
   }, [syncFromCombo]);
 
   const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    requestGoogleTranslate();
     const next = e.target.value;
     setValue(next);
 
@@ -107,6 +125,7 @@ export function LanguageSelect({ selectId, className = '' }: LanguageSelectProps
         <select
           id={selectId}
           value={showValue}
+          onFocus={requestGoogleTranslate}
           onChange={onSelectChange}
           className={selectStyles}
         >

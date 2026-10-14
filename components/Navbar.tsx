@@ -344,10 +344,7 @@ export const Navbar = () => {
             className="flex min-h-11 min-w-0 items-center overflow-hidden py-1"
             onClick={() => setOpen(false)}
           >
-            <BrandLogo
-              priority
-              className="!h-14 !max-w-[4.5rem] sm:!h-16 sm:!max-w-[5.5rem] md:!h-[4.75rem] md:!max-w-[7rem]"
-            />
+            <BrandLogo className="!h-14 !max-w-[4.5rem] sm:!h-16 sm:!max-w-[5.5rem] md:!h-[4.75rem] md:!max-w-[7rem]" />
           </Link>
 
           <div className="hidden items-center gap-1 md:flex">

@@ -14,6 +14,12 @@ import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 export default function Home() {
   return (
     <div className="flex min-h-screen min-w-0 flex-col">
+      <link
+        rel="preload"
+        as="image"
+        href="/hm-stories/hero-lcp.webp"
+        fetchPriority="high"
+      />
       <HomeStructuredData />
       <HeroSection />
       <MenuPreview />

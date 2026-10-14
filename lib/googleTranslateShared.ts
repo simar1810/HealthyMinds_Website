@@ -35,6 +35,14 @@ export const MAX_INIT_FRAMES = 180;
 /** Fired when language changes from any `LanguageSelect` so duplicates stay in sync. */
 export const LANGUAGE_CHANGE_EVENT = 'nutrichef:language';
 
+/** Ask the footer gadget to load Google Translate. First paint does not wait on it. */
+export const TRANSLATE_NEEDED_EVENT = 'nutrichef:translate-needed';
+
+export function requestGoogleTranslate() {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new Event(TRANSLATE_NEEDED_EVENT));
+}
+
 export function dispatchLanguageChange(code: string) {
   if (typeof window === 'undefined') return;
   window.dispatchEvent(new CustomEvent(LANGUAGE_CHANGE_EVENT, { detail: { code } }));
