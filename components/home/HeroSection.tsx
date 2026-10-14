@@ -9,9 +9,21 @@ import { SectionPlansCta } from "@/components/home/SectionPlansCta";
 const HERO_IMAGE = "/hm-stories/hero-journey.jpg";
 
 const AVATARS = [
-  { src: "/hm-stories/customers-burj.jpg", position: "18% 20%" },
-  { src: "/hm-stories/customers-burj.jpg", position: "78% 22%" },
-  { src: "/hm-stories/customers-mall.jpg", position: "22% 18%" },
+  {
+    src: "/hm-stories/customers-burj.jpg",
+    position: "18% 20%",
+    alt: "Farhana Bodi with Chef Radhey in Dubai",
+  },
+  {
+    src: "/hm-stories/customers-burj.jpg",
+    position: "78% 22%",
+    alt: "Farhana Bodi and Chef Radhey, Healthy Minds customers",
+  },
+  {
+    src: "/hm-stories/customers-mall.jpg",
+    position: "22% 18%",
+    alt: "Sahil Khan in Dubai",
+  },
 ] as const;
 
 export const HeroSection = () => {
@@ -45,7 +57,7 @@ export const HeroSection = () => {
                   >
                     <Image
                       src={avatar.src}
-                      alt=""
+                      alt={avatar.alt}
                       fill
                       className="object-cover"
                       style={{ objectPosition: avatar.position }}
