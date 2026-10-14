@@ -69,6 +69,8 @@ function mapRecipeToMeal(recipe: ApiRecipe): PreviewMeal {
   };
 }
 
+const PREVIEW_LIMIT = 8;
+
 function mealMatchesTab(meal: PreviewMeal, tabId: string): boolean {
   if (tabId === "all") return true;
   return meal.planFilterId === tabId;
@@ -110,7 +112,21 @@ export const MenuPreview = () => {
   }, []);
 
   useEffect(() => {
-    void fetchRecipes();
+    let timer = 0;
+    const start = () => {
+      timer = window.setTimeout(() => {
+        void fetchRecipes();
+      }, 0);
+    };
+    if (document.readyState === "complete") {
+      start();
+    } else {
+      window.addEventListener("load", start, { once: true });
+    }
+    return () => {
+      window.removeEventListener("load", start);
+      if (timer) window.clearTimeout(timer);
+    };
   }, [fetchRecipes]);
 
   const visibleMeals = useMemo(
@@ -176,7 +192,7 @@ export const MenuPreview = () => {
           </p>
         ) : (
           <div className="flex w-full min-w-0 gap-8 overflow-x-auto pb-12 hide-scrollbar">
-            {visibleMeals.map((meal) => {
+            {visibleMeals.slice(0, PREVIEW_LIMIT).map((meal) => {
               const tag = tagForMeal(meal);
               return (
                 <button
