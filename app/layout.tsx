@@ -12,9 +12,15 @@ const DESCRIPTION =
   "Healthy Minds Restaurant in the UAE. Chef-crafted meal plans for fat loss, muscle gain, and a balanced week. Fresh plates, clear macros, delivered to your door.";
 const OG_IMAGE = "/hm-stories/hero-journey.jpg";
 
+/** Public Google Ads tag from Priyansh. Lives in the document head of every page. */
+const GOOGLE_ADS_ID = "AW-18465769763";
+
 const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.match(
   /^G-[A-Z0-9]+$/,
 )?.[0];
+
+const googleTagIds = [GOOGLE_ADS_ID, ...(gaMeasurementId ? [gaMeasurementId] : [])];
+const googleTagConfig = googleTagIds.map((id) => `gtag('config','${id}');`).join("");
 
 const fontUi = Inter({
   subsets: ["latin"],
@@ -79,20 +85,16 @@ export default function RootLayout({
       className={`${fontUi.variable} ${fontDisplay.variable} scroll-smooth`}
       suppressHydrationWarning
     >
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+        strategy="beforeInteractive"
+      />
+      <Script id="google-ads-gtag" strategy="beforeInteractive">
+        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());${googleTagConfig}`}
+      </Script>
       <body
         className={`${fontUi.className} hm-page-bg flex min-h-screen flex-col antialiased bg-background text-foreground`}
       >
-        {gaMeasurementId ? (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga4" strategy="afterInteractive">
-              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaMeasurementId}');`}
-            </Script>
-          </>
-        ) : null}
         <AuthProvider>
           <TenantProvider>
             <AppChrome>{children}</AppChrome>
