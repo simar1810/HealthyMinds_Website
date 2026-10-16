@@ -17,6 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const navLinks = [
   { href: "/#menu", label: "Menu", match: "menu" },
   { href: "/plans", label: "Plans", match: "plans" },
+  { href: "/blog", label: "Blog", match: "blog" },
   { href: "/#features", label: "Features", match: "features" },
   { href: "/#chef", label: "Chef", match: "chef" },
   { href: "/#community", label: "Community", match: "community" },
@@ -226,7 +227,9 @@ export const Navbar = () => {
     const active =
       match === "plans"
         ? pathname === "/plans" || pathname.startsWith("/meal-plans")
-        : pathname === "/" && activeSlug === match;
+        : match === "blog"
+          ? pathname === "/blog" || pathname.startsWith("/blog/")
+          : pathname === "/" && activeSlug === match;
     return [
       "relative rounded-lg px-3 py-2 text-sm font-bold uppercase tracking-widest transition-colors md:px-3.5",
       active
@@ -293,6 +296,8 @@ export const Navbar = () => {
                   className={`flex min-h-12 items-center rounded-xl px-4 text-sm font-bold uppercase tracking-widest transition ${
                     (match === "plans" &&
                       (pathname === "/plans" || pathname.startsWith("/meal-plans"))) ||
+                    (match === "blog" &&
+                      (pathname === "/blog" || pathname.startsWith("/blog/"))) ||
                     (pathname === "/" && activeSlug === match)
                       ? "bg-red-50 text-hm-primary"
                       : "text-slate-600 hover:bg-hm-surface-low hover:text-hm-primary"

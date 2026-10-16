@@ -8,6 +8,7 @@ import { GoogleTranslate } from "@/components/GoogleTranslate";
 const explore = [
   { href: "/menu", label: "Menu" },
   { href: "/plans", label: "Plans" },
+  { href: "/blog", label: "Blog" },
   { href: "/#features", label: "Features" },
   { href: "/#chef", label: "Chef" },
   { href: "/#testimonials", label: "Testimonials" },
