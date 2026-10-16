@@ -9,6 +9,7 @@ const navLinks = [
   { name: "Home", href: "/", hasChild: false },
   { name: "Plans", href: "/plans", hasChild: false },
   { name: "Menu", href: "/menu", hasChild: false },
+  { name: "Blog", href: "/blog", hasChild: false },
 ];
 
 function useIsClient() {

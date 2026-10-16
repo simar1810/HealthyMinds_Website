@@ -3,6 +3,7 @@ import { Epilogue, Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { AppChrome } from "@/components/AppChrome";
+import { HashScroll } from "@/components/HashScroll";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { TenantProvider } from "@/contexts/TenantContext";
 
@@ -95,6 +96,7 @@ export default function RootLayout({
       <body
         className={`${fontUi.className} hm-page-bg flex min-h-screen flex-col antialiased bg-background text-foreground`}
       >
+        <HashScroll />
         <AuthProvider>
           <TenantProvider>
             <AppChrome>{children}</AppChrome>
