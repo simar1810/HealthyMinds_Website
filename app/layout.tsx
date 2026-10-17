@@ -67,6 +67,9 @@ export const metadata: Metadata = {
     shortcut: "/healthy-minds-logo.png",
     apple: "/healthy-minds-logo.png",
   },
+  verification: {
+    google: "_xuIQSrwaq_QSqxCMOT29ttp6Dnsyk1lmes5dgrGcNk",
+  },
 };
 
 export const viewport: Viewport = {
