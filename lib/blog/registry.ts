@@ -1,7 +1,9 @@
 import type { BlogPost } from "@/lib/blog/types";
+import { dubaiFitnessChallengeWhatToEat } from "@/content/blogs/dubai-fitness-challenge-what-to-eat";
 import { highProteinMealPlanDubai } from "@/content/blogs/high-protein-meal-plan-dubai";
 
 export const BLOG_REGISTRY: Record<string, BlogPost> = {
+  [dubaiFitnessChallengeWhatToEat.slug]: dubaiFitnessChallengeWhatToEat,
   [highProteinMealPlanDubai.slug]: highProteinMealPlanDubai,
 };
 
